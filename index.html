@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <!-- App Developed by Pjmask -->
     <meta name="author" content="Pjmask">
     <title>सार्थी टूर एण्ड ट्रेवल्स</title>
     
@@ -51,7 +50,7 @@
         .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text-main); }
         .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
 
-        /* CUSTOM 9-SEAT LAYOUT (2-4-3) */
+        /* CUSTOM 9-SEAT LAYOUT */
         .bus-layout { border: 2px solid var(--border); border-radius: 20px; padding: 20px; background: var(--bg-card); width: 260px; margin: 0 auto; position: relative; }
         .steering-wheel { text-align: left; margin-bottom: 15px; color: var(--text-muted); font-size: 20px; padding-left: 10px; border-bottom: 2px dashed var(--border); padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center;}
         
@@ -91,7 +90,6 @@
 </head>
 <body>
 
-<!-- SPLASH SCREEN -->
 <div id="splashScreen">
     <i class="fa-solid fa-van-shuttle splash-icon"></i>
     <h1 style="color: var(--text-main); font-size: 28px; font-weight: 700; margin-bottom: 5px;">Sarthi Travels</h1>
@@ -102,10 +100,9 @@
     
     <div class="top-nav">
         <div class="brand">सार्थी ट्रेवल्स <span id="adminTag" style="display:none; color:var(--danger); font-size:10px; vertical-align:top;">ADMIN</span></div>
-        <div style="font-size:13px; font-weight:500; color:var(--text-muted);"><i class="fa-solid fa-user-circle"></i> <span id="userPhoneDisplay">Guest</span></div>
+        <div style="font-size:13px; font-weight:500; color:var(--text-muted);"><i class="fa-solid fa-user-circle"></i> <span id="userNameDisplay">Guest</span></div>
     </div>
 
-    <!-- 1. LOGIN SCREEN -->
     <div id="loginScreen" class="screen active">
         <div style="flex-grow: 0.2;"></div>
         <div style="text-align:center; margin-bottom:30px;">
@@ -114,8 +111,11 @@
             <div style="font-size: 12px; color: var(--text-muted); letter-spacing: 1px;">प्रो. विजय सिंह राठौर</div>
         </div>
 
-        <p class="subtitle" style="text-align:center;">Enter your mobile number to book your seat</p>
+        <p class="subtitle" style="text-align:center;">Enter details to create your account</p>
+        
+        <input type="text" id="nameInput" class="input-box" placeholder="Your Full Name" style="text-align:center; font-weight:bold;">
         <input type="tel" id="phoneInput" class="input-box" placeholder="10-digit Mobile Number" maxlength="10" style="text-align:center; font-weight:bold; letter-spacing:2px;">
+        
         <button class="btn btn-primary" id="loginBtn" onclick="handleLogin()">Get Started</button>
         
         <div class="card" style="text-align:center; margin-top:20px; border-color:transparent; background:rgba(255,255,255,0.02);">
@@ -127,7 +127,6 @@
         <a href="#" onclick="openAdmin()" style="color:var(--text-muted); text-align:center; font-size:11px; text-decoration:none; opacity:0.5;">Driver Login Panel</a>
     </div>
 
-    <!-- 2. HOME / SEARCH SCREEN -->
     <div id="homeScreen" class="screen">
         <div style="margin-bottom: 20px;">
             <div style="font-size: 14px; color: var(--text-muted);" id="greetingText">Good Morning,</div>
@@ -149,7 +148,6 @@
                 <div style="flex:1;">
                     <label style="font-size:11px; color:var(--text-muted);">DEPARTURE</label>
                     <select id="timeInput" class="input-box" style="padding:10px; font-size:14px;">
-                        <!-- Generated via JS -->
                     </select>
                 </div>
             </div>
@@ -157,7 +155,6 @@
         </div>
     </div>
 
-    <!-- 3. SEAT SELECTION -->
     <div id="seatScreen" class="screen">
         <div style="display:flex; align-items:center; margin-bottom:20px;">
             <i class="fa-solid fa-chevron-left" onclick="switchTab('home')" style="font-size:18px; cursor:pointer; margin-right:15px; color:var(--text-muted);"></i>
@@ -174,7 +171,6 @@
                 <span style="font-size:10px; color:var(--border);">GATE</span>
             </div>
             <div class="seat-grid" id="seatGrid">
-                <!-- Seats Generated Here -->
             </div>
         </div>
         <div style="text-align:center; font-size:12px; color:var(--text-muted); margin-top:10px; letter-spacing:2px;">BACK ROW</div>
@@ -190,14 +186,26 @@
                 <div style="font-size:11px; color:var(--text-muted);">SEATS SELECTED</div>
                 <div id="selectedSeatsList" style="font-size:16px; font-weight:bold; color:var(--text-main);">None</div>
             </div>
-            <button class="btn btn-primary" style="width:auto; padding:12px 25px; margin:0;" onclick="proceedToPay()" id="proceedBtn" disabled>Proceed</button>
+            <button class="btn btn-primary" style="width:auto; padding:12px 25px; margin:0;" onclick="proceedToPassengers()" id="proceedBtn" disabled>Next</button>
         </div>
     </div>
 
-    <!-- 4. PAYMENT OPTIONS WITH DYNAMIC QR -->
-    <div id="paymentScreen" class="screen">
+    <div id="passengerScreen" class="screen">
         <div style="display:flex; align-items:center; margin-bottom:20px;">
             <i class="fa-solid fa-chevron-left" onclick="switchScreen('seatScreen')" style="font-size:18px; cursor:pointer; margin-right:15px; color:var(--text-muted);"></i>
+            <h2 class="title" style="margin:0;">Passenger Details</h2>
+        </div>
+        <p class="subtitle">Please provide details for the selected seats.</p>
+        
+        <div id="passengerFormsContainer" style="flex:1; overflow-y:auto;">
+        </div>
+
+        <button class="btn btn-primary" onclick="proceedToPay()" style="margin-top:10px;">Proceed to Pay</button>
+    </div>
+
+    <div id="paymentScreen" class="screen">
+        <div style="display:flex; align-items:center; margin-bottom:20px;">
+            <i class="fa-solid fa-chevron-left" onclick="switchScreen('passengerScreen')" style="font-size:18px; cursor:pointer; margin-right:15px; color:var(--text-muted);"></i>
             <h2 class="title" style="margin:0;">Payment Details</h2>
         </div>
         
@@ -237,7 +245,6 @@
                 </div>
             </div>
 
-            <!-- Auto Generated QR Code Block -->
             <div class="qr-box" id="qrContainer">
                 <div style="color: #000; font-size: 14px; font-weight: bold; margin-bottom: 10px;">Scan to Pay ₹<span id="qrAmount">0</span></div>
                 <img id="upiQRCode" src="" alt="UPI QR Code">
@@ -246,7 +253,6 @@
         </div>
     </div>
 
-    <!-- 5. E-TICKET & WHATSAPP SENDER -->
     <div id="ticketScreen" class="screen">
         <div style="text-align:center; color:var(--success); margin-bottom:10px;">
             <i class="fa-solid fa-circle-check" style="font-size:40px;"></i>
@@ -300,13 +306,11 @@
         <button class="btn btn-outline" style="border:none;" onclick="switchTab('trips')">Go to My Trips</button>
     </div>
 
-    <!-- 6. MY TRIPS -->
     <div id="tripsScreen" class="screen">
         <h2 class="title" style="margin-bottom:20px;">My Bookings</h2>
         <div id="myTripsContainer" style="overflow-y:auto; flex:1; padding-bottom:20px;"></div>
     </div>
 
-    <!-- 7. ADMIN DASHBOARD -->
     <div id="adminScreen" class="screen">
         <h2 class="title" style="color:var(--danger);"><i class="fa-solid fa-user-shield"></i> Admin Panel</h2>
         
@@ -337,7 +341,6 @@
         <button class="btn btn-outline" onclick="logoutAdmin()" style="margin-top:15px; border-color:var(--border);">Exit Admin Panel</button>
     </div>
 
-    <!-- BOTTOM NAVIGATION -->
     <div class="bottom-nav" id="bottomNav" style="display:none;">
         <div class="nav-item active" id="nav-home" onclick="switchTab('home')"><i class="fa-solid fa-house"></i> Home</div>
         <div class="nav-item" id="nav-trips" onclick="switchTab('trips')"><i class="fa-solid fa-ticket"></i> My Trips</div>
@@ -345,20 +348,18 @@
     </div>
 
 </div>
-
-<!-- ================= JAVASCRIPT ENGINE ================= -->
-<script>
+    <script>
     const FLAT_FARE = 200;
     const ADMIN_WHATSAPP = "6269385198";
     const ADMIN_PIN = "2003";
     
-    let db = JSON.parse(localStorage.getItem('sarthi_live_db')) || [];
+    let db = JSON.parse(localStorage.getItem('sarthi_live_db_v3')) || [];
     let adminUpiId = localStorage.getItem('sarthi_admin_upi') || '';
     
     const state = {
-        user: null, isAdmin: false, currentTicket: null,
+        userName: null, userPhone: null, isAdmin: false, currentTicket: null,
         search: { from: 'Alampur', to: 'Gwalior', date: '', time: '08:00 AM' },
-        booking: { selectedSeats: [] }
+        booking: { selectedSeats: [], passengers: [] }
     };
 
     // Splash Screen & Init
@@ -372,11 +373,18 @@
         
         const today = new Date().toISOString().split('T')[0];
         document.getElementById('dateInput').value = today;
+        document.getElementById('dateInput').min = today; // Prevents past dates
         document.getElementById('adminDate').value = today;
         updateTimeDropdown('Alampur');
         
-        const savedUser = localStorage.getItem('sarthi_user');
-        if(savedUser) { state.user = savedUser; document.getElementById('userPhoneDisplay').innerText = state.user; document.getElementById('bottomNav').style.display = 'flex'; switchScreen('homeScreen'); }
+        const savedPhone = localStorage.getItem('sarthi_user_phone');
+        const savedName = localStorage.getItem('sarthi_user_name');
+        if(savedPhone && savedName) { 
+            state.userPhone = savedPhone; state.userName = savedName; 
+            document.getElementById('userNameDisplay').innerText = state.userName; 
+            document.getElementById('bottomNav').style.display = 'flex'; 
+            switchScreen('homeScreen'); 
+        }
     };
 
     function setGreeting() {
@@ -398,20 +406,23 @@
         if(tab === 'trips') { loadMyTrips(); switchScreen('tripsScreen'); }
     }
 
-    // Auth & Strict Phone Validation
+    // Auth & Validation
     function handleLogin() {
-        const phone = document.getElementById('phoneInput').value;
-        // Strict Indian Phone Verification: Must start with 6,7,8,9 and be exactly 10 digits
+        const name = document.getElementById('nameInput').value.trim();
+        const phone = document.getElementById('phoneInput').value.trim();
         const phoneRegex = /^[6-9]\d{9}$/;
+        
+        if(name.length < 2) return alert("Please enter your proper Name.");
         
         if(phoneRegex.test(phone)) {
             const btn = document.getElementById('loginBtn');
             btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> Verifying...`;
             
-            // Simulate backend verification delay (Ready for Firebase OTP later)
             setTimeout(() => {
-                state.user = phone; localStorage.setItem('sarthi_user', phone);
-                document.getElementById('userPhoneDisplay').innerText = phone;
+                state.userName = name; state.userPhone = phone; 
+                localStorage.setItem('sarthi_user_phone', phone);
+                localStorage.setItem('sarthi_user_name', name);
+                document.getElementById('userNameDisplay').innerText = name;
                 document.getElementById('bottomNav').style.display = 'flex';
                 btn.innerHTML = `Get Started`;
                 switchTab('home');
@@ -421,7 +432,7 @@
         }
     }
     
-    function handleLogout() { if(confirm("Are you sure you want to logout?")){ localStorage.removeItem('sarthi_user'); state.user = null; document.getElementById('bottomNav').style.display = 'none'; document.getElementById('userPhoneDisplay').innerText = "Guest"; switchScreen('loginScreen'); } }
+    function handleLogout() { if(confirm("Are you sure you want to logout?")){ localStorage.removeItem('sarthi_user_phone'); localStorage.removeItem('sarthi_user_name'); state.userPhone = null; state.userName = null; document.getElementById('bottomNav').style.display = 'none'; document.getElementById('userNameDisplay').innerText = "Guest"; switchScreen('loginScreen'); } }
 
     // Admin Auth
     function openAdmin() {
@@ -433,7 +444,7 @@
         } else alert("Access Denied: Incorrect PIN");
     }
     function saveAdminSettings() {
-        adminUpiId = document.getElementById('adminUpiInput').value;
+        adminUpiId = document.getElementById('adminUpiInput').value.trim();
         localStorage.setItem('sarthi_admin_upi', adminUpiId);
         document.getElementById('upiSaveMsg').style.display = 'block';
         setTimeout(() => document.getElementById('upiSaveMsg').style.display = 'none', 2000);
@@ -462,41 +473,56 @@
         
         document.getElementById('seatRouteTitle').innerText = `${state.search.from} → ${state.search.to}`;
         document.getElementById('seatDateTitle').innerText = `${state.search.date} • ${state.search.time}`;
-        state.booking.selectedSeats = []; updateSeatUI();
+        
+        state.booking.selectedSeats = []; 
+        state.booking.passengers = [];
+        updateSeatUI();
         generate9SeatMap();
         switchScreen('seatScreen');
     }
 
-    // 9-SEAT CUSTOM MAP (Front 2, Mid 4, Back 3)
+    // 9-SEAT CUSTOM MAP
     function generate9SeatMap() {
-        const grid = document.getElementById('seatGrid'); grid.innerHTML = '';
+        const grid = document.getElementById('seatGrid'); 
+        grid.innerHTML = ''; 
+        
         const bookingsForTrip = db.filter(b => b.date === state.search.date && b.time === state.search.time && b.from === state.search.from);
         let bookedSeats = [];
-        bookingsForTrip.forEach(b => bookedSeats.push(...b.seats));
+        bookingsForTrip.forEach(b => {
+            b.passengers.forEach(p => bookedSeats.push(p.seat));
+        });
 
-        grid.innerHTML += `<div class="seat driver-seat"><i class="fa-solid fa-user-tie"></i></div>`; 
-        addSeatNode(grid, 1, bookedSeats);
-        grid.innerHTML += `<div></div>`; 
-        addSeatNode(grid, 2, bookedSeats);
+        const appendSeat = (htmlContent, isDriver = false) => {
+            const div = document.createElement('div');
+            div.className = isDriver ? 'seat driver-seat' : 'seat';
+            div.innerHTML = htmlContent;
+            grid.appendChild(div);
+        };
+        const appendEmpty = () => { const div = document.createElement('div'); grid.appendChild(div); };
+        
+        const createSeatNode = (seatNo) => {
+            const isBooked = bookedSeats.includes(seatNo);
+            const seatDiv = document.createElement('div');
+            seatDiv.className = `seat ${isBooked ? 'booked' : 'available'}`;
+            seatDiv.innerText = seatNo;
+            if(!isBooked) seatDiv.onclick = () => toggleSeat(seatNo, seatDiv);
+            grid.appendChild(seatDiv);
+        };
 
-        addSeatNode(grid, 3, bookedSeats);
-        addSeatNode(grid, 4, bookedSeats);
-        addSeatNode(grid, 5, bookedSeats);
-        addSeatNode(grid, 6, bookedSeats);
+        appendSeat('<i class="fa-solid fa-user-tie"></i>', true);
+        createSeatNode(1);
+        appendEmpty();
+        createSeatNode(2);
 
-        grid.innerHTML += `<div></div>`; 
-        addSeatNode(grid, 7, bookedSeats);
-        addSeatNode(grid, 8, bookedSeats);
-        addSeatNode(grid, 9, bookedSeats);
-    }
+        createSeatNode(3);
+        createSeatNode(4);
+        createSeatNode(5);
+        createSeatNode(6);
 
-    function addSeatNode(grid, seatNo, bookedSeats) {
-        const isBooked = bookedSeats.includes(seatNo);
-        const seatDiv = document.createElement('div');
-        seatDiv.className = `seat ${isBooked ? 'booked' : 'available'}`;
-        seatDiv.innerText = seatNo;
-        if(!isBooked) seatDiv.onclick = () => toggleSeat(seatNo, seatDiv);
-        grid.appendChild(seatDiv);
+        appendEmpty();
+        createSeatNode(7);
+        createSeatNode(8);
+        createSeatNode(9);
     }
 
     function toggleSeat(seatNo, el) {
@@ -515,21 +541,54 @@
         const count = state.booking.selectedSeats.length;
         document.getElementById('selectedSeatsList').innerText = count > 0 ? state.booking.selectedSeats.sort((a,b)=>a-b).join(', ') : "None";
         document.getElementById('proceedBtn').disabled = count === 0;
-        document.getElementById('proceedBtn').innerText = `Pay ₹${count * FLAT_FARE}`;
+    }
+
+    // Passenger Form Logic
+    function proceedToPassengers() {
+        const container = document.getElementById('passengerFormsContainer');
+        container.innerHTML = '';
+        
+        state.booking.selectedSeats.sort((a,b)=>a-b).forEach((seatNo, index) => {
+            const defaultName = (index === 0) ? state.userName : '';
+            container.innerHTML += `
+                <div class="card" style="padding: 15px; margin-bottom: 12px; border-color: rgba(229, 192, 123, 0.3);">
+                    <div style="font-weight: 600; font-size: 14px; margin-bottom: 10px; color: var(--accent);">
+                        <i class="fa-solid fa-chair"></i> SEAT NUMBER: ${seatNo}
+                    </div>
+                    <input type="text" id="passName_${seatNo}" class="input-box" placeholder="Passenger Full Name" value="${defaultName}" style="margin-bottom: 10px; padding: 12px;">
+                    <input type="number" id="passAge_${seatNo}" class="input-box" placeholder="Passenger Age (Years)" style="margin-bottom: 0; padding: 12px;">
+                </div>
+            `;
+        });
+        switchScreen('passengerScreen');
     }
 
     // Payment Logic & Dynamic QR Code Generation
     function proceedToPay() {
-        const count = state.booking.selectedSeats.length;
+        state.booking.passengers = [];
+        let isValid = true;
+
+        state.booking.selectedSeats.forEach(seatNo => {
+            let name = document.getElementById(`passName_${seatNo}`).value.trim();
+            let age = parseInt(document.getElementById(`passAge_${seatNo}`).value.trim());
+            
+            if(!name || name.length < 2 || isNaN(age) || age < 1 || age > 110) {
+                isValid = false;
+            } else {
+                state.booking.passengers.push({ seat: seatNo, name, age });
+            }
+        });
+
+        if(!isValid) return alert("Please correctly fill in the Name and valid Age for all passengers.");
+
+        const count = state.booking.passengers.length;
         const totalAmt = count * FLAT_FARE;
         document.getElementById('paySeatCount').innerText = count;
         document.getElementById('payTotalAmount').innerText = `₹${totalAmt}`;
         
-        // Prepare Dynamic QR Code if UPI is set
         if(adminUpiId) {
             document.getElementById('adminUpiDisplay').innerText = `UPI: ${adminUpiId}`;
             const upiString = `upi://pay?pa=${adminUpiId}&pn=SarthiTravels&am=${totalAmt}&cu=INR`;
-            // Using a free Google-style QR generation API
             const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiString)}`;
             document.getElementById('upiQRCode').src = qrUrl;
             document.getElementById('qrAmount').innerText = totalAmt;
@@ -544,27 +603,26 @@
 
     function handleUPIButtonClick() {
         if(!adminUpiId) return alert("Admin has not configured UPI yet. Please use 'Pay in Bus'.");
-        const amt = state.booking.selectedSeats.length * FLAT_FARE;
+        const amt = state.booking.passengers.length * FLAT_FARE;
         const upiLink = `upi://pay?pa=${adminUpiId}&pn=SarthiTravels&am=${amt}&cu=INR`;
         window.location.href = upiLink; 
-        
-        // Wait briefly for app switch, then confirm.
         setTimeout(() => confirmPayment('UPI'), 2000);
     }
 
     function confirmPayment(mode) {
         const newTicket = {
             pnr: 'PNR' + Math.floor(100000 + Math.random() * 900000),
-            phone: state.user,
+            phone: state.userPhone,
+            bookedBy: state.userName,
             from: state.search.from, to: state.search.to,
             date: state.search.date, time: state.search.time,
-            seats: state.booking.selectedSeats.sort((a,b)=>a-b),
-            fare: state.booking.selectedSeats.length * FLAT_FARE,
+            passengers: state.booking.passengers, 
+            fare: state.booking.passengers.length * FLAT_FARE,
             mode: mode,
             timestamp: new Date().toLocaleString()
         };
         db.push(newTicket);
-        localStorage.setItem('sarthi_live_db', JSON.stringify(db));
+        localStorage.setItem('sarthi_live_db_v3', JSON.stringify(db));
         state.currentTicket = newTicket;
         renderTicketUI(newTicket);
         switchScreen('ticketScreen');
@@ -575,7 +633,10 @@
         document.getElementById('ticketFrom').innerText = ticket.from;
         document.getElementById('ticketTo').innerText = ticket.to;
         document.getElementById('ticketDateTime').innerText = `${ticket.date} • ${ticket.time}`;
-        document.getElementById('ticketSeats').innerText = ticket.seats.join(', ');
+        
+        const seatNumbers = ticket.passengers.map(p => p.seat).join(', ');
+        document.getElementById('ticketSeats').innerText = seatNumbers;
+        
         document.getElementById('ticketPhone').innerText = ticket.phone;
         
         const statusEl = document.getElementById('ticketStatus');
@@ -586,12 +647,15 @@
     function sendWhatsAppMessage() {
         const t = state.currentTicket;
         if(!t) return;
+        
+        let passList = t.passengers.map(p => `• Seat ${p.seat}: ${p.name} (Age: ${p.age})`).join('\n');
+
         const msg = `*NEW BOOKING - SARTHI TRAVELS* 🚌\n\n` +
                     `*PNR:* ${t.pnr}\n*Route:* ${t.from} to ${t.to}\n` +
-                    `*Date:* ${t.date} | *Time:* ${t.time}\n` +
-                    `*Seat Nos:* ${t.seats.join(', ')}\n\n` +
-                    `*Customer Ph:* ${t.phone}\n` +
-                    `*Payment:* ${t.mode === 'UPI' ? 'PAID via UPI' : 'CASH (To be collected in Bus)'} - ₹${t.fare}\n\n` +
+                    `*Date:* ${t.date} | *Time:* ${t.time}\n\n` +
+                    `*Passenger Details:*\n${passList}\n\n` +
+                    `*Booked By:* ${t.bookedBy} (${t.phone})\n` +
+                    `*Payment:* ${t.mode === 'UPI' ? 'PAID via UPI' : 'CASH (Collect in Bus)'} - ₹${t.fare}\n\n` +
                     `Please confirm receipt.`;
         window.open(`https://wa.me/91${ADMIN_WHATSAPP}?text=${encodeURIComponent(msg)}`, '_blank');
         setTimeout(() => switchTab('trips'), 1000);
@@ -600,11 +664,12 @@
     // My Trips Logic
     function loadMyTrips() {
         const container = document.getElementById('myTripsContainer'); container.innerHTML = '';
-        const myTrips = db.filter(b => b.phone === state.user).reverse();
+        const myTrips = db.filter(b => b.phone === state.userPhone).reverse();
 
         if(myTrips.length === 0) return container.innerHTML = `<p style="text-align:center; color:var(--text-muted); margin-top:50px;">No trips found.</p>`;
 
         myTrips.forEach(t => {
+            const seatsList = t.passengers.map(p => p.seat).join(', ');
             container.innerHTML += `
             <div class="card" style="border-left: 4px solid var(--accent); cursor:pointer; padding:15px;" onclick="renderAndShowPastTicket('${t.pnr}')">
                 <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
@@ -613,7 +678,7 @@
                 </div>
                 <div style="font-weight:600; font-size:15px;">${t.from} <i class="fa-solid fa-arrow-right" style="font-size:11px; color:var(--text-muted); margin:0 5px;"></i> ${t.to}</div>
                 <div style="font-size:12px; color:var(--text-muted); margin-top:6px;"><i class="fa-regular fa-calendar"></i> ${t.date} | ${t.time}</div>
-                <div style="font-size:12px; color:var(--accent); margin-top:6px; font-weight:bold;">Seats: ${t.seats.join(', ')}</div>
+                <div style="font-size:12px; color:var(--accent); margin-top:6px; font-weight:bold;">Seats: ${seatsList}</div>
             </div>`;
         });
     }
@@ -633,15 +698,25 @@
         let totalSeatsBooked = 0;
 
         trips.forEach(t => {
-            totalSeatsBooked += t.seats.length;
+            totalSeatsBooked += t.passengers.length;
+            
+            let passengerHtml = t.passengers.map(p => `
+                <div style="font-size:12px; color:var(--text-main); margin-top:6px;">
+                    <i class="fa-solid fa-user" style="color:var(--text-muted); font-size:10px; margin-right:5px;"></i> 
+                    <span style="color:var(--accent); font-weight:bold;">Seat ${p.seat}:</span> ${p.name} (Age: ${p.age})
+                </div>`).join('');
+
             container.innerHTML += `
             <div class="card" style="padding:15px; margin-bottom:10px; border-color:rgba(255,255,255,0.1);">
-                <div style="display:flex; justify-content:space-between;">
-                    <div style="font-weight:bold; color:var(--accent); font-size:15px;">Seat: ${t.seats.join(', ')}</div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:8px; border-bottom:1px solid var(--border); padding-bottom:8px;">
+                    <div style="font-weight:bold; color:var(--accent); font-size:14px;">PNR: ${t.pnr}</div>
                     <div style="font-weight:bold; font-size:12px; color:var(--text-muted);">${t.from} <i class="fa-solid fa-arrow-right"></i> ${t.to}</div>
                 </div>
+                
+                ${passengerHtml}
+
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-top:12px; padding-top:10px; border-top:1px dashed var(--border);">
-                    <div style="font-size:13px; font-weight:600;"><i class="fa-solid fa-phone" style="color:var(--text-muted);"></i> <a href="tel:${t.phone}" style="color:var(--text-main); text-decoration:none;">${t.phone}</a></div>
+                    <div style="font-size:12px; font-weight:600;"><i class="fa-solid fa-phone" style="color:var(--text-muted);"></i> <a href="tel:${t.phone}" style="color:var(--text-main); text-decoration:none;">${t.phone}</a></div>
                     <div style="font-size:11px; font-weight:bold; padding:4px 8px; border-radius:5px; background:${t.mode==='UPI'?'rgba(46,160,67,0.15)':'rgba(210,153,34,0.15)'}; color:${t.mode==='UPI'?'var(--success)':'#D29922'};">${t.mode==='UPI'?'PAID':'DUE ₹'+t.fare}</div>
                 </div>
             </div>`;
@@ -654,3 +729,4 @@
 
 </body>
 </html>
+
