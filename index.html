@@ -4,772 +4,454 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="author" content="Pjmask">
-    <title>सार्थी टूर एण्ड ट्रेवल्स</title>
+    <title>Sarthi Travels - Premium Booking</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Noto+Sans+Devanagari:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
     <style>
-        /* --- MULTI-LAYERED AESTHETIC THEME --- */
         :root {
-            --bg-base: #07090F; 
-            --accent: #E5C07B; 
-            --accent-glow: rgba(229, 192, 123, 0.4);
-            --text-main: #FFFFFF; 
-            --text-muted: #A0ABC0;
-            --success: #38A169; 
-            --danger: #E53E3E; 
-            
-            /* Glassmorphism Variables */
-            --glass-bg: rgba(20, 25, 35, 0.65);
-            --glass-border: rgba(229, 192, 123, 0.15);
-            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            --bg: #05070A; --card-bg: rgba(20, 25, 35, 0.6); --glass-border: rgba(229, 192, 123, 0.2);
+            --accent: #E5C07B; --text: #fff; --text-dim: #94A3B8;
+            --success: #38A169; --danger: #E53E3E;
         }
-
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Outfit', 'Noto Sans Devanagari', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background: var(--bg-base); color: var(--text-main); display: flex; justify-content: center; min-height: 100vh; overflow-x: hidden; position: relative; }
+        body { background: var(--bg); color: var(--text); display: flex; justify-content: center; min-height: 100vh; overflow-x: hidden; }
 
-        /* Animated Multi-layer Background */
-        .bg-orb-1 { position: fixed; top: -10%; left: -20%; width: 300px; height: 300px; background: rgba(229, 192, 123, 0.15); filter: blur(80px); border-radius: 50%; animation: float1 10s infinite alternate; z-index: -1; }
-        .bg-orb-2 { position: fixed; bottom: -10%; right: -10%; width: 250px; height: 250px; background: rgba(56, 161, 105, 0.1); filter: blur(80px); border-radius: 50%; animation: float2 8s infinite alternate; z-index: -1; }
-        @keyframes float1 { 0% { transform: translate(0, 0); } 100% { transform: translate(30px, 50px); } }
-        @keyframes float2 { 0% { transform: translate(0, 0); } 100% { transform: translate(-40px, -30px); } }
+        /* Animated Mesh Background */
+        .mesh-bg { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; background: radial-gradient(circle at 15% 50%, rgba(229, 192, 123, 0.08), transparent 25%), radial-gradient(circle at 85% 30%, rgba(56, 161, 105, 0.05), transparent 25%); filter: blur(40px); animation: shift 15s infinite alternate; }
+        @keyframes shift { 0% { transform: scale(1); } 100% { transform: scale(1.2); } }
 
-        /* Splash Screen */
-        #splashScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: var(--bg-base); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.5s ease; }
-        .splash-icon { font-size: 60px; color: var(--accent); margin-bottom: 20px; animation: pulse 1.5s infinite; filter: drop-shadow(0 0 15px var(--accent-glow)); }
-        @keyframes pulse { 0% { transform: scale(0.95); } 50% { transform: scale(1.05); } 100% { transform: scale(0.95); } }
-
-        .app-container { width: 100%; max-width: 480px; min-height: 100vh; display: flex; flex-direction: column; position: relative; padding-bottom: 80px; z-index: 1; }
+        .app { width: 100%; max-width: 480px; min-height: 100vh; display: flex; flex-direction: column; position: relative; padding-bottom: 80px; }
         
-        /* Glassmorphism Top Nav */
-        .top-nav { padding: 15px 20px; background: rgba(10, 15, 25, 0.7); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); position: sticky; top: 0; z-index: 10; border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center; }
-        .brand { font-size: 20px; font-weight: 700; color: var(--accent); text-shadow: 0 0 10px rgba(229,192,123,0.3); }
-
-        .screen { display: none; padding: 20px; flex: 1; flex-direction: column; animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
+        .top-nav { padding: 15px 20px; background: rgba(5, 7, 10, 0.8); backdrop-filter: blur(15px); position: sticky; top: 0; z-index: 50; border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center; }
+        .lang-btn { background: transparent; border: 1px solid var(--accent); color: var(--accent); padding: 4px 10px; border-radius: 12px; font-size: 11px; cursor: pointer; }
+        
+        .screen { display: none; padding: 20px; flex: 1; flex-direction: column; animation: fade 0.4s ease; }
         .screen.active { display: flex; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fade { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Glass Cards */
-        .card { background: var(--glass-bg); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid var(--glass-border); border-radius: 16px; padding: 20px; margin-bottom: 15px; box-shadow: var(--glass-shadow); }
-        .title { font-size: 26px; font-weight: 700; margin-bottom: 5px; letter-spacing: 0.5px; }
+        .glass { background: var(--card-bg); backdrop-filter: blur(12px); border: 1px solid var(--glass-border); border-radius: 16px; padding: 20px; margin-bottom: 15px; box-shadow: 0 8px 32px rgba(0,0,0,0.3); }
         
-        .input-box { background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255,255,255,0.1); padding: 15px; border-radius: 12px; margin-bottom: 15px; color: var(--text-main); width: 100%; font-size: 16px; outline: none; transition: 0.3s; }
-        .input-box:focus { border-color: var(--accent); box-shadow: 0 0 10px var(--accent-glow); }
+        .input { background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); padding: 15px; border-radius: 12px; margin-bottom: 15px; color: var(--text); width: 100%; font-size: 15px; outline: none; }
+        .input:focus { border-color: var(--accent); }
 
-        .btn { width: 100%; padding: 16px; border-radius: 12px; border: none; font-size: 16px; font-weight: 600; cursor: pointer; transition: 0.3s; display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 10px; }
-        .btn-primary { background: linear-gradient(135deg, var(--accent), #b89a62); color: #000; box-shadow: 0 4px 15px var(--accent-glow); }
-        .btn-primary:active { transform: scale(0.98); }
-        .btn-success { background: linear-gradient(135deg, #38A169, #276749); color: #fff; }
+        .btn { width: 100%; padding: 16px; border-radius: 12px; border: none; font-size: 16px; font-weight: 600; cursor: pointer; margin-bottom: 10px; transition: 0.2s; display: flex; justify-content: center; align-items: center; gap: 8px; }
+        .btn-gold { background: linear-gradient(135deg, var(--accent), #b89a62); color: #000; }
+        .btn-green { background: #276749; color: #fff; }
         .btn-outline { background: transparent; border: 1px solid var(--glass-border); color: var(--accent); }
 
-        /* 9-Seat Layout */
-        .bus-layout { border: 1px solid var(--glass-border); border-radius: 20px; padding: 20px; background: rgba(0,0,0,0.3); width: 280px; margin: 0 auto; box-shadow: inset 0 0 20px rgba(0,0,0,0.5); }
-        .steering-wheel { text-align: left; margin-bottom: 20px; color: var(--text-muted); font-size: 20px; border-bottom: 1px dashed rgba(255,255,255,0.1); padding-bottom: 10px; display: flex; justify-content: space-between;}
-        
-        .seat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; justify-items: center; align-items: center; }
-        .seat { width: 45px; height: 45px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 600; cursor: pointer; transition: 0.3s; position: relative; }
-        .seat::after { content: ''; position: absolute; bottom: -6px; width: 28px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; }
-        
-        .seat.available:hover { border-color: var(--accent); background: rgba(229,192,123,0.1); }
-        .seat.selected { background: var(--accent); border-color: var(--accent); color: #000; box-shadow: 0 0 15px var(--accent-glow); transform: translateY(-2px); }
-        .seat.selected::after { background: #000; opacity: 0.5; }
-        .seat.booked { background: rgba(229, 62, 62, 0.2); border-color: var(--danger); color: var(--danger); cursor: not-allowed; }
-        .seat.booked::after { background: var(--danger); opacity: 0.5; }
-        .seat.driver-seat { background: transparent; border: none; color: var(--text-muted); cursor: not-allowed; }
-        .seat.driver-seat::after { display: none; }
-
-        .seat-legend { display: flex; justify-content: center; gap: 15px; margin-top: 20px; font-size: 12px; color: var(--text-muted); }
-        .legend-box { width: 12px; height: 12px; border-radius: 3px; border: 1px solid rgba(255,255,255,0.2); }
+        /* Ertiga Map */
+        .bus { border: 1px solid var(--glass-border); border-radius: 20px; padding: 20px; background: rgba(0,0,0,0.4); width: 280px; margin: 0 auto; }
+        .grid-seats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; justify-items: center; align-items: center; }
+        .seat { width: 45px; height: 45px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .seat.avail:hover { border-color: var(--accent); background: rgba(229,192,123,0.1); }
+        .seat.sel { background: var(--accent); color: #000; border-color: var(--accent); transform: scale(1.05); }
+        .seat.book { background: rgba(229, 62, 62, 0.2); border-color: var(--danger); color: var(--danger); cursor: not-allowed; }
+        .seat.drv { border: none; color: var(--text-dim); }
 
         /* E-Ticket */
-        .e-ticket { background: #ffffff; border-radius: 16px; overflow: hidden; color: #000; margin-top: 10px; position: relative; box-shadow: 0 15px 35px rgba(0,0,0,0.5); }
-        .ticket-header { background: #F7FAFC; color: #1A202C; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px dashed #E2E8F0; }
-        .ticket-body { padding: 20px; background: url('https://www.transparenttextures.com/patterns/cubes.png'); }
-        .barcode { width: 100%; height: 50px; background: repeating-linear-gradient(90deg, #000, #000 2px, transparent 2px, transparent 4px); margin-top: 15px; opacity: 0.8; }
+        .ticket { background: #fff; border-radius: 16px; color: #000; overflow: hidden; margin-top: 10px; }
+        .t-head { background: var(--card-bg); color: var(--accent); padding: 15px; display: flex; justify-content: space-between; font-weight: bold; }
+        .t-body { padding: 20px; }
+        .barcode { height: 40px; background: repeating-linear-gradient(90deg, #000, #000 2px, transparent 2px, transparent 4px); margin-top: 15px; opacity: 0.8; }
 
-        /* Glass Bottom Nav */
-        .bottom-nav { position: fixed; bottom: 0; width: 100%; max-width: 480px; background: rgba(10, 15, 25, 0.85); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid rgba(255,255,255,0.05); z-index: 100; padding-bottom: env(safe-area-inset-bottom, 12px); }
-        .nav-item { color: #4A5568; text-align: center; font-size: 11px; cursor: pointer; transition: 0.3s; display: flex; flex-direction: column; gap: 5px; font-weight: 600; }
-        .nav-item i { font-size: 20px; }
-        .nav-item.active { color: var(--accent); filter: drop-shadow(0 0 5px var(--accent-glow)); }
-
-        .qr-box { background: white; padding: 20px; border-radius: 16px; text-align: center; margin-top: 15px; display: none; }
-        .qr-box img { width: 160px; height: 160px; border-radius: 8px; }
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; max-width: 480px; background: rgba(5, 7, 10, 0.9); backdrop-filter: blur(10px); display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid var(--glass-border); z-index: 50; }
+        .nav-item { color: var(--text-dim); font-size: 11px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+        .nav-item.active { color: var(--accent); }
         
-        ::-webkit-scrollbar { width: 0px; }
+        #recaptcha-container { display: flex; justify-content: center; margin: 10px 0; }
     </style>
 </head>
 <body>
 
-<div class="bg-orb-1"></div>
-<div class="bg-orb-2"></div>
+<div class="mesh-bg"></div>
 
-<div id="splashScreen">
-    <i class="fa-solid fa-van-shuttle splash-icon"></i>
-    <h1 style="color: var(--text-main); font-size: 32px; font-weight: 700; margin-bottom: 5px; letter-spacing: 1px;">Sarthi Travels</h1>
-    <div style="color: var(--accent); font-size: 12px; letter-spacing: 3px; font-weight: 600;">PREMIUM SERVICE</div>
+<div id="splashScreen" style="position:fixed; top:0; left:0; width:100%; height:100vh; background:var(--bg); z-index:9999; display:flex; flex-direction:column; justify-content:center; align-items:center;">
+    <i class="fa-solid fa-van-shuttle" style="font-size:60px; color:var(--accent); animation: fade 1s infinite alternate;"></i>
+    <h1 style="margin-top:20px; color:#fff;">Sarthi Travels</h1>
 </div>
 
-<div class="app-container">
-    
+<div class="app">
     <div class="top-nav">
-        <div class="brand">सार्थी ट्रेवल्स <span id="adminTag" style="display:none; color:var(--danger); font-size:10px; vertical-align:top; border: 1px solid var(--danger); padding: 2px 5px; border-radius: 4px; margin-left: 5px;">ADMIN</span></div>
-        <div style="font-size:13px; font-weight:600; color:var(--text-main); background: rgba(255,255,255,0.1); padding: 5px 12px; border-radius: 20px;"><i class="fa-solid fa-user-circle" style="color: var(--accent);"></i> <span id="userNameDisplay">Guest</span></div>
+        <div style="font-weight:700; color:var(--accent); font-size:18px;">सार्थी ट्रेवल्स <span id="adminTag" style="display:none; color:var(--danger); border:1px solid var(--danger); padding:2px 4px; font-size:10px; border-radius:4px;">ADMIN</span></div>
+        <div style="display:flex; gap:10px; align-items:center;">
+            <button class="lang-btn" onclick="toggleLanguage()">A/अ</button>
+            <div style="font-size:12px; color:var(--text); background:rgba(255,255,255,0.1); padding:4px 10px; border-radius:15px;" id="userNameDisplay">Guest</div>
+        </div>
     </div>
 
-    <div id="loginScreen" class="screen active">
-        <div style="flex-grow: 0.2;"></div>
-        <div style="text-align:center; margin-bottom:30px;">
-            <i class="fa-solid fa-car-side" style="font-size:45px; color:var(--accent); margin-bottom:15px; filter: drop-shadow(0 0 10px var(--accent-glow));"></i>
-            <h1 class="title" style="font-size:34px;">सार्थी टूर एण्ड ट्रेवल्स</h1>
-            <div style="font-size: 13px; color: var(--text-muted); letter-spacing: 1px; font-weight: 500;">प्रो. विजय सिंह राठौर</div>
+    <div id="authScreen" class="screen active">
+        <div style="text-align:center; margin:30px 0;">
+            <i class="fa-solid fa-car-side" style="font-size:45px; color:var(--accent); margin-bottom:10px;"></i>
+            <h1 class="translate" data-en="Sarthi Tour & Travels" data-hi="सार्थी टूर एण्ड ट्रेवल्स">Sarthi Tour & Travels</h1>
+            <p style="color:var(--text-dim); font-size:12px;">प्रो. विजय सिंह राठौर</p>
         </div>
 
-        <div class="card">
-            <div style="text-align: center; margin-bottom: 20px; font-size: 14px; color: var(--text-muted);">Create Account / Login</div>
-            <input type="text" id="nameInput" class="input-box" placeholder="Your Full Name" style="text-align:center; font-weight:600;">
-            <input type="tel" id="phoneInput" class="input-box" placeholder="10-digit Mobile Number" maxlength="10" style="text-align:center; font-weight:600; letter-spacing:2px;">
-            <button class="btn btn-primary" id="loginBtn" onclick="handleLogin()">Secure Login <i class="fa-solid fa-arrow-right"></i></button>
+        <div class="glass" id="loginBox">
+            <p style="text-align:center; margin-bottom:15px; font-size:13px; color:var(--text-dim);" class="translate" data-en="Login to Book Tickets" data-hi="टिकट बुक करने के लिए लॉगिन करें">Login to Book Tickets</p>
+            <input type="text" id="nameInput" class="input" placeholder="Full Name / पूरा नाम" style="text-align:center;">
+            <input type="tel" id="phoneInput" class="input" placeholder="Mobile / मोबाइल नंबर" maxlength="10" style="text-align:center; letter-spacing:2px; font-weight:bold;">
+            <div id="recaptcha-container"></div>
+            <button class="btn btn-gold translate" id="getOtpBtn" onclick="sendOTP()" data-en="Get OTP" data-hi="OTP प्राप्त करें">Get OTP</button>
+        </div>
+
+        <div class="glass" id="otpBox" style="display:none;">
+            <p style="text-align:center; margin-bottom:15px; color:var(--accent);">Enter 6-digit OTP</p>
+            <input type="number" id="otpInput" class="input" placeholder="X X X X X X" style="text-align:center; letter-spacing:5px;">
+            <button class="btn btn-green translate" id="verifyOtpBtn" onclick="verifyOTP()" data-en="Verify & Login" data-hi="वेरीफाई और लॉगिन">Verify & Login</button>
         </div>
         
-        <div style="text-align:center; margin-top:10px; font-size: 13px; color: var(--text-muted);">
-            Helpline: <span style="color: var(--accent); font-weight: 600;">9098567628</span> | <span style="color: var(--accent); font-weight: 600;">9425794524</span>
-        </div>
-
-        <div style="flex-grow: 1;"></div>
-        <div style="text-align:center; font-size:11px; opacity:0.6; margin-bottom: 10px;">Developed by Pjmask</div>
-        <a href="#" onclick="openAdmin()" style="color:var(--text-muted); text-align:center; font-size:12px; text-decoration:underline;">Driver Login Panel</a>
+        <div style="flex-grow:1;"></div>
+        <p style="text-align:center; font-size:12px; color:var(--text-dim);">Helpline: <span style="color:var(--accent);">9098567628</span></p>
+        <a href="#" onclick="openAdmin()" style="text-align:center; display:block; margin-top:10px; color:var(--text-dim); font-size:11px;">Admin Panel</a>
     </div>
 
     <div id="homeScreen" class="screen">
-        <div style="margin-bottom: 20px; padding-left: 5px;">
-            <div style="font-size: 15px; color: var(--accent); font-weight: 600;" id="greetingText">Good Morning,</div>
-            <h2 class="title" style="font-size: 32px;">Where to today?</h2>
-        </div>
-        
-        <div class="card">
-            <div style="position:relative; margin-bottom: 5px;">
-                <input type="text" id="fromInput" class="input-box" value="Alampur" readonly style="font-weight:600; font-size: 18px; color: white;">
-                <div style="position:absolute; right:20px; top:35px; background: var(--accent); color: #000; padding:12px; border-radius:50%; box-shadow: 0 4px 10px var(--accent-glow); z-index:2; cursor:pointer; transition: 0.4s;" onclick="swapRoute(this)"><i class="fa-solid fa-arrow-right-arrow-left fa-rotate-90"></i></div>
-                <input type="text" id="toInput" class="input-box" value="Gwalior" readonly style="font-weight:600; font-size: 18px; color: white;">
+        <h2 style="font-size:28px; margin-bottom:20px;" class="translate" data-en="Where to today?" data-hi="आज कहाँ जाना है?">Where to today?</h2>
+        <div class="glass">
+            <div style="position:relative;">
+                <input type="text" id="fromInput" class="input" value="Alampur" readonly style="font-weight:bold;">
+                <div style="position:absolute; right:20px; top:35px; background:var(--accent); color:#000; padding:10px; border-radius:50%; z-index:2; cursor:pointer;" onclick="swapRoute()"><i class="fa-solid fa-arrows-rotate"></i></div>
+                <input type="text" id="toInput" class="input" value="Gwalior" readonly style="font-weight:bold;">
             </div>
-            
-            <div style="display:flex; gap:15px;">
-                <div style="flex:1;">
-                    <label style="font-size:11px; color:var(--text-muted); font-weight: 600;">DATE</label>
-                    <input type="date" id="dateInput" class="input-box" style="padding:12px; font-size:15px; margin-top: 5px;">
-                </div>
-                <div style="flex:1;">
-                    <label style="font-size:11px; color:var(--text-muted); font-weight: 600;">TIME</label>
-                    <select id="timeInput" class="input-box" style="padding:12px; font-size:15px; margin-top: 5px;">
-                        </select>
-                </div>
+            <div style="display:flex; gap:10px;">
+                <input type="date" id="dateInput" class="input" style="flex:1; padding:10px;">
+                <select id="timeInput" class="input" style="flex:1; padding:10px;"></select>
             </div>
-            <button class="btn btn-primary" onclick="searchBuses()" style="margin-top: 10px;">Search Available Seats</button>
+            <button class="btn btn-gold translate" onclick="searchBuses()" data-en="Search Seats" data-hi="सीटें खोजें">Search Seats</button>
         </div>
     </div>
 
     <div id="seatScreen" class="screen">
-        <div style="display:flex; align-items:center; margin-bottom:25px;">
-            <div style="background: rgba(255,255,255,0.1); padding: 10px 15px; border-radius: 12px; cursor: pointer; margin-right: 15px;" onclick="switchTab('home')"><i class="fa-solid fa-chevron-left"></i></div>
+        <div style="display:flex; align-items:center; margin-bottom:20px;">
+            <i class="fa-solid fa-arrow-left" onclick="switchTab('home')" style="font-size:20px; margin-right:15px; cursor:pointer;"></i>
             <div>
-                <h3 style="font-size:18px; font-weight: 700;" id="seatRouteTitle">Alampur to Gwalior</h3>
-                <div style="color:var(--accent); font-size:13px; font-weight: 600;" id="seatDateTitle"></div>
+                <h3 id="seatTitle">Route</h3>
+                <div style="color:var(--accent); font-size:12px;" id="seatSubtitle">Date</div>
             </div>
         </div>
-
-        <div class="bus-layout">
-            <div class="steering-wheel">
-                <i class="fa-solid fa-dharmachakra" style="color: var(--accent);"></i>
-                <span style="font-size:11px; color:var(--text-muted); letter-spacing: 1px;">ENTRY</span>
-            </div>
-            <div class="seat-grid" id="seatGrid">
-                </div>
+        
+        <div class="bus">
+            <div style="margin-bottom:15px; border-bottom:1px dashed rgba(255,255,255,0.2); padding-bottom:5px;"><i class="fa-solid fa-dharmachakra" style="color:var(--accent);"></i></div>
+            <div class="grid-seats" id="seatGrid"></div>
         </div>
 
-        <div class="seat-legend">
-            <div class="legend-item"><div class="legend-box" style="background:rgba(255,255,255,0.05);"></div> Available</div>
-            <div class="legend-item"><div class="legend-box" style="background:rgba(229, 62, 62, 0.4); border-color:var(--danger);"></div> Booked</div>
-            <div class="legend-item"><div class="legend-box" style="background:var(--accent); border-color:var(--accent);"></div> Selected</div>
-        </div>
-
-        <div class="card" style="margin-top:25px; display:flex; justify-content:space-between; align-items:center; padding:20px;">
+        <div class="glass" style="margin-top:20px; display:flex; justify-content:space-between; align-items:center;">
             <div>
-                <div style="font-size:12px; color:var(--text-muted); font-weight: 600;">SELECTED SEATS</div>
-                <div id="selectedSeatsList" style="font-size:20px; font-weight:bold; color:var(--accent);">None</div>
+                <div style="font-size:11px; color:var(--text-dim);">SEATS</div>
+                <div id="selectedSeatsList" style="font-size:18px; font-weight:bold; color:var(--accent);">None</div>
             </div>
-            <button class="btn btn-primary" style="width:auto; padding:12px 30px; margin:0; border-radius: 20px;" onclick="proceedToPassengers()" id="proceedBtn" disabled>Next <i class="fa-solid fa-arrow-right"></i></button>
+            <button class="btn btn-gold" style="width:auto; margin:0;" onclick="proceedToPassengers()" id="proceedBtn" disabled>Next <i class="fa-solid fa-arrow-right"></i></button>
         </div>
     </div>
 
     <div id="passengerScreen" class="screen">
-        <div style="display:flex; align-items:center; margin-bottom:20px;">
-            <div style="background: rgba(255,255,255,0.1); padding: 10px 15px; border-radius: 12px; cursor: pointer; margin-right: 15px;" onclick="switchScreen('seatScreen')"><i class="fa-solid fa-chevron-left"></i></div>
-            <h2 class="title" style="margin:0;">Passenger Details</h2>
-        </div>
-        <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 20px;">Please provide details for the reserved seats.</p>
-        
-        <div id="passengerFormsContainer" style="flex:1; overflow-y:auto; padding-right: 5px;">
-        </div>
-
-        <button class="btn btn-primary" onclick="proceedToPay()" style="margin-top:15px; padding: 18px;">Proceed to Payment <i class="fa-solid fa-shield-check"></i></button>
+        <h2 style="margin-bottom:20px;" class="translate" data-en="Passenger Info" data-hi="यात्री विवरण">Passenger Info</h2>
+        <div id="passForms" style="overflow-y:auto; flex:1;"></div>
+        <button class="btn btn-gold" onclick="proceedToPay()">Proceed to Payment</button>
     </div>
 
-    <div id="paymentScreen" class="screen">
-        <div style="display:flex; align-items:center; margin-bottom:20px;">
-            <div style="background: rgba(255,255,255,0.1); padding: 10px 15px; border-radius: 12px; cursor: pointer; margin-right: 15px;" onclick="switchScreen('passengerScreen')"><i class="fa-solid fa-chevron-left"></i></div>
-            <h2 class="title" style="margin:0;">Checkout</h2>
-        </div>
-        
-        <div class="card" style="background: linear-gradient(135deg, rgba(229,192,123,0.1), rgba(0,0,0,0.5)); border-color:var(--accent);">
-            <div style="display:flex; justify-content:space-between; margin-bottom:12px; font-size:15px; color: var(--text-muted);">
-                <span>Seats Booked</span>
-                <span id="paySeatCount" style="font-weight:bold; color: white;">0</span>
-            </div>
-            <div style="display:flex; justify-content:space-between; margin-bottom:15px; font-size:15px; color: var(--text-muted);">
-                <span>Fare per Seat</span>
-                <span style="color: white;">₹200</span>
-            </div>
-            <div style="border-top: 1px dashed rgba(229,192,123,0.3); margin: 15px 0;"></div>
-            <div style="display:flex; justify-content:space-between; font-size:24px; font-weight:bold; color:var(--accent);">
-                <span>Total Amount</span>
-                <span id="payTotalAmount">₹0</span>
+    <div id="checkoutScreen" class="screen">
+        <h2 style="margin-bottom:20px;" class="translate" data-en="Payment" data-hi="भुगतान">Payment</h2>
+        <div class="glass" style="background:rgba(229,192,123,0.1); border-color:var(--accent);">
+            <div style="display:flex; justify-content:space-between; font-size:22px; font-weight:bold; color:var(--accent);">
+                <span class="translate" data-en="Total" data-hi="कुल राशि">Total</span> <span id="payAmount">₹0</span>
             </div>
         </div>
-
-        <h3 style="font-size:13px; margin:25px 0 15px 0; color:var(--text-muted); letter-spacing: 1px;">CHOOSE PAYMENT METHOD</h3>
-        
-        <div class="card" style="padding:18px; cursor:pointer; display:flex; justify-content:space-between; align-items:center; transition: 0.3s;" onclick="confirmPayment('CASH')" onmouseover="this.style.borderColor='var(--success)'" onmouseout="this.style.borderColor='var(--glass-border)'">
-            <div>
-                <div style="font-weight:600; font-size:17px;"><i class="fa-solid fa-money-bill-wave" style="color:var(--success); margin-right:10px;"></i> Pay in Bus (Cash)</div>
-                <div style="font-size:12px; color:var(--text-muted); margin-left:34px; margin-top: 5px;">Pay the driver directly during journey</div>
-            </div>
-            <i class="fa-solid fa-chevron-right" style="color:var(--text-muted);"></i>
+        <div class="glass" style="cursor:pointer;" onclick="confirmBooking('CASH')">
+            <div style="font-weight:bold; font-size:16px;"><i class="fa-solid fa-money-bill" style="color:var(--success); margin-right:10px;"></i> Pay in Bus (Cash)</div>
+            <div style="font-size:12px; color:var(--text-dim); margin-left:30px;">Pay directly to driver</div>
         </div>
-
-        <div class="card" id="upiSection" style="padding:18px; border-color:var(--accent); background: rgba(229,192,123,0.05);">
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-                <div>
-                    <div style="font-weight:600; font-size:17px; display:flex; align-items:center;">
-                        <i class="fa-brands fa-google-pay" style="font-size:22px; color:var(--accent); margin-right:10px;"></i> Pay via UPI App
-                    </div>
-                    <div style="font-size:12px; color:var(--text-muted); margin-left:34px; margin-top: 5px;" id="adminUpiDisplay">UPI ID not configured</div>
-                </div>
-            </div>
-
-            <div class="qr-box" id="qrContainer">
-                <div style="color: #1A202C; font-size: 15px; font-weight: 800; margin-bottom: 15px;">Scan to Pay ₹<span id="qrAmount">0</span></div>
-                <img id="upiQRCode" src="" alt="UPI QR Code" style="box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
-                <button class="btn btn-success" style="margin-top: 20px; padding: 14px; font-size: 15px; border-radius: 8px;" onclick="handleUPIButtonClick()"><i class="fa-solid fa-bolt"></i> Click to Pay via App</button>
-            </div>
+        <div class="glass" id="upiBox" style="border-color:var(--accent); text-align:center;">
+            <div style="font-weight:bold; font-size:16px; margin-bottom:10px;"><i class="fa-brands fa-google-pay" style="color:var(--accent);"></i> Pay via UPI</div>
+            <div id="upiDisplay" style="font-size:12px; color:var(--text-dim); margin-bottom:15px;">UPI ID</div>
+            <img id="qrCode" src="" style="width:150px; height:150px; border-radius:10px; display:none; margin:0 auto 15px auto;">
+            <button class="btn btn-green" onclick="payViaApp()">Open UPI App</button>
         </div>
     </div>
 
     <div id="ticketScreen" class="screen">
-        <div style="text-align:center; color:var(--success); margin-bottom:15px; margin-top: 20px;">
-            <div style="width: 80px; height: 80px; background: rgba(56, 161, 105, 0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px auto;">
-                <i class="fa-solid fa-check" style="font-size:40px;"></i>
-            </div>
-            <h2 style="font-size:24px; font-weight: 700;">Booking Confirmed!</h2>
-            <div style="font-size:13px; color:var(--text-muted); margin-top: 5px;">Your digital boarding pass is ready</div>
+        <div style="text-align:center; color:var(--success); margin-bottom:10px;">
+            <i class="fa-solid fa-circle-check" style="font-size:50px;"></i>
+            <h2 style="margin-top:10px;">Confirmed!</h2>
         </div>
-
-        <div class="e-ticket">
-            <div class="ticket-header">
-                <div style="font-weight:800; font-size:18px; letter-spacing:1px; color: #1A202C;">SARTHI TRAVELS</div>
-                <div style="font-size:12px; font-weight:bold; color: #4A5568;">PNR: <span id="ticketPNR" style="color: #000;"></span></div>
-            </div>
-            
-            <div class="ticket-body">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-                    <div>
-                        <div style="font-size:11px; color:#718096; font-weight: 600;">FROM</div>
-                        <div style="font-size:20px; font-weight:800; color: #1A202C;" id="ticketFrom"></div>
-                    </div>
-                    <i class="fa-solid fa-arrow-right-long" style="color:#CBD5E0; font-size: 20px;"></i>
-                    <div style="text-align:right;">
-                        <div style="font-size:11px; color:#718096; font-weight: 600;">TO</div>
-                        <div style="font-size:20px; font-weight:800; color: #1A202C;" id="ticketTo"></div>
-                    </div>
+        <div class="ticket">
+            <div class="t-head"><span>SARTHI TRAVELS</span><span id="tPNR" style="color:#000;"></span></div>
+            <div class="t-body">
+                <div style="display:flex; justify-content:space-between; font-weight:bold; font-size:18px;">
+                    <span id="tFrom"></span> <i class="fa-solid fa-arrow-right" style="color:#ccc;"></i> <span id="tTo"></span>
                 </div>
-
-                <div style="display:flex; justify-content:space-between; background:rgba(226, 232, 240, 0.5); padding:12px 15px; border-radius:10px; margin-bottom:20px;">
-                    <div>
-                        <div style="font-size:10px; color:#718096; font-weight: 600;">DATE & TIME</div>
-                        <div style="font-weight:800; font-size:14px; color: #2D3748;" id="ticketDateTime"></div>
-                    </div>
-                    <div style="text-align:right;">
-                        <div style="font-size:10px; color:#718096; font-weight: 600;">SEAT NO(s)</div>
-                        <div style="font-weight:800; font-size:14px; color:#D69E2E;" id="ticketSeats"></div>
-                    </div>
+                <div style="background:#f1f5f9; padding:10px; border-radius:8px; margin:15px 0; display:flex; justify-content:space-between; font-size:13px; font-weight:bold;">
+                    <span id="tDate"></span> <span id="tSeats" style="color:#d69e2e;"></span>
                 </div>
-                
                 <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <div style="font-size:13px; font-weight:700; color:#4A5568;"><i class="fa-solid fa-phone" style="margin-right: 5px;"></i> <span id="ticketPhone"></span></div>
-                    <div style="font-weight:800; font-size:16px; padding: 5px 10px; border-radius: 6px;" id="ticketStatus"></div>
+                    <span id="tPhone" style="font-size:12px; color:#4a5568; font-weight:bold;"></span>
+                    <span id="tStatus" style="font-weight:bold; padding:4px 8px; border-radius:6px;"></span>
                 </div>
-                
-                <div class="dashed-line"></div>
-                <div style="text-align: center; font-size: 11px; color: #A0ABC0; font-weight: 600;">Show this pass while boarding</div>
                 <div class="barcode"></div>
             </div>
         </div>
-
-        <button class="btn btn-success" style="margin-top:25px; box-shadow:0 4px 15px rgba(56, 161, 105, 0.4); border-radius: 25px;" onclick="sendWhatsAppMessage()">
-            <i class="fa-brands fa-whatsapp" style="font-size:20px; margin-right:8px;"></i> Send Ticket to Driver
-        </button>
-        <button class="btn btn-outline" style="border:none; margin-top: 5px;" onclick="switchTab('trips')">Skip to My Trips</button>
+        <button class="btn btn-green" style="margin-top:20px;" onclick="sendWhatsApp()"><i class="fa-brands fa-whatsapp"></i> Send to Driver</button>
     </div>
 
     <div id="tripsScreen" class="screen">
-        <h2 class="title" style="margin-bottom:20px;">Booking History</h2>
-        <div id="myTripsContainer" style="overflow-y:auto; flex:1; padding-bottom:20px; padding-right: 5px;"></div>
+        <h2 style="margin-bottom:15px;" class="translate" data-en="My Trips" data-hi="मेरी यात्रा">My Trips</h2>
+        <div id="tripsList" style="overflow-y:auto; flex:1;"></div>
     </div>
 
     <div id="adminScreen" class="screen">
-        <h2 class="title" style="color:var(--accent);"><i class="fa-solid fa-shield-halved"></i> Driver Console</h2>
+        <h2 style="color:var(--danger);"><i class="fa-solid fa-shield"></i> Driver Panel</h2>
         
-        <div class="card" style="padding:20px; margin-bottom:20px; border-color:var(--accent); background: rgba(229,192,123,0.05);">
-            <div style="font-size:13px; color:var(--text-main); font-weight: 600; margin-bottom:10px;">Setup Receiving UPI ID</div>
-            <div style="display:flex; gap:10px;">
-                <input type="text" id="adminUpiInput" class="input-box" style="margin:0; padding:12px; font-size:15px;" placeholder="e.g. 9098567628@ybl">
-                <button class="btn btn-primary" style="width:auto; margin:0; padding:12px 20px; border-radius: 12px;" onclick="saveAdminSettings()">Save</button>
-            </div>
-            <div style="font-size:11px; color:var(--success); margin-top:8px; font-weight: 600; display:none;" id="upiSaveMsg"><i class="fa-solid fa-check"></i> UPI Live! QR generated for customers.</div>
+        <div class="glass" style="border-color:var(--danger); padding:15px;">
+            <input type="text" id="adminUpi" class="input" placeholder="Set UPI ID (e.g. 9098@ybl)" style="margin-bottom:10px; padding:10px;">
+            <button class="btn btn-outline" style="padding:10px;" onclick="saveAdmin()">Save Settings</button>
+        </div>
+        
+        <div style="display:flex; gap:10px; margin-bottom:15px;">
+            <input type="date" id="admDate" class="input" style="padding:10px;" onchange="loadManifest()">
+            <select id="admTime" class="input" style="padding:10px;" onchange="loadManifest()"><option>08:00 AM</option><option>07:00 AM</option><option>04:00 PM</option></select>
         </div>
 
-        <div style="display:flex; gap:15px; margin-bottom:20px;">
-            <div style="flex:1;">
-                <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 5px;">FILTER DATE</div>
-                <input type="date" id="adminDate" class="input-box" style="margin:0; padding:12px;" onchange="loadAdminData()">
+        <div style="display:flex; gap:10px; margin-bottom:15px;">
+            <div class="glass" style="flex:1; text-align:center; padding:15px; margin:0;">
+                <div style="font-size:10px; color:var(--text-dim);">SEATS BOOKED</div>
+                <div style="font-size:24px; font-weight:bold; color:var(--accent);" id="admSeats">0/9</div>
             </div>
-            <div style="flex:1;">
-                <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 5px;">FILTER TIME</div>
-                <select id="adminTime" class="input-box" style="margin:0; padding:12px;" onchange="loadAdminData()">
-                    <option>08:00 AM</option><option>07:00 AM</option><option>04:00 PM</option>
-                </select>
+            <div class="glass" style="flex:1; text-align:center; padding:15px; margin:0;">
+                <div style="font-size:10px; color:var(--text-dim);">EXPECTED REVENUE</div>
+                <div style="font-size:24px; font-weight:bold; color:var(--success);" id="admRev">₹0</div>
             </div>
         </div>
-        
-        <div class="card" style="text-align:center; padding:20px; border-left: 4px solid var(--accent);">
-            <div style="font-size:12px; color:var(--text-muted); font-weight: 600; letter-spacing: 1px;">TOTAL RESERVED SEATS</div>
-            <div style="font-size:36px; font-weight:800; color:var(--text-main); margin-top: 5px;" id="adminSeatCount">0 <span style="font-size: 18px; color: var(--text-muted);">/ 9</span></div>
-        </div>
-        
-        <div style="font-size:13px; color:var(--text-muted); font-weight: 600; margin-bottom:10px; letter-spacing: 1px;">PASSENGER MANIFEST</div>
-        <div id="adminManifest" style="overflow-y:auto; flex:1; padding-right: 5px;"></div>
-        
-        <button class="btn btn-outline" onclick="logoutAdmin()" style="margin-top:20px; border-color:rgba(255,255,255,0.2); color: white;">Exit Admin Panel</button>
+
+        <button class="btn btn-green" style="padding:12px; margin-bottom:15px; font-size:14px;" onclick="shareManifest()"><i class="fa-solid fa-share-nodes"></i> Share Manifest List</button>
+
+        <div id="manifestList" style="overflow-y:auto; flex:1;"></div>
+        <button class="btn btn-outline" onclick="logoutAdmin()" style="margin-top:15px;">Exit Admin</button>
     </div>
 
-    <div class="bottom-nav" id="bottomNav" style="display:none;">
-        <div class="nav-item active" id="nav-home" onclick="switchTab('home')"><i class="fa-solid fa-house"></i> Home</div>
-        <div class="nav-item" id="nav-trips" onclick="switchTab('trips')"><i class="fa-solid fa-ticket-simple"></i> Trips</div>
-        <div class="nav-item" id="nav-profile" onclick="handleLogout()"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</div>
+    <div class="bottom-nav" id="botNav" style="display:none;">
+        <div class="nav-item active" onclick="switchTab('home')"><i class="fa-solid fa-house"></i> Home</div>
+        <div class="nav-item" onclick="switchTab('trips')"><i class="fa-solid fa-ticket"></i> Trips</div>
+        <div class="nav-item" onclick="handleLogout()"><i class="fa-solid fa-right-from-bracket"></i> Logout</div>
     </div>
-
 </div>
+
 <script>
-    const FLAT_FARE = 200;
+    // --- FIREBASE SETUP ---
+    const firebaseConfig = {
+        apiKey: "AIzaSyCPT5uSpPyHk6dA_q8UjTg3bIzLKh9tB24",
+        authDomain: "sarthi-travels.firebaseapp.com",
+        projectId: "sarthi-travels",
+        storageBucket: "sarthi-travels.firebasestorage.app",
+        messagingSenderId: "168359171735",
+        appId: "1:168359171735:web:befeb6338c0ce1e8d53bd2"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    // --- GLOBALS ---
+    const FARE = 200;
     const ADMIN_WHATSAPP = "6269385198";
-    const ADMIN_PIN = "2003";
+    const PIN = "2003";
+    let confirmationResult = null;
+    let adminUpiId = "";
+    let isHindi = false;
     
-    // Using a new DB key to avoid clashes with older versions
-    let db = JSON.parse(localStorage.getItem('sarthi_live_db_v4')) || [];
-    let adminUpiId = localStorage.getItem('sarthi_admin_upi') || '';
-    
-    const state = {
-        userName: null, userPhone: null, isAdmin: false, currentTicket: null,
-        search: { from: 'Alampur', to: 'Gwalior', date: '', time: '08:00 AM' },
-        booking: { selectedSeats: [], passengers: [] }
-    };
+    const state = { userPhone: null, userName: null, ticket: null, search: { from: 'Alampur', to: 'Gwalior', date: '', time: '08:00 AM' }, booking: { seats: [], pass: [] } };
 
-    // Splash Screen & Init
+    // --- INIT ---
     window.onload = () => {
-        setTimeout(() => {
-            document.getElementById('splashScreen').style.opacity = '0';
-            setTimeout(() => document.getElementById('splashScreen').style.display = 'none', 500);
-        }, 1800);
+        setTimeout(() => { document.getElementById('splashScreen').style.opacity = '0'; setTimeout(() => document.getElementById('splashScreen').style.display = 'none', 500); }, 1500);
+        
+        window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', { 'size': 'invisible' });
+        
+        db.collection("settings").doc("config").get().then(doc => { if(doc.exists) adminUpiId = doc.data().upi; });
 
-        setGreeting();
-        
-        // Strict Date Logic (Disable Past Dates)
-        const todayStr = new Date().toISOString().split('T')[0];
-        const dateInput = document.getElementById('dateInput');
-        dateInput.value = todayStr;
-        dateInput.min = todayStr; 
-        
-        document.getElementById('adminDate').value = todayStr;
-        updateTimeDropdown('Alampur');
-        
-        const savedPhone = localStorage.getItem('sarthi_user_phone');
-        const savedName = localStorage.getItem('sarthi_user_name');
-        if(savedPhone && savedName) { 
-            state.userPhone = savedPhone; state.userName = savedName; 
-            document.getElementById('userNameDisplay').innerText = state.userName; 
-            document.getElementById('bottomNav').style.display = 'flex'; 
-            switchScreen('homeScreen'); 
-        }
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('dateInput').value = document.getElementById('dateInput').min = document.getElementById('admDate').value = today;
+        updateTimes('Alampur');
+
+        auth.onAuthStateChanged(user => {
+            if(user) {
+                state.userPhone = user.phoneNumber.replace('+91','');
+                state.userName = localStorage.getItem('sn') || "User";
+                document.getElementById('userNameDisplay').innerText = state.userName;
+                document.getElementById('botNav').style.display = 'flex';
+                switchTab('home');
+            }
+        });
     };
 
-    function setGreeting() {
-        const hour = new Date().getHours();
-        const greeting = hour < 12 ? 'Good Morning,' : hour < 18 ? 'Good Afternoon,' : 'Good Evening,';
-        document.getElementById('greetingText').innerText = greeting;
+    // --- TRANSLATOR ---
+    function toggleLanguage() {
+        isHindi = !isHindi;
+        document.querySelectorAll('.translate').forEach(el => {
+            el.innerText = isHindi ? el.getAttribute('data-hi') : el.getAttribute('data-en');
+        });
     }
 
-    // Navigation
-    function switchScreen(id) {
-        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-        window.scrollTo(0, 0);
-    }
-    function switchTab(tab) {
-        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-        document.getElementById('nav-'+tab).classList.add('active');
-        if(tab === 'home') switchScreen('homeScreen');
-        if(tab === 'trips') { loadMyTrips(); switchScreen('tripsScreen'); }
-    }
+    // --- NAVIGATION ---
+    function switchScreen(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); window.scrollTo(0,0); }
+    function switchTab(t) { document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active')); event.currentTarget.classList.add('active'); if(t==='home') switchScreen('homeScreen'); else { loadTrips(); switchScreen('tripsScreen'); } }
 
-    // Auth & Strict Phone Validation
-    function handleLogin() {
+    // --- AUTH ---
+    function sendOTP() {
         const name = document.getElementById('nameInput').value.trim();
         const phone = document.getElementById('phoneInput').value.trim();
-        const phoneRegex = /^[6-9]\d{9}$/;
+        if(name.length<2 || !/^[6-9]\d{9}$/.test(phone)) return alert("Check Name/Phone");
         
-        if(name.length < 2) return alert("Please enter your Full Name.");
-        
-        if(phoneRegex.test(phone)) {
-            const btn = document.getElementById('loginBtn');
-            btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> Authenticating...`;
-            
-            setTimeout(() => {
-                state.userName = name; state.userPhone = phone; 
-                localStorage.setItem('sarthi_user_phone', phone);
-                localStorage.setItem('sarthi_user_name', name);
-                document.getElementById('userNameDisplay').innerText = name;
-                document.getElementById('bottomNav').style.display = 'flex';
-                btn.innerHTML = `Secure Login <i class="fa-solid fa-arrow-right"></i>`;
-                switchTab('home');
-            }, 1200);
-        } else {
-            alert("Invalid Format: Please enter a valid 10-digit Indian Mobile Number.");
-        }
+        document.getElementById('getOtpBtn').innerHTML = "Sending...";
+        auth.signInWithPhoneNumber("+91"+phone, window.recaptchaVerifier).then(res => {
+            confirmationResult = res; localStorage.setItem('sn', name);
+            document.getElementById('loginBox').style.display = "none";
+            document.getElementById('otpBox').style.display = "block";
+        }).catch(err => alert(err.message));
     }
     
-    function handleLogout() { if(confirm("Are you sure you want to logout?")){ localStorage.removeItem('sarthi_user_phone'); localStorage.removeItem('sarthi_user_name'); state.userPhone = null; state.userName = null; document.getElementById('bottomNav').style.display = 'none'; document.getElementById('userNameDisplay').innerText = "Guest"; switchScreen('loginScreen'); } }
+    function verifyOTP() {
+        const code = document.getElementById('otpInput').value.trim();
+        if(code.length !== 6) return;
+        document.getElementById('verifyOtpBtn').innerHTML = "Verifying...";
+        confirmationResult.confirm(code).catch(() => { alert("Wrong OTP"); document.getElementById('verifyOtpBtn').innerHTML = "Verify"; });
+    }
+    
+    function handleLogout() { if(confirm("Logout?")) auth.signOut().then(() => { localStorage.clear(); location.reload(); }); }
 
-    // Admin Access
-    function openAdmin() {
-        if(prompt("Enter 4-Digit Security PIN:") === ADMIN_PIN) {
-            document.getElementById('adminTag').style.display = 'inline';
-            document.getElementById('bottomNav').style.display = 'none';
-            document.getElementById('adminUpiInput').value = adminUpiId;
-            state.isAdmin = true; loadAdminData(); switchScreen('adminScreen');
-        } else alert("Access Denied: Incorrect PIN");
+    // --- SEARCH & SEATS ---
+    function swapRoute() {
+        const f = document.getElementById('fromInput'); const t = document.getElementById('toInput');
+        let temp = f.value; f.value = t.value; t.value = temp; updateTimes(f.value);
     }
-    function saveAdminSettings() {
-        adminUpiId = document.getElementById('adminUpiInput').value.trim();
-        localStorage.setItem('sarthi_admin_upi', adminUpiId);
-        document.getElementById('upiSaveMsg').style.display = 'block';
-        setTimeout(() => document.getElementById('upiSaveMsg').style.display = 'none', 3000);
-    }
-    function logoutAdmin() { document.getElementById('adminTag').style.display = 'none'; state.isAdmin = false; switchScreen('loginScreen'); }
-
-    // Booking Engine (Search & Map)
-    function swapRoute(btn) {
-        btn.style.transform = btn.style.transform === 'rotate(180deg)' ? 'rotate(0deg)' : 'rotate(180deg)';
-        const from = document.getElementById('fromInput').value;
-        document.getElementById('fromInput').value = document.getElementById('toInput').value;
-        document.getElementById('toInput').value = from;
-        updateTimeDropdown(document.getElementById('fromInput').value);
-    }
-    function updateTimeDropdown(fromStr) {
-        const timeSelect = document.getElementById('timeInput');
-        timeSelect.innerHTML = fromStr === 'Alampur' ? '<option>08:00 AM</option><option>04:00 PM</option>' : '<option>07:00 AM</option><option>04:00 PM</option>';
-    }
+    function updateTimes(f) { document.getElementById('timeInput').innerHTML = f==='Alampur' ? '<option>08:00 AM</option><option>04:00 PM</option>' : '<option>07:00 AM</option><option>04:00 PM</option>'; }
 
     function searchBuses() {
-        state.search.from = document.getElementById('fromInput').value;
-        state.search.to = document.getElementById('toInput').value;
-        state.search.date = document.getElementById('dateInput').value;
-        state.search.time = document.getElementById('timeInput').value;
+        state.search.from = document.getElementById('fromInput').value; state.search.to = document.getElementById('toInput').value;
+        state.search.date = document.getElementById('dateInput').value; state.search.time = document.getElementById('timeInput').value;
+        if(!state.search.date) return;
         
-        if(!state.search.date) return alert("Please select a valid journey date.");
+        document.getElementById('seatTitle').innerText = `${state.search.from} to ${state.search.to}`;
+        document.getElementById('seatSubtitle').innerText = `${state.search.date} | ${state.search.time}`;
+        state.booking.seats = []; updateSeatUI();
         
-        // Block past dates (Double verification)
-        const selectedDate = new Date(state.search.date);
-        const todayDate = new Date(new Date().toISOString().split('T')[0]);
-        if (selectedDate < todayDate) return alert("Booking for past dates is not allowed.");
-
-        document.getElementById('seatRouteTitle').innerText = `${state.search.from} → ${state.search.to}`;
-        document.getElementById('seatDateTitle').innerText = `${state.search.date} • ${state.search.time}`;
-        
-        state.booking.selectedSeats = []; 
-        state.booking.passengers = [];
-        updateSeatUI();
-        renderSeatMap();
-        switchScreen('seatScreen');
-    }
-
-    // Bug-Free Seat Renderer
-    function renderSeatMap() {
-        const grid = document.getElementById('seatGrid'); 
-        grid.innerHTML = ''; 
-        
-        const bookingsForTrip = db.filter(b => b.date === state.search.date && b.time === state.search.time && b.from === state.search.from);
-        let bookedSeats = [];
-        bookingsForTrip.forEach(b => {
-            b.passengers.forEach(p => bookedSeats.push(p.seat));
+        db.collection("bookings").where("date","==",state.search.date).where("time","==",state.search.time).where("from","==",state.search.from).get().then(snap => {
+            let booked = []; snap.forEach(doc => doc.data().pass.forEach(p => booked.push(p.s)));
+            drawSeats(booked); switchScreen('seatScreen');
         });
-
-        // Driver node
-        const driverDiv = document.createElement('div');
-        driverDiv.className = 'seat driver-seat';
-        driverDiv.innerHTML = '<i class="fa-solid fa-user-tie"></i>';
-        grid.appendChild(driverDiv);
-
-        // Seat 1
-        createSeatNode(1, grid, bookedSeats);
-        // Empty space
-        grid.appendChild(document.createElement('div'));
-        // Seat 2
-        createSeatNode(2, grid, bookedSeats);
-
-        // Mid row
-        createSeatNode(3, grid, bookedSeats);
-        createSeatNode(4, grid, bookedSeats);
-        createSeatNode(5, grid, bookedSeats);
-        createSeatNode(6, grid, bookedSeats);
-
-        // Back row
-        grid.appendChild(document.createElement('div'));
-        createSeatNode(7, grid, bookedSeats);
-        createSeatNode(8, grid, bookedSeats);
-        createSeatNode(9, grid, bookedSeats);
     }
 
-    function createSeatNode(seatNo, parentGrid, bookedSeatsArray) {
-        const isBooked = bookedSeatsArray.includes(seatNo);
-        const seatDiv = document.createElement('div');
-        seatDiv.className = `seat ${isBooked ? 'booked' : 'available'}`;
-        seatDiv.innerText = seatNo;
-        
-        if(!isBooked) {
-            seatDiv.addEventListener('click', function() {
-                if(state.booking.selectedSeats.includes(seatNo)) {
-                    state.booking.selectedSeats = state.booking.selectedSeats.filter(s => s !== seatNo);
-                    this.classList.remove('selected');
-                } else {
-                    if(state.booking.selectedSeats.length >= 6) return alert("Maximum 6 seats allowed per booking");
-                    state.booking.selectedSeats.push(seatNo);
-                    this.classList.add('selected');
-                }
-                updateSeatUI();
-            });
-        }
-        parentGrid.appendChild(seatDiv);
+    function drawSeats(booked) {
+        const g = document.getElementById('seatGrid'); g.innerHTML = '<div class="seat drv"><i class="fa-solid fa-user-tie"></i></div>';
+        const addS = (n) => {
+            let isB = booked.includes(n); let d = document.createElement('div');
+            d.className = `seat ${isB?'book':'avail'}`; d.innerText = n;
+            if(!isB) d.onclick = () => toggleSeat(n, d);
+            g.appendChild(d);
+        };
+        addS(1); g.appendChild(document.createElement('div')); addS(2);
+        for(let i=3; i<=6; i++) addS(i);
+        g.appendChild(document.createElement('div')); addS(7); addS(8); addS(9);
     }
 
-    function updateSeatUI() {
-        const count = state.booking.selectedSeats.length;
-        document.getElementById('selectedSeatsList').innerText = count > 0 ? state.booking.selectedSeats.sort((a,b)=>a-b).join(', ') : "None";
-        document.getElementById('proceedBtn').disabled = count === 0;
+    function toggleSeat(n, el) {
+        if(state.booking.seats.includes(n)) { state.booking.seats = state.booking.seats.filter(s=>s!==n); el.classList.remove('sel'); }
+        else { if(state.booking.seats.length>=6) return; state.booking.seats.push(n); el.classList.add('sel'); }
+        updateSeatUI();
     }
+    function updateSeatUI() { const len = state.booking.seats.length; document.getElementById('selectedSeatsList').innerText = len ? state.booking.seats.join(',') : "None"; document.getElementById('proceedBtn').disabled = !len; }
 
-    // Passenger Form Dynamic Generation
     function proceedToPassengers() {
-        const container = document.getElementById('passengerFormsContainer');
-        container.innerHTML = '';
-        
-        state.booking.selectedSeats.sort((a,b)=>a-b).forEach((seatNo, index) => {
-            const defaultName = (index === 0) ? state.userName : '';
-            container.innerHTML += `
-                <div class="card" style="padding: 18px; margin-bottom: 15px; border-color: rgba(229, 192, 123, 0.2); background: rgba(0,0,0,0.3);">
-                    <div style="font-weight: 700; font-size: 14px; margin-bottom: 12px; color: var(--accent);">
-                        <i class="fa-solid fa-chair" style="margin-right: 5px;"></i> SEAT NUMBER: ${seatNo}
-                    </div>
-                    <input type="text" id="passName_${seatNo}" class="input-box" placeholder="Passenger Full Name" value="${defaultName}" style="margin-bottom: 12px; background: rgba(255,255,255,0.05);">
-                    <input type="number" id="passAge_${seatNo}" class="input-box" placeholder="Passenger Age (Years)" style="margin-bottom: 0; background: rgba(255,255,255,0.05);">
-                </div>
-            `;
+        const c = document.getElementById('passForms'); c.innerHTML = '';
+        state.booking.seats.sort().forEach((s,i) => {
+            c.innerHTML += `<div class="glass" style="padding:15px; margin-bottom:10px;"><div style="color:var(--accent); font-weight:bold; margin-bottom:10px;">Seat ${s}</div><input type="text" id="pN_${s}" class="input" placeholder="Name" value="${i===0?state.userName:''}" style="margin-bottom:10px; padding:10px;"><input type="number" id="pA_${s}" class="input" placeholder="Age" style="margin-bottom:0; padding:10px;"></div>`;
         });
         switchScreen('passengerScreen');
     }
 
-    // Payment Logic & Dynamic QR Code
+    // --- PAYMENT & TICKET ---
     function proceedToPay() {
-        state.booking.passengers = [];
-        let isValid = true;
-
-        state.booking.selectedSeats.forEach(seatNo => {
-            let name = document.getElementById(`passName_${seatNo}`).value.trim();
-            let age = parseInt(document.getElementById(`passAge_${seatNo}`).value.trim());
-            
-            if(!name || name.length < 2 || isNaN(age) || age < 1 || age > 110) isValid = false;
-            else state.booking.passengers.push({ seat: seatNo, name, age });
+        state.booking.pass = []; let valid = true;
+        state.booking.seats.forEach(s => {
+            let n = document.getElementById(`pN_${s}`).value.trim(); let a = parseInt(document.getElementById(`pA_${s}`).value);
+            if(n.length<2 || !a) valid = false; else state.booking.pass.push({s, n, a});
         });
-
-        if(!isValid) return alert("Validation Error: Please fill correct Name and valid Age for all passengers.");
-
-        const count = state.booking.passengers.length;
-        const totalAmt = count * FLAT_FARE;
-        document.getElementById('paySeatCount').innerText = count;
-        document.getElementById('payTotalAmount').innerText = `₹${totalAmt}`;
+        if(!valid) return alert("Fill all details correctly");
+        
+        let amt = state.booking.pass.length * FARE;
+        document.getElementById('payAmount').innerText = `₹${amt}`;
         
         if(adminUpiId) {
-            document.getElementById('adminUpiDisplay').innerText = `UPI: ${adminUpiId}`;
-            const upiString = `upi://pay?pa=${adminUpiId}&pn=SarthiTravels&am=${totalAmt}&cu=INR`;
-            const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(upiString)}`;
-            document.getElementById('upiQRCode').src = qrUrl;
-            document.getElementById('qrAmount').innerText = totalAmt;
-            document.getElementById('qrContainer').style.display = 'block';
-        } else {
-            document.getElementById('adminUpiDisplay').innerText = "UPI ID not configured";
-            document.getElementById('qrContainer').style.display = 'none';
-        }
-
-        switchScreen('paymentScreen');
+            document.getElementById('upiDisplay').innerText = adminUpiId;
+            document.getElementById('qrCode').src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=upi://pay?pa=${adminUpiId}&pn=Sarthi&am=${amt}&cu=INR`;
+            document.getElementById('qrCode').style.display = 'block';
+        } else { document.getElementById('upiBox').style.display = 'none'; }
+        switchScreen('checkoutScreen');
     }
 
-    function handleUPIButtonClick() {
-        if(!adminUpiId) return alert("Admin has not configured UPI yet. Please select 'Pay in Bus'.");
-        const amt = state.booking.passengers.length * FLAT_FARE;
-        window.location.href = `upi://pay?pa=${adminUpiId}&pn=SarthiTravels&am=${amt}&cu=INR`; 
-        setTimeout(() => confirmPayment('UPI'), 2500);
+    function payViaApp() { window.location.href = `upi://pay?pa=${adminUpiId}&pn=Sarthi&am=${state.booking.pass.length*FARE}&cu=INR`; setTimeout(()=>confirmBooking('UPI'), 3000); }
+
+    function confirmBooking(mode) {
+        const t = { pnr: 'PNR'+Math.floor(100000+Math.random()*900000), phone: state.userPhone, from: state.search.from, to: state.search.to, date: state.search.date, time: state.search.time, pass: state.booking.pass, fare: state.booking.pass.length*FARE, mode, ts: new Date().toISOString() };
+        db.collection("bookings").doc(t.pnr).set(t).then(() => { state.ticket = t; renderTicket(t); switchScreen('ticketScreen'); });
     }
 
-    function confirmPayment(mode) {
-        const newTicket = {
-            pnr: 'PNR' + Math.floor(100000 + Math.random() * 900000),
-            phone: state.userPhone,
-            bookedBy: state.userName,
-            from: state.search.from, to: state.search.to,
-            date: state.search.date, time: state.search.time,
-            passengers: state.booking.passengers, 
-            fare: state.booking.passengers.length * FLAT_FARE,
-            mode: mode,
-            timestamp: new Date().toLocaleString()
-        };
-        db.push(newTicket);
-        localStorage.setItem('sarthi_live_db_v4', JSON.stringify(db));
-        state.currentTicket = newTicket;
-        renderTicketUI(newTicket);
-        switchScreen('ticketScreen');
+    function renderTicket(t) {
+        document.getElementById('tPNR').innerText = t.pnr; document.getElementById('tFrom').innerText = t.from; document.getElementById('tTo').innerText = t.to;
+        document.getElementById('tDate').innerText = `${t.date} | ${t.time}`; document.getElementById('tSeats').innerText = "Seat: " + t.pass.map(p=>p.s).join(',');
+        document.getElementById('tPhone').innerText = t.phone;
+        let sEl = document.getElementById('tStatus');
+        if(t.mode==='UPI') { sEl.innerText = "PAID"; sEl.style.background = "rgba(56,161,105,0.2)"; sEl.style.color = "#276749"; }
+        else { sEl.innerText = "DUE: ₹"+t.fare; sEl.style.background = "rgba(229,192,123,0.2)"; sEl.style.color = "#975a16"; }
     }
 
-    function renderTicketUI(ticket) {
-        document.getElementById('ticketPNR').innerText = ticket.pnr;
-        document.getElementById('ticketFrom').innerText = ticket.from;
-        document.getElementById('ticketTo').innerText = ticket.to;
-        document.getElementById('ticketDateTime').innerText = `${ticket.date} • ${ticket.time}`;
-        
-        const seatNumbers = ticket.passengers.map(p => p.seat).join(', ');
-        document.getElementById('ticketSeats').innerText = seatNumbers;
-        
-        document.getElementById('ticketPhone').innerText = ticket.phone;
-        
-        const statusEl = document.getElementById('ticketStatus');
-        if(ticket.mode === 'UPI') { 
-            statusEl.innerText = `PAID: ₹${ticket.fare}`; 
-            statusEl.style.background = 'rgba(56, 161, 105, 0.2)';
-            statusEl.style.color = '#276749'; 
-        } else { 
-            statusEl.innerText = `DUE IN BUS: ₹${ticket.fare}`; 
-            statusEl.style.background = 'rgba(214, 158, 46, 0.2)';
-            statusEl.style.color = '#975A16'; 
-        }
+    function sendWhatsApp() {
+        let pText = state.ticket.pass.map(p=>`- S${p.s}: ${p.n} (${p.a})`).join('\n');
+        let m = `*NEW BOOKING* 🚌\nPNR: ${state.ticket.pnr}\nRoute: ${state.ticket.from} to ${state.ticket.to}\nSchedule: ${state.ticket.date} | ${state.ticket.time}\n\n*Passengers:*\n${pText}\n\nPhone: ${state.ticket.phone}\nPayment: ${state.ticket.mode} (₹${state.ticket.fare})\n\nConfirm receipt.`;
+        window.open(`https://wa.me/91${ADMIN_WHATSAPP}?text=${encodeURIComponent(m)}`, '_blank');
+        switchTab('trips');
     }
 
-    function sendWhatsAppMessage() {
-        const t = state.currentTicket;
-        if(!t) return;
-        
-        let passList = t.passengers.map(p => `• Seat ${p.seat}: ${p.name} (Age: ${p.age})`).join('\n');
-
-        const msg = `*NEW BOOKING - SARTHI TRAVELS* 🚌\n\n` +
-                    `*PNR:* ${t.pnr}\n*Route:* ${t.from} to ${t.to}\n` +
-                    `*Date:* ${t.date} | *Time:* ${t.time}\n\n` +
-                    `*Passenger Details:*\n${passList}\n\n` +
-                    `*Booked By:* ${t.bookedBy} (${t.phone})\n` +
-                    `*Payment Status:* ${t.mode === 'UPI' ? 'PAID via UPI' : 'CASH (Collect in Bus)'} - ₹${t.fare}\n\n` +
-                    `Please confirm receipt.`;
-        window.open(`https://wa.me/91${ADMIN_WHATSAPP}?text=${encodeURIComponent(msg)}`, '_blank');
-        setTimeout(() => switchTab('trips'), 1000);
-    }
-
-    // My Trips History
-    function loadMyTrips() {
-        const container = document.getElementById('myTripsContainer'); container.innerHTML = '';
-        const myTrips = db.filter(b => b.phone === state.userPhone).reverse();
-
-        if(myTrips.length === 0) return container.innerHTML = `<p style="text-align:center; color:var(--text-muted); margin-top:50px; font-weight: 500;">No previous bookings found.</p>`;
-
-        myTrips.forEach(t => {
-            const seatsList = t.passengers.map(p => p.seat).join(', ');
-            const statusColor = t.mode === 'UPI' ? 'var(--success)' : '#D69E2E';
-            const statusBg = t.mode === 'UPI' ? 'rgba(56, 161, 105, 0.1)' : 'rgba(214, 158, 46, 0.1)';
-            
-            container.innerHTML += `
-            <div class="card" style="border-left: 4px solid var(--accent); cursor:pointer; padding:18px;" onclick="renderAndShowPastTicket('${t.pnr}')">
-                <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
-                    <div style="font-size:13px; font-weight:700; color:var(--text-muted);">PNR: <span style="color:var(--text-main);">${t.pnr}</span></div>
-                    <div style="font-size:11px; color:${statusColor}; font-weight:700; background:${statusBg}; padding:4px 10px; border-radius:12px;">${t.mode==='UPI'?'PAID':'PAY IN BUS'}</div>
-                </div>
-                <div style="font-weight:700; font-size:16px; margin-bottom: 8px;">${t.from} <i class="fa-solid fa-arrow-right" style="font-size:12px; color:var(--text-muted); margin:0 8px;"></i> ${t.to}</div>
-                <div style="font-size:13px; color:var(--text-muted); margin-bottom: 8px;"><i class="fa-regular fa-calendar" style="margin-right:5px;"></i> ${t.date} | ${t.time}</div>
-                <div style="font-size:13px; color:var(--accent); font-weight:700;"><i class="fa-solid fa-chair" style="margin-right:5px;"></i> Seats: ${seatsList}</div>
-            </div>`;
+    function loadTrips() {
+        let c = document.getElementById('tripsList'); c.innerHTML = '';
+        db.collection("bookings").where("phone","==",state.userPhone).get().then(snap => {
+            snap.forEach(doc => {
+                let t = doc.data();
+                c.innerHTML += `<div class="glass" style="border-left:3px solid var(--accent); padding:15px; margin-bottom:10px;"><div style="display:flex; justify-content:space-between; margin-bottom:5px;"><strong style="font-size:12px;">${t.pnr}</strong> <span style="font-size:10px; color:${t.mode==='UPI'?'var(--success)':'var(--accent)'};">${t.mode}</span></div><div style="font-weight:bold; font-size:15px;">${t.from} > ${t.to}</div><div style="font-size:12px; color:var(--text-dim);">${t.date} | ${t.time}</div></div>`;
+            });
         });
     }
 
-    function renderAndShowPastTicket(pnr) {
-        const t = db.find(x => x.pnr === pnr);
-        if(t) { state.currentTicket = t; renderTicketUI(t); switchScreen('ticketScreen'); }
-    }
+    // --- ADMIN ---
+    function openAdmin() { if(prompt("Admin PIN:") === PIN) { document.getElementById('adminTag').style.display='inline'; document.getElementById('botNav').style.display='none'; document.getElementById('adminUpi').value = adminUpiId; loadManifest(); switchScreen('adminScreen'); } }
+    function saveAdmin() { adminUpiId = document.getElementById('adminUpi').value; db.collection("settings").doc("config").set({upi: adminUpiId}); alert("Settings Saved!"); }
+    function logoutAdmin() { document.getElementById('adminTag').style.display='none'; switchScreen('authScreen'); }
 
-    // Admin Dashboard Engine
-    function loadAdminData() {
-        const date = document.getElementById('adminDate').value;
-        const time = document.getElementById('adminTime').value;
-        const container = document.getElementById('adminManifest'); container.innerHTML = '';
+    let manifestDataCache = "";
+
+    function loadManifest() {
+        const d = document.getElementById('admDate').value; const t = document.getElementById('admTime').value;
+        const c = document.getElementById('manifestList'); c.innerHTML = '';
+        manifestDataCache = `*MANIFEST: ${d} | ${t}*\n`;
         
-        const trips = db.filter(b => b.date === date && b.time === time);
-        let totalSeatsBooked = 0;
-
-        trips.forEach(t => {
-            totalSeatsBooked += t.passengers.length;
-            
-            let passengerHtml = t.passengers.map(p => `
-                <div style="font-size:13px; color:var(--text-main); margin-top:8px; display: flex; align-items: center; background: rgba(255,255,255,0.03); padding: 8px; border-radius: 8px;">
-                    <i class="fa-solid fa-user" style="color:var(--text-muted); font-size:12px; margin-right:10px;"></i> 
-                    <span style="color:var(--accent); font-weight:700; margin-right: 5px; min-width: 50px;">Seat ${p.seat}:</span> ${p.name} <span style="color:var(--text-muted); font-size: 11px; margin-left: 5px;">(Age: ${p.age})</span>
-                </div>`).join('');
-
-            const statusColor = t.mode === 'UPI' ? 'var(--success)' : '#D69E2E';
-            const statusBg = t.mode === 'UPI' ? 'rgba(56, 161, 105, 0.15)' : 'rgba(214, 158, 46, 0.15)';
-
-            container.innerHTML += `
-            <div class="card" style="padding:18px; margin-bottom:15px; border-color:rgba(255,255,255,0.08); background: rgba(0,0,0,0.2);">
-                <div style="display:flex; justify-content:space-between; margin-bottom:12px; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:12px;">
-                    <div style="font-weight:700; color:var(--accent); font-size:14px;">PNR: ${t.pnr}</div>
-                    <div style="font-weight:600; font-size:12px; color:var(--text-muted);">${t.from} <i class="fa-solid fa-arrow-right"></i> ${t.to}</div>
-                </div>
+        db.collection("bookings").where("date","==",d).where("time","==",t).get().then(snap => {
+            let seats = 0; let rev = 0;
+            snap.forEach(doc => {
+                let b = doc.data(); seats += b.pass.length; rev += b.fare;
+                let passHTML = b.pass.map(p => `<div style="font-size:12px; margin-top:5px;"><span style="color:var(--accent);">S${p.s}:</span> ${p.n} (${p.a})</div>`).join('');
+                manifestDataCache += `\nPNR: ${b.pnr}\nSeats: ${b.pass.map(p=>p.s).join(',')}\nPhone: ${b.phone}\nDue: ${b.mode==='CASH'?('Rs '+b.fare):'PAID'}\n`;
                 
-                ${passengerHtml}
-
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:15px; padding-top:12px; border-top:1px dashed rgba(255,255,255,0.1);">
-                    <div style="font-size:13px; font-weight:600;"><i class="fa-solid fa-phone" style="color:var(--text-muted); margin-right: 5px;"></i> <a href="tel:${t.phone}" style="color:var(--text-main); text-decoration:none;">${t.phone}</a></div>
-                    <div style="font-size:11px; font-weight:800; padding:6px 12px; border-radius:8px; background:${statusBg}; color:${statusColor}; letter-spacing: 0.5px;">${t.mode==='UPI'?'PAID':'DUE ₹'+t.fare}</div>
-                </div>
-            </div>`;
+                c.innerHTML += `<div class="glass" style="padding:15px; margin-bottom:10px;"><div style="display:flex; justify-content:space-between; font-weight:bold; border-bottom:1px dashed var(--glass-border); padding-bottom:5px;"><span style="font-size:12px; color:var(--text-dim);">${b.pnr}</span><span>${b.from} > ${b.to}</span></div>${passHTML}<div style="margin-top:10px; display:flex; justify-content:space-between; align-items:center;"><div style="display:flex; gap:10px;"><a href="tel:${b.phone}" style="color:var(--success);"><i class="fa-solid fa-phone"></i></a> <a href="https://wa.me/91${b.phone}" style="color:var(--success);"><i class="fa-brands fa-whatsapp"></i></a></div><span style="font-size:11px; color:${b.mode==='UPI'?'var(--success)':'var(--accent)'};">${b.mode==='UPI'?'PAID':'DUE ₹'+b.fare}</span></div></div>`;
+            });
+            document.getElementById('admSeats').innerText = `${seats}/9`; document.getElementById('admRev').innerText = `₹${rev}`;
         });
-
-        document.getElementById('adminSeatCount').innerHTML = `${totalSeatsBooked} <span style="font-size: 18px; color: var(--text-muted);">/ 9</span>`;
-        if(trips.length === 0) container.innerHTML = `<p style="text-align:center; color:var(--text-muted); margin-top:40px; font-size:14px; font-weight: 500;">No reservations for this schedule yet.</p>`;
     }
-</script>
 
+    function shareManifest() { window.open(`https://wa.me/?text=${encodeURIComponent(manifestDataCache)}`, '_blank'); }
+</script>
 </body>
 </html>
