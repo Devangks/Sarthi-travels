@@ -104,6 +104,7 @@
 <body>
 <div class="ambient-bg"></div>
 
+<!-- Toast Alert -->
 <div id="toast"><i id="toastIcon" class="fa-solid fa-bell"></i> <span id="toastMsg">Alert</span></div>
 
 <div id="splashScreen" style="position:fixed; top:0; left:0; width:100%; height:100vh; background:var(--bg-base); z-index:9999; display:flex; flex-direction:column; justify-content:center; align-items:center;">
@@ -113,6 +114,7 @@
 </div>
 
 <div class="app-frame">
+    <!-- TOP HEADER -->
     <div class="top-nav">
         <div class="brand-logo"><i class="fa-solid fa-bus"></i> सार्थी <span id="adminTag" style="display:none; color:#000; background:var(--danger); padding:2px 6px; font-size:9px; border-radius:6px; letter-spacing: 1px;">DRIVER</span></div>
         <div style="display:flex; gap:10px; align-items:center;">
@@ -121,6 +123,7 @@
         </div>
     </div>
 
+    <!-- 1. AUTH SCREEN -->
     <div id="authScreen" class="screen active">
         <div style="text-align:center; margin:40px 0 30px 0;">
             <h1 class="translate" data-en="Sarthi Travels" data-hi="सार्थी ट्रेवल्स" style="font-size: 42px; font-weight: 900;">Sarthi Travels</h1>
@@ -154,6 +157,7 @@
         <a href="#" onclick="openAdmin()" style="text-align:center; display:block; margin-top:10px; color:var(--text-muted); font-size:12px; font-weight: 700; text-decoration:none;"><i class="fa-solid fa-user-astronaut"></i> Driver Auth</a>
     </div>
 
+    <!-- 2. HOME SCREEN -->
     <div id="homeScreen" class="screen">
         <h2 style="font-size:36px; font-weight: 900; margin-bottom:25px; line-height: 1.1;" class="translate" data-en="Where to today?" data-hi="आज कहाँ जाना है?">Where to today?</h2>
         <div class="glass-card" style="padding: 30px 24px;">
@@ -184,6 +188,7 @@
         </div>
     </div>
 
+    <!-- 3. SEAT MAP SCREEN -->
     <div id="seatScreen" class="screen">
         <div style="display:flex; align-items:center; margin-bottom:30px;">
             <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 12px 16px; border-radius: 14px; margin-right: 15px; cursor: pointer;" onclick="switchTab('home')"><i class="fa-solid fa-arrow-left"></i></div>
@@ -211,6 +216,7 @@
         </div>
     </div>
 
+    <!-- 4. PASSENGER DETAILS -->
     <div id="passengerScreen" class="screen">
         <div style="display:flex; align-items:center; margin-bottom:25px;">
             <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 12px 16px; border-radius: 14px; margin-right: 15px; cursor: pointer;" onclick="switchScreen('seatScreen')"><i class="fa-solid fa-arrow-left"></i></div>
@@ -220,6 +226,7 @@
         <button class="btn btn-gold" style="margin-top: 15px;" onclick="proceedToPay()">Secure Checkout <i class="fa-solid fa-lock"></i></button>
     </div>
 
+    <!-- 5. CHECKOUT -->
     <div id="checkoutScreen" class="screen">
         <div style="display:flex; align-items:center; margin-bottom:25px;">
             <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 12px 16px; border-radius: 14px; margin-right: 15px; cursor: pointer;" onclick="switchScreen('passengerScreen')"><i class="fa-solid fa-arrow-left"></i></div>
@@ -260,6 +267,7 @@
         </div>
     </div>
 
+    <!-- 6. BOARDING PASS SCREEN -->
     <div id="ticketScreen" class="screen">
         <div style="text-align:center; margin-bottom:20px; margin-top: 10px;">
             <div style="width: 80px; height: 80px; background: rgba(16, 185, 129, 0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px auto; border: 2px solid var(--success);">
@@ -309,11 +317,13 @@
         </div>
     </div>
 
+    <!-- 7. TRIPS -->
     <div id="tripsScreen" class="screen">
         <h2 style="font-size: 32px; font-weight: 900; margin-bottom:25px;" class="translate" data-en="My Bookings" data-hi="मेरी यात्रा">My Bookings</h2>
         <div id="tripsList" style="overflow-y:auto; flex:1; padding-right: 5px;"></div>
     </div>
 
+    <!-- 8. ADMIN DASHBOARD -->
     <div id="adminScreen" class="screen">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
             <h2 style="color:var(--gold); font-size: 28px; font-weight: 900;"><i class="fa-solid fa-shield-halved"></i> Driver Panel</h2>
@@ -354,6 +364,7 @@
         <button class="btn" style="background: rgba(239,68,68,0.1); color: var(--danger); margin-top: 15px; border-radius: 100px;" onclick="logoutAdmin()">Exit Driver Panel</button>
     </div>
 
+    <!-- BOTTOM NAV -->
     <div class="bottom-nav" id="botNav" style="display:none;">
         <div class="nav-item active" onclick="switchTab('home')"><i class="fa-solid fa-house"></i> <span>Home</span></div>
         <div class="nav-item" onclick="switchTab('trips')"><i class="fa-solid fa-ticket-simple"></i> <span>Trips</span></div>
@@ -362,10 +373,12 @@
 </div>
 
 <script>
-    // --- SUPABASE ENGINE ---
+    // --- SUPABASE ENGINE FIX APPLIED HERE ---
     const SUPABASE_URL = "https://dauogmpxplaochdjntnj.supabase.co"; 
     const SUPABASE_ANON_KEY = "sb_publishable_swVHpNxlJuQjQop0cziIjg_44U-ofWf";
-    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    
+    // Using variable name "db" to completely avoid the clash with the global "supabase" CDN variable
+    const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     const FARE = 200; 
     const ADMIN_WHATSAPP = "6269385198";
@@ -379,7 +392,7 @@
     window.onload = () => {
         setTimeout(() => { document.getElementById('splashScreen').style.opacity = '0'; setTimeout(() => document.getElementById('splashScreen').style.display = 'none', 500); }, 2000);
         
-        supabase.from('settings').select('value').eq('key', 'upi_id').then(res => { 
+        db.from('settings').select('value').eq('key', 'upi_id').then(res => { 
             if(res.data && res.data[0]) { adminUpiId = res.data[0].value; localStorage.setItem('s_admin_upi', adminUpiId); } 
         });
 
@@ -423,7 +436,7 @@
             mockGeneratedPIN = Math.floor(1000 + Math.random() * 9000).toString();
             alert(`[Security Alert]\nYour 4-Digit Login PIN is: ${mockGeneratedPIN}`);
             document.getElementById('loginBox').style.display = "none"; document.getElementById('otpBox').style.display = "block";
-            document.getElementById('getOtpBtn').innerHTML = `Continue Securely`;
+            document.getElementById('getOtpBtn').innerHTML = `Continue Securely <i class="fa-solid fa-shield-halved"></i>`;
         }, 1000);
     }
     
@@ -460,10 +473,10 @@
         document.getElementById('seatGrid').innerHTML = '<div class="skeleton" style="width: 250px; height: 150px; grid-column: span 4;"></div>';
         switchScreen('seatScreen');
 
-        supabase.from('bookings').select('pnr').eq('journey_date', state.search.date).eq('journey_time', state.search.time).eq('route_from', state.search.from).then(res => {
+        db.from('bookings').select('pnr').eq('journey_date', state.search.date).eq('journey_time', state.search.time).eq('route_from', state.search.from).then(res => {
             if(res.data && res.data.length > 0) {
                 let pnrs = res.data.map(b => b.pnr);
-                supabase.from('passengers').select('seat_no').in('pnr', pnrs).then(pRes => {
+                db.from('passengers').select('seat_no').in('pnr', pnrs).then(pRes => {
                     let booked = pRes.data ? pRes.data.map(p => p.seat_no) : []; drawSeats(booked);
                 });
             } else { drawSeats([]); }
@@ -532,9 +545,9 @@
         let finalFare = state.booking.pass.length * FARE;
         const bookingRow = { pnr: pnrStr, phone: state.userPhone, booked_by: state.userName, route_from: state.search.from, route_to: state.search.to, journey_date: state.search.date, journey_time: state.search.time, fare: finalFare, payment_mode: mode };
         
-        supabase.from('bookings').insert([bookingRow]).then(() => {
+        db.from('bookings').insert([bookingRow]).then(() => {
             const passengerRows = state.booking.pass.map(p => ({ pnr: pnrStr, name: p.n, age: p.a, seat_no: p.s }));
-            supabase.from('passengers').insert(passengerRows).then(() => {
+            db.from('passengers').insert(passengerRows).then(() => {
                 state.ticket = { pnr: pnrStr, phone: state.userPhone, from: state.search.from, to: state.search.to, date: state.search.date, time: state.search.time, pass: state.booking.pass, fare: bookingRow.fare, mode };
                 if(mode === 'CASH') document.getElementById('cashBtn').innerHTML = `<div><div style="font-weight:900; font-size:18px;"><i class="fa-solid fa-money-bill-wave" style="color:var(--success); margin-right:12px;"></i> Pay in Bus (Cash)</div><div style="font-size:13px; color:var(--text-muted); margin-left:36px; margin-top: 4px; font-weight: 600;">Pay directly to the driver</div></div><i class="fa-solid fa-chevron-right" style="color: var(--text-muted);"></i>`;
                 renderTicket(state.ticket); showToast("Booking Successful!"); switchScreen('ticketScreen');
@@ -559,11 +572,11 @@
 
     function loadTrips() {
         let c = document.getElementById('tripsList'); c.innerHTML = '<div class="skeleton" style="width:100%; height:120px; margin-bottom:15px;"></div><div class="skeleton" style="width:100%; height:120px;"></div>';
-        supabase.from('bookings').select('*').eq('phone', state.userPhone).order('created_at', { ascending: false }).then(res => {
+        db.from('bookings').select('*').eq('phone', state.userPhone).order('created_at', { ascending: false }).then(res => {
             c.innerHTML = '';
             if(!res.data || res.data.length === 0) { c.innerHTML = '<p style="text-align:center;color:var(--text-muted); margin-top: 50px; font-weight:800;">No booking history found.</p>'; return; }
             res.data.forEach(t => {
-                supabase.from('passengers').select('seat_no').eq('pnr', t.pnr).then(pRes => {
+                db.from('passengers').select('seat_no').eq('pnr', t.pnr).then(pRes => {
                     let sList = pRes.data ? pRes.data.map(x=>x.seat_no).join(', ') : '';
                     c.innerHTML += `<div class="glass-card" style="border-left:4px solid var(--gold); padding:20px; margin-bottom:18px;"><div style="display:flex; justify-content:space-between; margin-bottom:12px;"><strong style="font-size:14px; color:var(--text-muted);">${t.pnr}</strong> <span style="font-size:11px; font-weight:900; padding:6px 10px; border-radius:8px; background:${t.payment_mode.includes('PAID')?'rgba(16,185,129,0.15)':'rgba(245,158,11,0.15)'}; color:${t.payment_mode.includes('PAID')?'var(--success)':'var(--warning)'}; letter-spacing:1px;">${t.payment_mode.includes('PAID')?'PAID':'PAY IN BUS'}</span></div><div style="font-weight:900; font-size:18px; margin-bottom:10px;">${t.route_from} <i class="fa-solid fa-arrow-right" style="color:var(--text-muted); font-size: 14px; margin: 0 6px;"></i> ${t.route_to}</div><div style="font-size:13px; color:var(--text-muted); font-weight:600; margin-bottom:10px;"><i class="fa-regular fa-calendar" style="margin-right:6px;"></i> ${t.journey_date} | ${t.journey_time}</div><div style="font-size:14px; color:var(--gold); font-weight:800;"><i class="fa-solid fa-chair" style="margin-right:6px;"></i> Seats: ${sList}</div></div>`;
                 });
@@ -581,7 +594,7 @@
     
     function saveAdmin() { 
         adminUpiId = document.getElementById('adminUpi').value.trim(); localStorage.setItem('s_admin_upi', adminUpiId);
-        supabase.from('settings').upsert({key:'upi_id', value:adminUpiId}).then(() => showToast("UPI Rules Updated!")); 
+        db.from('settings').upsert({key:'upi_id', value:adminUpiId}).then(() => showToast("UPI Rules Updated!")); 
     }
     
     function logoutAdmin() { document.getElementById('adminTag').style.display='none'; switchScreen('authScreen'); }
@@ -593,13 +606,13 @@
         const c = document.getElementById('manifestList'); c.innerHTML = '<div class="skeleton" style="width:100%; height:150px; margin-bottom:15px;"></div>';
         manifestDataCache = `*LIVE MANIFEST: ${d} | ${t}*\n`;
         
-        supabase.from('bookings').select('*').eq('journey_date', d).eq('journey_time', t).then(bRes => {
+        db.from('bookings').select('*').eq('journey_date', d).eq('journey_time', t).then(bRes => {
             c.innerHTML = '';
             if(!bRes.data || bRes.data.length === 0) { document.getElementById('admSeats').innerHTML = `0<span style="font-size: 16px; color: var(--text-muted);">/9</span>`; document.getElementById('admRevUpi').innerText = "₹0"; document.getElementById('admRevCash').innerText = "₹0"; c.innerHTML = '<p style="text-align:center;color:var(--text-muted); font-weight:700; margin-top:30px;">No bookings for this schedule.</p>'; return; }
             
             let seatsC = 0; let revUpi = 0; let revCash = 0; let pnrs = bRes.data.map(b => b.pnr);
             
-            supabase.from('passengers').select('*').in('pnr', pnrs).then(pRes => {
+            db.from('passengers').select('*').in('pnr', pnrs).then(pRes => {
                 bRes.data.forEach(b => {
                     if(b.payment_mode === 'UPI' || b.payment_mode === 'CASH_PAID') revUpi += b.fare; else revCash += b.fare;
                     let pList = pRes.data ? pRes.data.filter(p => p.pnr === b.pnr) : [];
@@ -619,7 +632,7 @@
 
     function markAsPaid(pnr) {
         if(confirm("Confirm cash collected from passenger?")) {
-            supabase.from('bookings').update({ payment_mode: 'CASH_PAID' }).eq('pnr', pnr).then(() => { showToast("Payment Updated Successfully!"); loadManifest(); });
+            db.from('bookings').update({ payment_mode: 'CASH_PAID' }).eq('pnr', pnr).then(() => { showToast("Payment Updated Successfully!"); loadManifest(); });
         }
     }
 
