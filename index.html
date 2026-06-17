@@ -98,7 +98,6 @@
 <body>
 
 <div class="ambient-bg"></div>
-
 <div id="toast"><i id="toastIcon" class="fa-solid fa-bell"></i> <span id="toastMsg">Alert</span></div>
 
 <div id="splashScreen" style="position:fixed; top:0; left:0; width:100%; height:100vh; background:var(--bg-base); z-index:9999; display:flex; flex-direction:column; justify-content:center; align-items:center; transition: opacity 0.4s;">
@@ -108,6 +107,7 @@
 </div>
 
 <div class="app-frame">
+    <!-- TOP HEADER -->
     <div class="top-nav">
         <div class="brand-logo"><i class="fa-solid fa-bus"></i> सार्थी <span id="adminTag" style="display:none; color:#000; background:var(--danger); padding:2px 6px; font-size:9px; border-radius:6px; letter-spacing: 1px; margin-left: 5px;">DRIVER</span></div>
         <div style="display:flex; gap:10px; align-items:center;">
@@ -116,6 +116,7 @@
         </div>
     </div>
 
+    <!-- 1. AUTH SCREEN -->
     <div id="authScreen" class="screen active">
         <div style="text-align:center; margin:40px 0 30px 0;">
             <h1 class="translate" data-en="Sarthi Travels" data-hi="सार्थी ट्रेवल्स" style="font-size: 42px; font-weight: 900;">Sarthi Travels</h1>
@@ -126,19 +127,23 @@
             <p style="text-align:center; margin-bottom:25px; font-size:15px; font-weight: 700; color:var(--text-muted);" class="translate" data-en="Access Your Account" data-hi="खाते में प्रवेश करें">Access Your Account</p>
             <div class="input-group">
                 <label class="translate" data-en="PASSENGER NAME" data-hi="यात्री का नाम">PASSENGER NAME</label>
-                <input type="text" id="nameInput" class="input" placeholder="Full Name" style="font-weight: 700;">
+                <input type="text" id="nameInput" class="input translate" placeholder="Full Name" data-en="Full Name" data-hi="पूरा नाम" style="font-weight: 700;">
             </div>
             <div class="input-group">
                 <label class="translate" data-en="MOBILE NUMBER" data-hi="मोबाइल नंबर">MOBILE NUMBER</label>
-                <input type="tel" id="phoneInput" class="input" placeholder="10-digit number" maxlength="10" style="letter-spacing:2px; font-weight:800; font-size: 18px;">
+                <input type="tel" id="phoneInput" class="input translate" placeholder="10-digit number" data-en="10-digit number" data-hi="10-अंकों का नंबर" maxlength="10" style="letter-spacing:2px; font-weight:800; font-size: 18px;">
             </div>
-            <button class="btn btn-gold translate" id="getOtpBtn" onclick="requestPIN()" data-en="Continue Securely" data-hi="लॉगिन करें">Continue Securely <i class="fa-solid fa-shield-halved"></i></button>
+            <button class="btn btn-gold" id="getOtpBtn" onclick="requestPIN()">
+                <span class="translate" data-en="Continue Securely" data-hi="आगे बढ़ें">Continue Securely</span> <i class="fa-solid fa-shield-halved"></i>
+            </button>
         </div>
 
         <div class="glass-card" id="otpBox" style="display:none;">
             <p style="text-align:center; margin-bottom:20px; font-weight: 700; color:var(--gold);" class="translate" data-en="Enter Security PIN" data-hi="सिक्योरिटी पिन डालें">Enter Security PIN</p>
             <input type="number" id="otpInput" class="input" placeholder="• • • •" style="text-align:center; letter-spacing:12px; font-size: 28px; font-weight: 900; background: rgba(0,0,0,0.6);">
-            <button class="btn btn-green translate" onclick="verifyPIN()" data-en="Verify Identity" data-hi="वेरीफाई करें">Verify Identity <i class="fa-solid fa-fingerprint"></i></button>
+            <button class="btn btn-green" onclick="verifyPIN()">
+                <span class="translate" data-en="Verify Identity" data-hi="वेरीफाई करें">Verify Identity</span> <i class="fa-solid fa-fingerprint"></i>
+            </button>
         </div>
         
         <div style="flex-grow:1;"></div>
@@ -146,9 +151,10 @@
             <span class="translate" data-en="24/7 Helpline: " data-hi="हेल्पलाइन: " style="font-size:12px; color:var(--text-muted); font-weight: 700;">24/7 Helpline: </span>
             <span style="color:var(--gold); font-weight: 900; font-size: 14px; letter-spacing: 1px;">9098567628</span>
         </div>
-        <a href="#" onclick="openAdmin()" class="translate" data-en="Driver Portal" data-hi="ड्राइवर पोर्टल" style="text-align:center; display:block; margin-top:10px; color:var(--text-muted); font-size:12px; font-weight: 700; text-decoration:none;"><i class="fa-solid fa-user-astronaut"></i> Driver Portal</a>
+        <a href="#" onclick="openAdmin()" style="text-align:center; display:block; margin-top:10px; color:var(--text-muted); font-size:12px; font-weight: 700; text-decoration:none;"><i class="fa-solid fa-user-astronaut"></i> <span class="translate" data-en="Driver Portal" data-hi="ड्राइवर पोर्टल">Driver Portal</span></a>
     </div>
 
+    <!-- 2. HOME SCREEN -->
     <div id="homeScreen" class="screen">
         <h2 style="font-size:36px; font-weight: 900; margin-bottom:25px; line-height: 1.1;" class="translate" data-en="Where to today?" data-hi="आज कहाँ जाना है?">Where to today?</h2>
         <div class="glass-card" style="padding: 30px 24px;">
@@ -175,10 +181,13 @@
                     <select id="timeInput" class="input" style="font-weight: 700;"></select>
                 </div>
             </div>
-            <button class="btn btn-gold translate" onclick="searchBuses()" data-en="Find Available Seats" data-hi="सीटें खोजें" style="margin-top: 15px; font-size: 18px;">Find Available Seats</button>
+            <button class="btn btn-gold" onclick="searchBuses()" style="margin-top: 15px; font-size: 18px;">
+                <span class="translate" data-en="Find Available Seats" data-hi="सीटें खोजें">Find Available Seats</span>
+            </button>
         </div>
     </div>
 
+    <!-- 3. SEAT MAP SCREEN -->
     <div id="seatScreen" class="screen">
         <div style="display:flex; align-items:center; margin-bottom:30px;">
             <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 12px 16px; border-radius: 14px; margin-right: 15px; cursor: pointer;" onclick="switchTab('home')"><i class="fa-solid fa-arrow-left"></i></div>
@@ -202,19 +211,25 @@
                 <div class="translate" data-en="SELECTED SEATS" data-hi="चुनी गई सीटें" style="font-size:10px; color:var(--text-muted); font-weight: 800; letter-spacing: 1px;">SELECTED SEATS</div>
                 <div id="selectedSeatsList" style="font-size:24px; font-weight:900; color:var(--gold);">None</div>
             </div>
-            <button class="btn btn-gold translate" data-en="Continue" data-hi="आगे बढ़ें" style="width:auto; margin:0; padding: 16px 30px; border-radius: 100px; font-size: 15px;" onclick="proceedToPassengers()" id="proceedBtn" disabled>Continue <i class="fa-solid fa-arrow-right"></i></button>
+            <button class="btn btn-gold" style="width:auto; margin:0; padding: 16px 30px; border-radius: 100px; font-size: 15px;" onclick="proceedToPassengers()" id="proceedBtn" disabled>
+                <span class="translate" data-en="Continue" data-hi="आगे बढ़ें">Continue</span> <i class="fa-solid fa-arrow-right"></i>
+            </button>
         </div>
     </div>
 
+    <!-- 4. PASSENGER DETAILS -->
     <div id="passengerScreen" class="screen">
         <div style="display:flex; align-items:center; margin-bottom:25px;">
             <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 12px 16px; border-radius: 14px; margin-right: 15px; cursor: pointer;" onclick="switchScreen('seatScreen')"><i class="fa-solid fa-arrow-left"></i></div>
             <h2 style="font-size: 24px; font-weight: 900;" class="translate" data-en="Passenger Details" data-hi="यात्री विवरण">Passenger Details</h2>
         </div>
         <div id="passForms" style="overflow-y:auto; flex:1; padding-right: 5px;"></div>
-        <button class="btn btn-gold translate" data-en="Secure Checkout" data-hi="भुगतान करें" style="margin-top: 15px;" onclick="proceedToPay()">Secure Checkout <i class="fa-solid fa-lock"></i></button>
+        <button class="btn btn-gold" style="margin-top: 15px;" onclick="proceedToPay()">
+            <span class="translate" data-en="Secure Checkout" data-hi="भुगतान करें">Secure Checkout</span> <i class="fa-solid fa-lock"></i>
+        </button>
     </div>
 
+    <!-- 5. CHECKOUT -->
     <div id="checkoutScreen" class="screen">
         <div style="display:flex; align-items:center; margin-bottom:25px;">
             <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 12px 16px; border-radius: 14px; margin-right: 15px; cursor: pointer;" onclick="switchScreen('passengerScreen')"><i class="fa-solid fa-arrow-left"></i></div>
@@ -232,29 +247,34 @@
             <div style="display:flex; justify-content:space-between; font-size:30px; font-weight:900; color:var(--gold);">
                 <span class="translate" data-en="Total" data-hi="कुल राशि">Total</span> <span id="payAmount">₹0</span>
             </div>
-            <div class="translate" data-en="ZERO HIDDEN CHARGES" data-hi="कोई अतिरिक्त शुल्क नहीं" style="font-size: 11px; color: var(--success); margin-top: 8px; font-weight: 800; letter-spacing: 1px;"><i class="fa-solid fa-circle-check"></i> ZERO HIDDEN CHARGES</div>
+            <div style="font-size: 11px; color: var(--success); margin-top: 8px; font-weight: 800; letter-spacing: 1px;">
+                <i class="fa-solid fa-circle-check"></i> <span class="translate" data-en="ZERO HIDDEN CHARGES" data-hi="कोई अतिरिक्त शुल्क नहीं">ZERO HIDDEN CHARGES</span>
+            </div>
         </div>
         
         <div class="translate" data-en="CHOOSE METHOD" data-hi="तरीका चुनें" style="font-size: 11px; font-weight: 800; color: var(--text-muted); margin-bottom: 12px; letter-spacing: 1.5px;">CHOOSE METHOD</div>
         
         <div class="glass-card" style="cursor:pointer; display: flex; align-items: center; justify-content: space-between; padding: 20px; transition: 0.3s;" onclick="confirmBooking('CASH')" id="cashBtn">
             <div>
-                <div class="translate" data-en="Pay in Bus (Cash)" data-hi="बस में नकद दें" style="font-weight:900; font-size:18px;"><i class="fa-solid fa-money-bill-wave" style="color:var(--success); margin-right:12px;"></i> Pay in Bus (Cash)</div>
+                <div style="font-weight:900; font-size:18px;"><i class="fa-solid fa-money-bill-wave" style="color:var(--success); margin-right:12px;"></i> <span class="translate" data-en="Pay in Bus (Cash)" data-hi="बस में नकद दें">Pay in Bus (Cash)</span></div>
                 <div class="translate" data-en="Pay directly to the driver" data-hi="ड्राइवर को पैसे दें" style="font-size:13px; color:var(--text-muted); margin-left:36px; margin-top: 4px; font-weight: 600;">Pay directly to the driver</div>
             </div>
             <i class="fa-solid fa-chevron-right" style="color: var(--text-muted);"></i>
         </div>
         
         <div class="glass-card" id="upiBox" style="border-color:var(--gold); text-align:center; background: rgba(234,179,8,0.05);">
-            <div class="translate" data-en="Pay via UPI" data-hi="UPI से भुगतान करें" style="font-weight:900; font-size:20px; margin-bottom:5px;"><i class="fa-brands fa-google-pay" style="color:var(--gold);"></i> Pay via UPI</div>
+            <div style="font-weight:900; font-size:20px; margin-bottom:5px;"><i class="fa-brands fa-google-pay" style="color:var(--gold);"></i> <span class="translate" data-en="Pay via UPI" data-hi="UPI से भुगतान करें">Pay via UPI</span></div>
             <div id="upiDisplay" style="font-size:13px; color:var(--text-muted); margin-bottom:25px; font-weight: 600;">Fetching secure UPI...</div>
             <div style="background: #fff; padding: 10px; border-radius: 16px; display: inline-block; margin-bottom: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
                 <img id="qrCode" src="" style="width:160px; height:160px; display:none; border-radius: 8px;">
             </div>
-            <button class="btn btn-green translate" data-en="Open UPI App" data-hi="UPI ऐप खोलें" style="border-radius: 100px; font-size: 18px;" onclick="payViaApp()"><i class="fa-solid fa-bolt"></i> Open UPI App</button>
+            <button class="btn btn-green" style="border-radius: 100px; font-size: 18px;" onclick="payViaApp()">
+                <i class="fa-solid fa-bolt"></i> <span class="translate" data-en="Open UPI App" data-hi="UPI ऐप खोलें">Open UPI App</span>
+            </button>
         </div>
     </div>
 
+    <!-- 6. BOARDING PASS SCREEN -->
     <div id="ticketScreen" class="screen">
         <div style="text-align:center; margin-bottom:20px; margin-top: 10px;">
             <div style="width: 80px; height: 80px; background: rgba(16, 185, 129, 0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px auto; border: 2px solid var(--success);">
@@ -299,41 +319,49 @@
         </div>
 
         <div style="display: flex; gap: 12px; margin-top: 30px;">
-            <button class="btn btn-green translate" data-en="Driver" data-hi="ड्राइवर" style="flex: 1; border-radius: 100px; font-size: 15px;" onclick="sendWhatsApp()"><i class="fa-brands fa-whatsapp" style="font-size: 20px;"></i> Driver</button>
-            <button class="btn btn-dark translate" data-en="Save PDF" data-hi="पीडीएफ सेव करें" style="flex: 1; border-radius: 100px; font-size: 15px;" onclick="window.print()"><i class="fa-solid fa-download"></i> Save PDF</button>
+            <button class="btn btn-green" style="flex: 1; border-radius: 100px; font-size: 15px;" onclick="sendWhatsApp()"><i class="fa-brands fa-whatsapp" style="font-size: 20px;"></i> <span class="translate" data-en="Driver" data-hi="ड्राइवर">Driver</span></button>
+            <button class="btn btn-dark" style="flex: 1; border-radius: 100px; font-size: 15px;" onclick="window.print()"><i class="fa-solid fa-download"></i> <span class="translate" data-en="Save PDF" data-hi="पीडीएफ सेव">Save PDF</span></button>
         </div>
     </div>
 
+    <!-- 7. TRIPS -->
     <div id="tripsScreen" class="screen">
         <h2 style="font-size: 32px; font-weight: 900; margin-bottom:25px;" class="translate" data-en="My Bookings" data-hi="मेरी यात्रा">My Bookings</h2>
         <div id="tripsList" style="overflow-y:auto; flex:1; padding-right: 5px;"></div>
     </div>
 
+    <!-- 8. ADMIN DASHBOARD (LAYERED) -->
     <div id="adminScreen" class="screen">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-            <h2 style="color:var(--gold); font-size: 26px; font-weight: 900;" class="translate" data-en="Driver Panel" data-hi="ड्राइवर पैनल"><i class="fa-solid fa-shield-halved"></i> Driver Panel</h2>
-            <button class="btn btn-dark translate" data-en="Refresh" data-hi="रिफ्रेश" style="width: auto; padding: 10px 16px; font-size: 12px; margin: 0; border-radius: 100px;" onclick="loadManifest()"><i class="fa-solid fa-arrows-rotate"></i> Refresh</button>
+            <h2 style="color:var(--gold); font-size: 26px; font-weight: 900;"><i class="fa-solid fa-shield-halved"></i> <span class="translate" data-en="Driver Panel" data-hi="ड्राइवर पैनल">Driver Panel</span></h2>
+            <button class="btn btn-dark" style="width: auto; padding: 10px 16px; font-size: 12px; margin: 0; border-radius: 100px;" onclick="loadManifest()"><i class="fa-solid fa-arrows-rotate"></i> <span class="translate" data-en="Refresh" data-hi="रिफ्रेश">Refresh</span></button>
         </div>
 
+        <!-- LAYER TABS -->
         <div class="adm-tabs">
-            <button class="adm-tab-btn active translate" onclick="switchAdmTab('manifest')" data-en="Manifest" data-hi="यात्री सूची">Manifest</button>
-            <button class="adm-tab-btn translate" onclick="switchAdmTab('revenue')" data-en="Revenue" data-hi="कमाई">Revenue</button>
-            <button class="adm-tab-btn translate" onclick="switchAdmTab('setup')" data-en="Setup" data-hi="सेटिंग्स">Setup</button>
+            <button id="tab-manifest" class="adm-tab-btn active translate" onclick="switchAdmTab('manifest', this)" data-en="Manifest" data-hi="यात्री सूची">Manifest</button>
+            <button id="tab-revenue" class="adm-tab-btn translate" onclick="switchAdmTab('revenue', this)" data-en="Revenue" data-hi="कमाई">Revenue</button>
+            <button id="tab-setup" class="adm-tab-btn translate" onclick="switchAdmTab('setup', this)" data-en="Setup" data-hi="सेटिंग्स">Setup</button>
         </div>
 
+        <!-- LAYER 1: MANIFEST (DEFAULT) -->
         <div id="layer-manifest" class="adm-layer" style="display: block; flex:1; overflow-y:auto;">
-            <div style="display:flex; gap:15px; margin-bottom:15px;">
+            <!-- GLITCH FIX: Added margin-top:20px to prevent absolute label overlap with tabs -->
+            <div style="display:flex; gap:15px; margin-top:20px; margin-bottom:20px;">
                 <div class="input-group" style="flex:1; margin:0;"><label class="translate" data-en="DATE" data-hi="तारीख">DATE</label><input type="date" id="admDate" class="input" style="margin:0; padding:12px;" onchange="loadManifest()"></div>
                 <div class="input-group" style="flex:1; margin:0;"><label class="translate" data-en="TIME" data-hi="समय">TIME</label><select id="admTime" class="input" style="margin:0; padding:12px;" onchange="loadManifest()"><option>08:00 AM</option><option>07:00 AM</option><option>04:00 PM</option></select></div>
             </div>
             
             <input type="text" id="admSearch" class="input translate" onkeyup="filterManifest()" placeholder="Search Name or PNR..." data-en="Search Name or PNR..." data-hi="नाम या PNR खोजें..." style="padding:14px; border-radius:100px; margin-bottom:20px;">
             
-            <button class="btn btn-gold translate" data-en="Share Manifest" data-hi="सूची भेजें" style="padding:16px; font-size:15px; border-radius: 100px; margin-bottom:20px;" onclick="shareManifest()"><i class="fa-solid fa-share-nodes"></i> Share Manifest</button>
+            <button class="btn btn-gold" style="padding:16px; font-size:15px; border-radius: 100px; margin-bottom:20px;" onclick="shareManifest()">
+                <i class="fa-solid fa-share-nodes"></i> <span class="translate" data-en="Share Manifest" data-hi="सूची भेजें">Share Manifest</span>
+            </button>
             
             <div id="manifestList"></div>
         </div>
 
+        <!-- LAYER 2: REVENUE -->
         <div id="layer-revenue" class="adm-layer">
             <div class="stats-grid">
                 <div class="stat-box">
@@ -352,20 +380,26 @@
             <p class="translate" data-en="Revenue data updates based on the selected date and time in the Manifest tab." data-hi="कमाई का डेटा 'यात्री सूची' वाले टैब की तारीख के अनुसार दिखता है।" style="color:var(--text-muted); font-size:12px; text-align:center;">Revenue data updates based on the selected date and time in the Manifest tab.</p>
         </div>
 
+        <!-- LAYER 3: SETUP -->
         <div id="layer-setup" class="adm-layer">
             <div class="glass-card" style="border-color:var(--text-muted); padding:24px;">
                 <div class="translate" data-en="UPI ID Configuration" data-hi="UPI आईडी सेटअप" style="font-size: 14px; font-weight: 800; color: var(--gold); margin-bottom: 20px;"><i class="fa-solid fa-qrcode"></i> UPI ID Configuration</div>
                 <input type="text" id="adminUpi" class="input" placeholder="e.g. 9098@ybl" style="margin-bottom:20px; font-weight: 800; color: var(--gold);">
-                <button class="btn btn-dark translate" data-en="Save & Lock UPI ID" data-hi="सेव करें" style="padding:16px; font-size: 14px; border-radius: 100px;" onclick="saveAdmin()"><i class="fa-solid fa-floppy-disk"></i> Save & Lock UPI ID</button>
+                <button class="btn btn-dark" style="padding:16px; font-size: 14px; border-radius: 100px;" onclick="saveAdmin()">
+                    <i class="fa-solid fa-floppy-disk"></i> <span class="translate" data-en="Save & Lock UPI ID" data-hi="सेव करें">Save & Lock UPI ID</span>
+                </button>
             </div>
-            <button class="btn translate" data-en="Exit Driver Panel" data-hi="पैनल बंद करें" style="background: rgba(239,68,68,0.1); color: var(--danger); margin-top: 15px; border-radius: 100px;" onclick="logoutAdmin()"><i class="fa-solid fa-arrow-right-from-bracket"></i> Exit Driver Panel</button>
+            <button class="btn" style="background: rgba(239,68,68,0.1); color: var(--danger); margin-top: 15px; border-radius: 100px;" onclick="logoutAdmin()">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i> <span class="translate" data-en="Exit Driver Panel" data-hi="पैनल बंद करें">Exit Driver Panel</span>
+            </button>
         </div>
     </div>
 
+    <!-- BOTTOM NAV -->
     <div class="bottom-nav" id="botNav" style="display:none;">
-        <div class="nav-item active translate" data-en="Home" data-hi="होम" onclick="switchTab('home')"><i class="fa-solid fa-house"></i> <span>Home</span></div>
-        <div class="nav-item translate" data-en="Trips" data-hi="यात्रा" onclick="switchTab('trips')"><i class="fa-solid fa-ticket-simple"></i> <span>Trips</span></div>
-        <div class="nav-item translate" data-en="Logout" data-hi="लॉगआउट" onclick="handleLogout()"><i class="fa-solid fa-arrow-right-from-bracket"></i> <span>Logout</span></div>
+        <div class="nav-item active" onclick="switchTab('home')"><i class="fa-solid fa-house"></i> <span class="translate" data-en="Home" data-hi="होम">Home</span></div>
+        <div class="nav-item" onclick="switchTab('trips')"><i class="fa-solid fa-ticket-simple"></i> <span class="translate" data-en="Trips" data-hi="यात्रा">Trips</span></div>
+        <div class="nav-item" onclick="handleLogout()"><i class="fa-solid fa-arrow-right-from-bracket"></i> <span class="translate" data-en="Logout" data-hi="लॉगआउट">Logout</span></div>
     </div>
 </div>
 
@@ -374,7 +408,6 @@
     const SUPABASE_URL = "https://dauogmpxplaochdjntnj.supabase.co"; 
     const SUPABASE_ANON_KEY = "sb_publishable_swVHpNxlJuQjQop0cziIjg_44U-ofWf";
     
-    // Create Supabase Client safely
     const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     const FARE = 200; 
@@ -386,7 +419,6 @@
     
     const state = { userPhone: null, userName: null, ticket: null, search: { from: 'Alampur', to: 'Gwalior', date: '', time: '08:00 AM' }, booking: { seats: [], pass: [] } };
 
-    // Anti-stuck splash logic
     function hideSplash() {
         const splash = document.getElementById('splashScreen');
         if(splash) {
@@ -417,7 +449,7 @@
             document.getElementById('botNav').style.display = 'flex'; 
             switchScreen('homeScreen');
         }
-        applyLanguage(); // Initial apply
+        applyLanguage(); 
     });
     window.onload = () => { setTimeout(hideSplash, 1000); };
 
@@ -440,22 +472,11 @@
             if(el.tagName === 'INPUT' && el.hasAttribute('placeholder')) {
                 el.setAttribute('placeholder', isHindi ? el.getAttribute('data-hi') : el.getAttribute('data-en'));
             } else {
-                // Keep inner HTML tags if they exist (like icons)
-                let iconHTML = el.innerHTML.match(/<i.*?><\/i>/) ? el.innerHTML.match(/<i.*?><\/i>/)[0] + ' ' : '';
-                // Specific fix for span elements containing text and icons inside buttons
-                if(el.classList.contains('btn')) {
-                     el.innerHTML = (isHindi ? el.getAttribute('data-hi') : el.getAttribute('data-en')) + ' ' + (el.querySelector('i') ? el.querySelector('i').outerHTML : '');
-                } else if(el.classList.contains('nav-item')) {
-                    el.innerHTML = (el.querySelector('i') ? el.querySelector('i').outerHTML : '') + ' <span>' + (isHindi ? el.getAttribute('data-hi') : el.getAttribute('data-en')) + '</span>';
-                } else {
-                    el.innerText = isHindi ? el.getAttribute('data-hi') : el.getAttribute('data-en');
-                }
+                el.innerText = isHindi ? el.getAttribute('data-hi') : el.getAttribute('data-en');
             }
         });
-        
-        // Dynamic re-render if on specific tabs
         if(document.getElementById('tripsScreen').classList.contains('active')) loadTrips();
-        if(document.getElementById('adminScreen').classList.contains('active')) loadManifest();
+        if(document.getElementById('layer-manifest').style.display === 'block') loadManifest();
     }
 
     function switchScreen(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); window.scrollTo(0,0); }
@@ -465,12 +486,12 @@
         const name = document.getElementById('nameInput').value.trim(); const phone = document.getElementById('phoneInput').value.trim();
         if(name.length < 2 || !/^[6-9]\d{9}$/.test(phone)) return showToast(isHindi ? "सही नाम और 10 अंकों का नंबर डालें।" : "Valid Name & 10-digit number required.", "error");
         
-        document.getElementById('getOtpBtn').innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> Securing...`;
+        document.getElementById('getOtpBtn').innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> ${isHindi?'सुरक्षित कर रहे हैं...':'Securing...'}`;
         setTimeout(() => {
             mockGeneratedPIN = Math.floor(1000 + Math.random() * 9000).toString();
             alert(`[Security Alert]\nYour 4-Digit Login PIN is: ${mockGeneratedPIN}`);
             document.getElementById('loginBox').style.display = "none"; document.getElementById('otpBox').style.display = "block";
-            document.getElementById('getOtpBtn').innerHTML = isHindi ? `लॉगिन करें <i class="fa-solid fa-shield-halved"></i>` : `Continue Securely <i class="fa-solid fa-shield-halved"></i>`;
+            document.getElementById('getOtpBtn').innerHTML = `<span class="translate" data-en="Continue Securely" data-hi="आगे बढ़ें">${isHindi?'आगे बढ़ें':'Continue Securely'}</span> <i class="fa-solid fa-shield-halved"></i>`;
         }, 800);
     }
     
@@ -541,7 +562,7 @@
         const len = state.booking.seats.length; 
         document.getElementById('selectedSeatsList').innerText = len ? state.booking.seats.sort().join(', ') : "None"; 
         document.getElementById('proceedBtn').disabled = !len; 
-        if(len) document.getElementById('proceedBtn').innerHTML = (isHindi ? "आगे बढ़ें" : "Continue") + ` <i class="fa-solid fa-arrow-right"></i>`;
+        if(len) document.getElementById('proceedBtn').innerHTML = `<span class="translate" data-en="Continue" data-hi="आगे बढ़ें">${isHindi?'आगे बढ़ें':'Continue'}</span> <i class="fa-solid fa-arrow-right"></i>`;
     }
 
     function proceedToPassengers() {
@@ -580,7 +601,7 @@
 
     function confirmBooking(mode) {
         if(mode === 'CASH') {
-            document.getElementById('cashBtn').innerHTML = `<div style="font-weight:900; font-size:18px;"><i class="fa-solid fa-circle-notch fa-spin" style="color:var(--gold); margin-right:12px;"></i> ${isHindi?'सुरक्षित कर रहे हैं...':'Reserving...'}</div>`;
+            document.getElementById('cashBtn').innerHTML = `<div><div style="font-weight:900; font-size:18px;"><i class="fa-solid fa-circle-notch fa-spin" style="color:var(--gold); margin-right:12px;"></i> ${isHindi?'सुरक्षित कर रहे हैं...':'Reserving...'}</div></div>`;
         }
         const pnrStr = 'PNR'+Math.floor(100000+Math.random()*900000);
         let finalFare = state.booking.pass.length * FARE;
@@ -590,7 +611,7 @@
             const passengerRows = state.booking.pass.map(p => ({ pnr: pnrStr, name: p.n, age: p.a, seat_no: p.s }));
             db.from('passengers').insert(passengerRows).then(() => {
                 state.ticket = { pnr: pnrStr, phone: state.userPhone, from: state.search.from, to: state.search.to, date: state.search.date, time: state.search.time, pass: state.booking.pass, fare: bookingRow.fare, mode };
-                if(mode === 'CASH') document.getElementById('cashBtn').innerHTML = `<div><div style="font-weight:900; font-size:18px;"><i class="fa-solid fa-money-bill-wave" style="color:var(--success); margin-right:12px;"></i> ${isHindi?'बस में नकद दें':'Pay in Bus (Cash)'}</div><div style="font-size:13px; color:var(--text-muted); margin-left:36px; margin-top: 4px; font-weight: 600;">${isHindi?'ड्राइवर को पैसे दें':'Pay directly to the driver'}</div></div><i class="fa-solid fa-chevron-right" style="color: var(--text-muted);"></i>`;
+                if(mode === 'CASH') document.getElementById('cashBtn').innerHTML = `<div><div style="font-weight:900; font-size:18px;"><i class="fa-solid fa-money-bill-wave" style="color:var(--success); margin-right:12px;"></i> <span class="translate" data-en="Pay in Bus (Cash)" data-hi="बस में नकद दें">${isHindi?'बस में नकद दें':'Pay in Bus (Cash)'}</span></div><div class="translate" data-en="Pay directly to the driver" data-hi="ड्राइवर को पैसे दें" style="font-size:13px; color:var(--text-muted); margin-left:36px; margin-top: 4px; font-weight: 600;">${isHindi?'ड्राइवर को पैसे दें':'Pay directly to the driver'}</div></div><i class="fa-solid fa-chevron-right" style="color: var(--text-muted);"></i>`;
                 renderTicket(state.ticket); showToast(isHindi ? "बुकिंग सफल!" : "Booking Successful!"); switchScreen('ticketScreen');
             });
         });
@@ -626,20 +647,25 @@
         });
     }
 
-    // --- ADMIN DRIVER PANEL WITH LAYERS ---
+    // --- GLITCH FIX: ADMIN DASHBOARD TABS BUG ---
     function openAdmin() { 
         if(prompt(isHindi ? "ड्राइवर पिन डालें:" : "Driver Dashboard PIN:") === PIN) { 
             document.getElementById('adminTag').style.display='inline'; document.getElementById('botNav').style.display='none'; 
             document.getElementById('adminUpi').value = adminUpiId; 
-            switchAdmTab('manifest'); switchScreen('adminScreen'); 
+            switchAdmTab('manifest', null); // Passed null to prevent currentTarget crash
+            switchScreen('adminScreen'); 
         } else showToast(isHindi ? "गलत पिन" : "Access Denied", "error"); 
     }
 
-    function switchAdmTab(tabId) {
+    function switchAdmTab(tabId, btnElement = null) {
         document.querySelectorAll('.adm-layer').forEach(l => l.style.display = 'none');
         document.querySelectorAll('.adm-tab-btn').forEach(b => b.classList.remove('active'));
         document.getElementById('layer-' + tabId).style.display = 'block';
-        event.currentTarget.classList.add('active');
+        if(btnElement) {
+            btnElement.classList.add('active');
+        } else {
+            document.getElementById('tab-' + tabId).classList.add('active');
+        }
         if(tabId === 'manifest') loadManifest();
     }
     
