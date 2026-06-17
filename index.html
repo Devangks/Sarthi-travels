@@ -98,7 +98,6 @@
 
 <div class="ambient-bg"></div>
 
-<!-- Toast Alert -->
 <div id="toast"><i id="toastIcon" class="fa-solid fa-bell"></i> <span id="toastMsg">Alert</span></div>
 
 <div id="splashScreen" style="position:fixed; top:0; left:0; width:100%; height:100vh; background:var(--bg-base); z-index:9999; display:flex; flex-direction:column; justify-content:center; align-items:center; transition: opacity 0.4s;">
@@ -110,7 +109,6 @@
 <div class="app-frame">
     <!-- TOP HEADER -->
     <div class="top-nav">
-        <!-- DRIVER TAG BUG FIXED: High Contrast Red/White -->
         <div class="brand-logo"><i class="fa-solid fa-bus"></i> सार्थी <span id="adminTag" style="display:none; color:#fff; background:var(--danger); padding:4px 8px; font-size:10px; font-weight:900; border-radius:6px; letter-spacing: 1px; margin-left: 8px; box-shadow: 0 0 12px rgba(239,68,68,0.6);">DRIVER</span></div>
         <div style="display:flex; gap:10px; align-items:center;">
             <button class="lang-btn" onclick="toggleLanguage()">A/अ</button>
@@ -268,9 +266,15 @@
             <div style="background: #fff; padding: 10px; border-radius: 16px; display: inline-block; margin-bottom: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
                 <img id="qrCode" src="" style="width:160px; height:160px; display:none; border-radius: 8px;">
             </div>
-            <button class="btn btn-green" style="border-radius: 100px; font-size: 18px;" onclick="payViaApp()">
-                <i class="fa-solid fa-bolt"></i> <span class="translate" data-en="Open UPI App" data-hi="UPI ऐप खोलें">Open UPI App</span>
-            </button>
+            
+            <div style="display:flex; gap:10px;">
+                <button class="btn btn-dark" style="border-radius: 100px; font-size: 14px; flex:1;" onclick="window.location.href='upi://pay?pa='+adminUpiId+'&pn=Sarthi&am='+(state.booking.pass.length*FARE)+'&cu=INR'">
+                    <i class="fa-solid fa-bolt"></i> <span class="translate" data-en="Open UPI App" data-hi="UPI ऐप खोलें">Open UPI App</span>
+                </button>
+                <button class="btn btn-green" style="border-radius: 100px; font-size: 14px; flex:1;" onclick="confirmBooking('UPI')" id="upiBtn">
+                    <i class="fa-solid fa-check"></i> <span class="translate" data-en="Verify Payment" data-hi="पेमेंट कन्फर्म करें">Verify Payment</span>
+                </button>
+            </div>
         </div>
     </div>
 
@@ -352,10 +356,9 @@
 
         <!-- LAYER 1: MANIFEST (DEFAULT) -->
         <div id="layer-manifest" class="adm-layer" style="display: block; flex:1; overflow-y:auto;">
-            <!-- GLITCH FIX: Added margin-top:20px to prevent absolute label overlap with tabs -->
+            
             <div style="display:flex; gap:15px; margin-top:20px; margin-bottom:20px;">
                 <div class="input-group" style="flex:1; margin:0;"><label class="translate" data-en="DATE" data-hi="तारीख">DATE</label><input type="date" id="admDate" class="input" style="margin:0; padding:12px;" onchange="loadManifest()"></div>
-                <!-- DRIVER TIME BUG FIX: Added "ALL TIMES" option so bookings don't hide -->
                 <div class="input-group" style="flex:1; margin:0;"><label class="translate" data-en="TIME" data-hi="समय">TIME</label>
                     <select id="admTime" class="input" style="margin:0; padding:12px;" onchange="loadManifest()">
                         <option value="ALL" class="translate" data-en="All Times" data-hi="सभी समय">All Times</option>
@@ -364,6 +367,18 @@
                         <option>04:00 PM</option>
                     </select>
                 </div>
+            </div>
+
+            <!-- NEW: OFFLINE BLOCK SEAT SECTION -->
+            <div class="glass-card" style="border-color:var(--danger); padding:18px; margin-bottom: 20px;">
+                <div class="translate" data-en="Block Offline Seats" data-hi="ऑफलाइन सीट बुक करें" style="font-size: 13px; font-weight: 800; color: var(--danger); margin-bottom: 12px;"><i class="fa-solid fa-lock"></i> Block Offline Seats</div>
+                <div style="display:flex; gap:10px;">
+                    <input type="text" id="offSeat" class="input" placeholder="Seat No (eg. 1,2)" style="margin:0; flex:1; padding:12px;">
+                    <input type="text" id="offName" class="input" placeholder="Pass Name" style="margin:0; flex:2; padding:12px;">
+                </div>
+                <button class="btn btn-dark" style="margin-top:12px; padding:12px; font-size:13px; border-radius:100px; color:var(--danger); border-color:rgba(239,68,68,0.3); margin-bottom:0;" onclick="blockOfflineSeat()">
+                    <i class="fa-solid fa-ban"></i> <span class="translate" data-en="Block Selected Seats" data-hi="सीट ब्लॉक करें">Block Selected Seats</span>
+                </button>
             </div>
             
             <input type="text" id="admSearch" class="input translate" onkeyup="filterManifest()" placeholder="Search Name or PNR..." data-en="Search Name or PNR..." data-hi="नाम या PNR खोजें..." style="padding:14px; border-radius:100px; margin-bottom:20px;">
@@ -418,11 +433,9 @@
 </div>
 
 <script>
-    // --- SUPABASE ENGINE FIX APPLIED HERE ---
+    // --- SUPABASE ENGINE ---
     const SUPABASE_URL = "https://dauogmpxplaochdjntnj.supabase.co"; 
     const SUPABASE_ANON_KEY = "sb_publishable_swVHpNxlJuQjQop0cziIjg_44U-ofWf";
-    
-    // Create Supabase Client safely
     const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     const FARE = 200; 
@@ -436,33 +449,30 @@
 
     function hideSplash() {
         const splash = document.getElementById('splashScreen');
-        if(splash) {
-            splash.style.opacity = '0';
-            setTimeout(() => { splash.style.display = 'none'; }, 400);
-        }
+        if(splash) { splash.style.opacity = '0'; setTimeout(() => { splash.style.display = 'none'; }, 400); }
     }
 
     document.addEventListener("DOMContentLoaded", () => {
         setTimeout(hideSplash, 1200);
         
         db.from('settings').select('value').eq('key', 'upi_id').then(res => { 
-            if(res.data && res.data[0]) { 
-                adminUpiId = res.data[0].value; 
-                localStorage.setItem('s_admin_upi', adminUpiId); 
-            } 
-        }).catch(err => console.error("UPI fetch issue:", err));
+            if(res.data && res.data[0]) { adminUpiId = res.data[0].value; localStorage.setItem('s_admin_upi', adminUpiId); } 
+        }).catch(err => console.log("UPI Load skipped."));
 
-        const today = new Date().toISOString().split('T')[0];
-        document.getElementById('dateInput').value = document.getElementById('dateInput').min = document.getElementById('admDate').value = today;
+        // ACCURATE LOCAL TIMEZONE FIX FOR INDIA (IST)
+        const tzDate = new Date();
+        const localOffset = tzDate.getTimezoneOffset() * 60000;
+        const localISOTime = (new Date(tzDate.getTime() - localOffset)).toISOString().slice(0, -1);
+        const todayLocal = localISOTime.split('T')[0];
+
+        document.getElementById('dateInput').value = document.getElementById('dateInput').min = document.getElementById('admDate').value = todayLocal;
         updateTimes('Alampur');
 
-        const savedPhone = localStorage.getItem('s_phone'); 
-        const savedName = localStorage.getItem('s_name');
+        const savedPhone = localStorage.getItem('s_phone'); const savedName = localStorage.getItem('s_name');
         if(savedPhone && savedName) {
             state.userPhone = savedPhone; state.userName = savedName;
             document.getElementById('userNameDisplay').innerHTML = `<i class="fa-solid fa-user-circle" style="color:var(--gold); margin-right:5px;"></i> ${state.userName}`;
-            document.getElementById('botNav').style.display = 'flex'; 
-            switchScreen('homeScreen');
+            document.getElementById('botNav').style.display = 'flex'; switchScreen('homeScreen');
         }
         applyLanguage(); 
     });
@@ -474,24 +484,18 @@
         document.getElementById('toastMsg').innerText = msg;
         if(type === 'error') { t.style.borderColor = 'var(--danger)'; icon.className = 'fa-solid fa-circle-exclamation'; icon.style.color = 'var(--danger)'; }
         else { t.style.borderColor = 'var(--gold)'; icon.className = 'fa-solid fa-circle-check'; icon.style.color = 'var(--gold)'; }
-        t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 4000);
+        t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000);
     }
 
-    function toggleLanguage() {
-        isHindi = !isHindi;
-        applyLanguage();
-    }
+    function toggleLanguage() { isHindi = !isHindi; applyLanguage(); }
     
     function applyLanguage() {
         document.querySelectorAll('.translate').forEach(el => { 
             if(el.tagName === 'INPUT' && el.hasAttribute('placeholder')) {
                 el.setAttribute('placeholder', isHindi ? el.getAttribute('data-hi') : el.getAttribute('data-en'));
             } else {
-                let iconHTML = el.innerHTML.match(/<i.*?><\/i>/) ? el.innerHTML.match(/<i.*?><\/i>/)[0] + ' ' : '';
                 if(el.classList.contains('btn') && el.querySelector('i')) {
-                     el.innerHTML = (isHindi ? el.getAttribute('data-hi') : el.getAttribute('data-en')) + ' ' + el.querySelector('i').outerHTML;
-                } else if(el.classList.contains('btn') && el.querySelector('span')) {
-                     el.querySelector('span').innerText = isHindi ? el.getAttribute('data-hi') : el.getAttribute('data-en');
+                     el.innerHTML = (el.querySelector('i').classList.contains('fa-shield-halved') || el.querySelector('i').classList.contains('fa-fingerprint') || el.querySelector('i').classList.contains('fa-arrow-right') || el.querySelector('i').classList.contains('fa-lock') ? (isHindi ? el.getAttribute('data-hi') : el.getAttribute('data-en')) + ' ' + el.querySelector('i').outerHTML : el.querySelector('i').outerHTML + ' ' + (isHindi ? el.getAttribute('data-hi') : el.getAttribute('data-en')));
                 } else if(el.classList.contains('nav-item')) {
                     el.innerHTML = (el.querySelector('i') ? el.querySelector('i').outerHTML : '') + ' <span>' + (isHindi ? el.getAttribute('data-hi') : el.getAttribute('data-en')) + '</span>';
                 } else {
@@ -512,13 +516,9 @@
         
         document.getElementById('getOtpBtn').innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> ${isHindi?'सुरक्षित कर रहे हैं...':'Securing...'}`;
         
-        // MOCK OTP WITH AUTO-FILL MAGICAL UX
         setTimeout(() => {
             mockGeneratedPIN = Math.floor(1000 + Math.random() * 9000).toString();
-            // Premium notification instead of ugly browser alert
             showToast(isHindi ? `[टेस्ट मोड] आपका पिन है: ${mockGeneratedPIN}` : `[TEST MODE] Your PIN is: ${mockGeneratedPIN}`, "success");
-            
-            // Auto fill the OTP
             document.getElementById('otpInput').value = mockGeneratedPIN;
             
             document.getElementById('loginBox').style.display = "none"; document.getElementById('otpBox').style.display = "block";
@@ -625,29 +625,34 @@
         switchScreen('checkoutScreen');
     }
 
-    function payViaApp() { 
-        let amt = state.booking.pass.length * FARE;
-        window.location.href = `upi://pay?pa=${adminUpiId}&pn=Sarthi&am=${amt}&cu=INR`; 
-        setTimeout(()=>confirmBooking('UPI'), 3500); 
-    }
-
     function confirmBooking(mode) {
         if(mode === 'CASH') {
             document.getElementById('cashBtn').innerHTML = `<div><div style="font-weight:900; font-size:18px;"><i class="fa-solid fa-circle-notch fa-spin" style="color:var(--gold); margin-right:12px;"></i> ${isHindi?'सुरक्षित कर रहे हैं...':'Reserving...'}</div></div>`;
+        } else {
+            document.getElementById('upiBtn').innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> ${isHindi?'प्रतीक्षा करें...':'Verifying...'}`;
         }
+        
         const pnrStr = 'PNR'+Math.floor(100000+Math.random()*900000);
         let finalFare = state.booking.pass.length * FARE;
         const bookingRow = { pnr: pnrStr, phone: state.userPhone, booked_by: state.userName, route_from: state.search.from, route_to: state.search.to, journey_date: state.search.date, journey_time: state.search.time, fare: finalFare, payment_mode: mode };
         
         db.from('bookings').insert([bookingRow]).then((res) => {
-            if(res.error) { showToast("Booking Database Error: Check RLS policy", "error"); document.getElementById('cashBtn').innerHTML = "Error"; return; }
+            if(res.error) { 
+                showToast("DB Error: Go to Supabase SQL Editor and Disable RLS Policy!", "error"); 
+                if(mode === 'CASH') document.getElementById('cashBtn').innerHTML = "Error Occurred";
+                else document.getElementById('upiBtn').innerHTML = "Error Occurred";
+                return; 
+            }
             
             const passengerRows = state.booking.pass.map(p => ({ pnr: pnrStr, name: p.n, age: p.a, seat_no: p.s }));
             db.from('passengers').insert(passengerRows).then((pRes) => {
-                if(pRes.error) { showToast("Passenger DB Error", "error"); return; }
+                if(pRes.error) { showToast("Passenger DB Error: Check RLS", "error"); return; }
                 
                 state.ticket = { pnr: pnrStr, phone: state.userPhone, from: state.search.from, to: state.search.to, date: state.search.date, time: state.search.time, pass: state.booking.pass, fare: bookingRow.fare, mode };
+                
                 if(mode === 'CASH') document.getElementById('cashBtn').innerHTML = `<div><div style="font-weight:900; font-size:18px;"><i class="fa-solid fa-money-bill-wave" style="color:var(--success); margin-right:12px;"></i> <span class="translate" data-en="Pay in Bus (Cash)" data-hi="बस में नकद दें">${isHindi?'बस में नकद दें':'Pay in Bus (Cash)'}</span></div><div class="translate" data-en="Pay directly to the driver" data-hi="ड्राइवर को पैसे दें" style="font-size:13px; color:var(--text-muted); margin-left:36px; margin-top: 4px; font-weight: 600;">${isHindi?'ड्राइवर को पैसे दें':'Pay directly to the driver'}</div></div><i class="fa-solid fa-chevron-right" style="color: var(--text-muted);"></i>`;
+                else document.getElementById('upiBtn').innerHTML = `<i class="fa-solid fa-check"></i> Verified`;
+                
                 renderTicket(state.ticket); showToast(isHindi ? "बुकिंग सफल!" : "Booking Successful!"); switchScreen('ticketScreen');
             });
         });
@@ -683,7 +688,7 @@
         });
     }
 
-    // --- GLITCH FIX: ADMIN DASHBOARD TABS BUG ---
+    // --- ADMIN DRIVER PANEL ---
     function openAdmin() { 
         if(prompt(isHindi ? "ड्राइवर पिन डालें:" : "Driver Dashboard PIN:") === PIN) { 
             document.getElementById('adminTag').style.display='inline'; document.getElementById('botNav').style.display='none'; 
@@ -697,11 +702,8 @@
         document.querySelectorAll('.adm-layer').forEach(l => l.style.display = 'none');
         document.querySelectorAll('.adm-tab-btn').forEach(b => b.classList.remove('active'));
         document.getElementById('layer-' + tabId).style.display = 'block';
-        if(btnElement) {
-            btnElement.classList.add('active');
-        } else {
-            document.getElementById('tab-' + tabId).classList.add('active');
-        }
+        if(btnElement) { btnElement.classList.add('active'); } 
+        else { document.getElementById('tab-' + tabId).classList.add('active'); }
         if(tabId === 'manifest') loadManifest();
     }
     
@@ -720,7 +722,6 @@
         manifestDataCache = `*LIVE MANIFEST: ${d} | ${t}*\n`;
         document.getElementById('admSearch').value = '';
         
-        // DRIVER TIME BUG FIX: Using dynamic query building to support "ALL"
         let query = db.from('bookings').select('*').eq('journey_date', d);
         if(t !== 'ALL') { query = query.eq('journey_time', t); }
 
@@ -766,6 +767,38 @@
         if(confirm(isHindi ? "नकद प्राप्त हुआ?" : "Confirm cash collected from passenger?")) {
             db.from('bookings').update({ payment_mode: 'CASH_PAID' }).eq('pnr', pnr).then(() => { showToast(isHindi ? "अपडेट हो गया!" : "Payment Updated!"); loadManifest(); });
         }
+    }
+
+    // --- NEW OFFLINE SEAT BLOCKER ---
+    function blockOfflineSeat() {
+        const d = document.getElementById('admDate').value;
+        let t = document.getElementById('admTime').value;
+        if(t === 'ALL') return showToast(isHindi ? "पहले समय चुनें (08 AM/04 PM)" : "Select specific Time first (not 'All Times').", "error");
+        
+        const seatInput = document.getElementById('offSeat').value.trim();
+        const name = document.getElementById('offName').value.trim() || 'Offline Booked';
+        
+        if(!seatInput) return showToast(isHindi ? "सीट नंबर डालें" : "Enter Seat Number.", "error");
+        
+        let seats = seatInput.split(',').map(s => parseInt(s.trim())).filter(s => !isNaN(s));
+        if(seats.length === 0) return showToast(isHindi ? "अमान्य सीट" : "Invalid Seat Number.", "error");
+
+        const pnrStr = 'OFF'+Math.floor(10000+Math.random()*90000);
+        const fare = seats.length * FARE;
+        
+        const bookingRow = { pnr: pnrStr, phone: 'OFFLINE', booked_by: 'DRIVER', route_from: 'Alampur', route_to: 'Gwalior', journey_date: d, journey_time: t, fare: fare, payment_mode: 'CASH_PAID' };
+
+        db.from('bookings').insert([bookingRow]).then((res) => {
+            if(res.error) return showToast("DB Error: Fix RLS!", "error");
+            const passengerRows = seats.map(s => ({ pnr: pnrStr, name: name, age: 0, seat_no: s }));
+            db.from('passengers').insert(passengerRows).then((pRes) => {
+                if(pRes.error) return showToast("Passenger DB Error", "error");
+                showToast(isHindi ? "सीट ब्लॉक हो गई!" : "Offline Seats Blocked!");
+                document.getElementById('offSeat').value = '';
+                document.getElementById('offName').value = '';
+                loadManifest();
+            });
+        });
     }
 
     function shareManifest() { window.open(`https://wa.me/?text=${encodeURIComponent(manifestDataCache)}`, '_blank'); }
