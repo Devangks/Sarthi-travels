@@ -48,7 +48,7 @@
         .btn-green { background: linear-gradient(135deg, #10B981 0%, #047857 100%); color: #fff; box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3); }
         .btn-dark { background: rgba(255,255,255,0.05); color: var(--text-main); border: 1px solid rgba(255,255,255,0.1); }
 
-        #toast { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); background: #1E293B; color: #fff; padding: 16px 24px; border-radius: 30px; font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 12px; z-index: 10000; box-shadow: 0 20px 40px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.05); transition: top 0.5s; }
+        #toast { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); background: #1E293B; color: #fff; padding: 16px 24px; border-radius: 30px; font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 12px; z-index: 10000; box-shadow: 0 20px 40px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.05); transition: top 0.5s; width: 90%; max-width: 400px; }
         #toast.show { top: 30px; }
 
         .bus-chassis { border: 2px solid rgba(255,255,255,0.15); background: linear-gradient(180deg, rgba(30,41,59,0.9) 0%, rgba(15,23,42,0.95) 100%); width: 300px; margin: 0 auto; border-top-left-radius: 60px; border-top-right-radius: 60px; border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; padding: 30px 20px 20px 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); position: relative; }
@@ -84,7 +84,6 @@
         .skeleton { background: linear-gradient(90deg, rgba(255,255,255,0.05) 25%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.05) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 12px; }
         @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 
-        /* Admin Layer System */
         .adm-tabs { display: flex; background: rgba(255,255,255,0.05); border-radius: 16px; padding: 6px; margin-bottom: 20px; }
         .adm-tab-btn { flex: 1; padding: 12px 0; background: transparent; border: none; color: var(--text-muted); font-weight: 800; font-size: 12px; border-radius: 12px; cursor: pointer; transition: 0.3s; letter-spacing: 1px; }
         .adm-tab-btn.active { background: var(--gold); color: #000; box-shadow: 0 4px 15px var(--gold-glow); }
@@ -98,6 +97,8 @@
 <body>
 
 <div class="ambient-bg"></div>
+
+<!-- Toast Alert -->
 <div id="toast"><i id="toastIcon" class="fa-solid fa-bell"></i> <span id="toastMsg">Alert</span></div>
 
 <div id="splashScreen" style="position:fixed; top:0; left:0; width:100%; height:100vh; background:var(--bg-base); z-index:9999; display:flex; flex-direction:column; justify-content:center; align-items:center; transition: opacity 0.4s;">
@@ -109,7 +110,8 @@
 <div class="app-frame">
     <!-- TOP HEADER -->
     <div class="top-nav">
-        <div class="brand-logo"><i class="fa-solid fa-bus"></i> सार्थी <span id="adminTag" style="display:none; color:#000; background:var(--danger); padding:2px 6px; font-size:9px; border-radius:6px; letter-spacing: 1px; margin-left: 5px;">DRIVER</span></div>
+        <!-- DRIVER TAG BUG FIXED: High Contrast Red/White -->
+        <div class="brand-logo"><i class="fa-solid fa-bus"></i> सार्थी <span id="adminTag" style="display:none; color:#fff; background:var(--danger); padding:4px 8px; font-size:10px; font-weight:900; border-radius:6px; letter-spacing: 1px; margin-left: 8px; box-shadow: 0 0 12px rgba(239,68,68,0.6);">DRIVER</span></div>
         <div style="display:flex; gap:10px; align-items:center;">
             <button class="lang-btn" onclick="toggleLanguage()">A/अ</button>
             <div style="font-size:12px; font-weight: 800; color:var(--text-main); background:rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding:8px 16px; border-radius:20px;" id="userNameDisplay"><i class="fa-solid fa-user-circle" style="color:var(--gold); margin-right:5px;"></i> Guest</div>
@@ -134,7 +136,7 @@
                 <input type="tel" id="phoneInput" class="input translate" placeholder="10-digit number" data-en="10-digit number" data-hi="10-अंकों का नंबर" maxlength="10" style="letter-spacing:2px; font-weight:800; font-size: 18px;">
             </div>
             <button class="btn btn-gold" id="getOtpBtn" onclick="requestPIN()">
-                <span class="translate" data-en="Continue Securely" data-hi="आगे बढ़ें">Continue Securely</span> <i class="fa-solid fa-shield-halved"></i>
+                <span class="translate" data-en="Continue Securely" data-hi="लॉगिन करें">Continue Securely</span> <i class="fa-solid fa-shield-halved"></i>
             </button>
         </div>
 
@@ -151,7 +153,7 @@
             <span class="translate" data-en="24/7 Helpline: " data-hi="हेल्पलाइन: " style="font-size:12px; color:var(--text-muted); font-weight: 700;">24/7 Helpline: </span>
             <span style="color:var(--gold); font-weight: 900; font-size: 14px; letter-spacing: 1px;">9098567628</span>
         </div>
-        <a href="#" onclick="openAdmin()" style="text-align:center; display:block; margin-top:10px; color:var(--text-muted); font-size:12px; font-weight: 700; text-decoration:none;"><i class="fa-solid fa-user-astronaut"></i> <span class="translate" data-en="Driver Portal" data-hi="ड्राइवर पोर्टल">Driver Portal</span></a>
+        <a href="#" onclick="openAdmin()" class="translate" data-en="Driver Portal" data-hi="ड्राइवर पोर्टल" style="text-align:center; display:block; margin-top:10px; color:var(--text-muted); font-size:12px; font-weight: 700; text-decoration:none;"><i class="fa-solid fa-user-astronaut"></i> Driver Portal</a>
     </div>
 
     <!-- 2. HOME SCREEN -->
@@ -247,9 +249,7 @@
             <div style="display:flex; justify-content:space-between; font-size:30px; font-weight:900; color:var(--gold);">
                 <span class="translate" data-en="Total" data-hi="कुल राशि">Total</span> <span id="payAmount">₹0</span>
             </div>
-            <div style="font-size: 11px; color: var(--success); margin-top: 8px; font-weight: 800; letter-spacing: 1px;">
-                <i class="fa-solid fa-circle-check"></i> <span class="translate" data-en="ZERO HIDDEN CHARGES" data-hi="कोई अतिरिक्त शुल्क नहीं">ZERO HIDDEN CHARGES</span>
-            </div>
+            <div class="translate" data-en="ZERO HIDDEN CHARGES" data-hi="कोई अतिरिक्त शुल्क नहीं" style="font-size: 11px; color: var(--success); margin-top: 8px; font-weight: 800; letter-spacing: 1px;"><i class="fa-solid fa-circle-check"></i> ZERO HIDDEN CHARGES</div>
         </div>
         
         <div class="translate" data-en="CHOOSE METHOD" data-hi="तरीका चुनें" style="font-size: 11px; font-weight: 800; color: var(--text-muted); margin-bottom: 12px; letter-spacing: 1.5px;">CHOOSE METHOD</div>
@@ -319,8 +319,12 @@
         </div>
 
         <div style="display: flex; gap: 12px; margin-top: 30px;">
-            <button class="btn btn-green" style="flex: 1; border-radius: 100px; font-size: 15px;" onclick="sendWhatsApp()"><i class="fa-brands fa-whatsapp" style="font-size: 20px;"></i> <span class="translate" data-en="Driver" data-hi="ड्राइवर">Driver</span></button>
-            <button class="btn btn-dark" style="flex: 1; border-radius: 100px; font-size: 15px;" onclick="window.print()"><i class="fa-solid fa-download"></i> <span class="translate" data-en="Save PDF" data-hi="पीडीएफ सेव">Save PDF</span></button>
+            <button class="btn btn-green" style="flex: 1; border-radius: 100px; font-size: 15px;" onclick="sendWhatsApp()">
+                <i class="fa-brands fa-whatsapp" style="font-size: 20px;"></i> <span class="translate" data-en="Driver" data-hi="ड्राइवर">Driver</span>
+            </button>
+            <button class="btn btn-dark" style="flex: 1; border-radius: 100px; font-size: 15px;" onclick="window.print()">
+                <i class="fa-solid fa-download"></i> <span class="translate" data-en="Save PDF" data-hi="पीडीएफ सेव">Save PDF</span>
+            </button>
         </div>
     </div>
 
@@ -334,7 +338,9 @@
     <div id="adminScreen" class="screen">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
             <h2 style="color:var(--gold); font-size: 26px; font-weight: 900;"><i class="fa-solid fa-shield-halved"></i> <span class="translate" data-en="Driver Panel" data-hi="ड्राइवर पैनल">Driver Panel</span></h2>
-            <button class="btn btn-dark" style="width: auto; padding: 10px 16px; font-size: 12px; margin: 0; border-radius: 100px;" onclick="loadManifest()"><i class="fa-solid fa-arrows-rotate"></i> <span class="translate" data-en="Refresh" data-hi="रिफ्रेश">Refresh</span></button>
+            <button class="btn btn-dark" style="width: auto; padding: 10px 16px; font-size: 12px; margin: 0; border-radius: 100px;" onclick="loadManifest()">
+                <i class="fa-solid fa-arrows-rotate"></i> <span class="translate" data-en="Refresh" data-hi="रिफ्रेश">Refresh</span>
+            </button>
         </div>
 
         <!-- LAYER TABS -->
@@ -349,7 +355,15 @@
             <!-- GLITCH FIX: Added margin-top:20px to prevent absolute label overlap with tabs -->
             <div style="display:flex; gap:15px; margin-top:20px; margin-bottom:20px;">
                 <div class="input-group" style="flex:1; margin:0;"><label class="translate" data-en="DATE" data-hi="तारीख">DATE</label><input type="date" id="admDate" class="input" style="margin:0; padding:12px;" onchange="loadManifest()"></div>
-                <div class="input-group" style="flex:1; margin:0;"><label class="translate" data-en="TIME" data-hi="समय">TIME</label><select id="admTime" class="input" style="margin:0; padding:12px;" onchange="loadManifest()"><option>08:00 AM</option><option>07:00 AM</option><option>04:00 PM</option></select></div>
+                <!-- DRIVER TIME BUG FIX: Added "ALL TIMES" option so bookings don't hide -->
+                <div class="input-group" style="flex:1; margin:0;"><label class="translate" data-en="TIME" data-hi="समय">TIME</label>
+                    <select id="admTime" class="input" style="margin:0; padding:12px;" onchange="loadManifest()">
+                        <option value="ALL" class="translate" data-en="All Times" data-hi="सभी समय">All Times</option>
+                        <option>08:00 AM</option>
+                        <option>07:00 AM</option>
+                        <option>04:00 PM</option>
+                    </select>
+                </div>
             </div>
             
             <input type="text" id="admSearch" class="input translate" onkeyup="filterManifest()" placeholder="Search Name or PNR..." data-en="Search Name or PNR..." data-hi="नाम या PNR खोजें..." style="padding:14px; border-radius:100px; margin-bottom:20px;">
@@ -408,6 +422,7 @@
     const SUPABASE_URL = "https://dauogmpxplaochdjntnj.supabase.co"; 
     const SUPABASE_ANON_KEY = "sb_publishable_swVHpNxlJuQjQop0cziIjg_44U-ofWf";
     
+    // Create Supabase Client safely
     const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     const FARE = 200; 
@@ -459,7 +474,7 @@
         document.getElementById('toastMsg').innerText = msg;
         if(type === 'error') { t.style.borderColor = 'var(--danger)'; icon.className = 'fa-solid fa-circle-exclamation'; icon.style.color = 'var(--danger)'; }
         else { t.style.borderColor = 'var(--gold)'; icon.className = 'fa-solid fa-circle-check'; icon.style.color = 'var(--gold)'; }
-        t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000);
+        t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 4000);
     }
 
     function toggleLanguage() {
@@ -472,7 +487,16 @@
             if(el.tagName === 'INPUT' && el.hasAttribute('placeholder')) {
                 el.setAttribute('placeholder', isHindi ? el.getAttribute('data-hi') : el.getAttribute('data-en'));
             } else {
-                el.innerText = isHindi ? el.getAttribute('data-hi') : el.getAttribute('data-en');
+                let iconHTML = el.innerHTML.match(/<i.*?><\/i>/) ? el.innerHTML.match(/<i.*?><\/i>/)[0] + ' ' : '';
+                if(el.classList.contains('btn') && el.querySelector('i')) {
+                     el.innerHTML = (isHindi ? el.getAttribute('data-hi') : el.getAttribute('data-en')) + ' ' + el.querySelector('i').outerHTML;
+                } else if(el.classList.contains('btn') && el.querySelector('span')) {
+                     el.querySelector('span').innerText = isHindi ? el.getAttribute('data-hi') : el.getAttribute('data-en');
+                } else if(el.classList.contains('nav-item')) {
+                    el.innerHTML = (el.querySelector('i') ? el.querySelector('i').outerHTML : '') + ' <span>' + (isHindi ? el.getAttribute('data-hi') : el.getAttribute('data-en')) + '</span>';
+                } else {
+                    el.innerText = isHindi ? el.getAttribute('data-hi') : el.getAttribute('data-en');
+                }
             }
         });
         if(document.getElementById('tripsScreen').classList.contains('active')) loadTrips();
@@ -487,12 +511,19 @@
         if(name.length < 2 || !/^[6-9]\d{9}$/.test(phone)) return showToast(isHindi ? "सही नाम और 10 अंकों का नंबर डालें।" : "Valid Name & 10-digit number required.", "error");
         
         document.getElementById('getOtpBtn').innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> ${isHindi?'सुरक्षित कर रहे हैं...':'Securing...'}`;
+        
+        // MOCK OTP WITH AUTO-FILL MAGICAL UX
         setTimeout(() => {
             mockGeneratedPIN = Math.floor(1000 + Math.random() * 9000).toString();
-            alert(`[Security Alert]\nYour 4-Digit Login PIN is: ${mockGeneratedPIN}`);
+            // Premium notification instead of ugly browser alert
+            showToast(isHindi ? `[टेस्ट मोड] आपका पिन है: ${mockGeneratedPIN}` : `[TEST MODE] Your PIN is: ${mockGeneratedPIN}`, "success");
+            
+            // Auto fill the OTP
+            document.getElementById('otpInput').value = mockGeneratedPIN;
+            
             document.getElementById('loginBox').style.display = "none"; document.getElementById('otpBox').style.display = "block";
             document.getElementById('getOtpBtn').innerHTML = `<span class="translate" data-en="Continue Securely" data-hi="आगे बढ़ें">${isHindi?'आगे बढ़ें':'Continue Securely'}</span> <i class="fa-solid fa-shield-halved"></i>`;
-        }, 800);
+        }, 1200);
     }
     
     function verifyPIN() {
@@ -529,6 +560,7 @@
         switchScreen('seatScreen');
 
         db.from('bookings').select('pnr').eq('journey_date', state.search.date).eq('journey_time', state.search.time).eq('route_from', state.search.from).then(res => {
+            if(res.error) { showToast("Database error", "error"); drawSeats([]); return; }
             if(res.data && res.data.length > 0) {
                 let pnrs = res.data.map(b => b.pnr);
                 db.from('passengers').select('seat_no').in('pnr', pnrs).then(pRes => {
@@ -607,9 +639,13 @@
         let finalFare = state.booking.pass.length * FARE;
         const bookingRow = { pnr: pnrStr, phone: state.userPhone, booked_by: state.userName, route_from: state.search.from, route_to: state.search.to, journey_date: state.search.date, journey_time: state.search.time, fare: finalFare, payment_mode: mode };
         
-        db.from('bookings').insert([bookingRow]).then(() => {
+        db.from('bookings').insert([bookingRow]).then((res) => {
+            if(res.error) { showToast("Booking Database Error: Check RLS policy", "error"); document.getElementById('cashBtn').innerHTML = "Error"; return; }
+            
             const passengerRows = state.booking.pass.map(p => ({ pnr: pnrStr, name: p.n, age: p.a, seat_no: p.s }));
-            db.from('passengers').insert(passengerRows).then(() => {
+            db.from('passengers').insert(passengerRows).then((pRes) => {
+                if(pRes.error) { showToast("Passenger DB Error", "error"); return; }
+                
                 state.ticket = { pnr: pnrStr, phone: state.userPhone, from: state.search.from, to: state.search.to, date: state.search.date, time: state.search.time, pass: state.booking.pass, fare: bookingRow.fare, mode };
                 if(mode === 'CASH') document.getElementById('cashBtn').innerHTML = `<div><div style="font-weight:900; font-size:18px;"><i class="fa-solid fa-money-bill-wave" style="color:var(--success); margin-right:12px;"></i> <span class="translate" data-en="Pay in Bus (Cash)" data-hi="बस में नकद दें">${isHindi?'बस में नकद दें':'Pay in Bus (Cash)'}</span></div><div class="translate" data-en="Pay directly to the driver" data-hi="ड्राइवर को पैसे दें" style="font-size:13px; color:var(--text-muted); margin-left:36px; margin-top: 4px; font-weight: 600;">${isHindi?'ड्राइवर को पैसे दें':'Pay directly to the driver'}</div></div><i class="fa-solid fa-chevron-right" style="color: var(--text-muted);"></i>`;
                 renderTicket(state.ticket); showToast(isHindi ? "बुकिंग सफल!" : "Booking Successful!"); switchScreen('ticketScreen');
@@ -652,7 +688,7 @@
         if(prompt(isHindi ? "ड्राइवर पिन डालें:" : "Driver Dashboard PIN:") === PIN) { 
             document.getElementById('adminTag').style.display='inline'; document.getElementById('botNav').style.display='none'; 
             document.getElementById('adminUpi').value = adminUpiId; 
-            switchAdmTab('manifest', null); // Passed null to prevent currentTarget crash
+            switchAdmTab('manifest', null); 
             switchScreen('adminScreen'); 
         } else showToast(isHindi ? "गलत पिन" : "Access Denied", "error"); 
     }
@@ -684,7 +720,11 @@
         manifestDataCache = `*LIVE MANIFEST: ${d} | ${t}*\n`;
         document.getElementById('admSearch').value = '';
         
-        db.from('bookings').select('*').eq('journey_date', d).eq('journey_time', t).then(bRes => {
+        // DRIVER TIME BUG FIX: Using dynamic query building to support "ALL"
+        let query = db.from('bookings').select('*').eq('journey_date', d);
+        if(t !== 'ALL') { query = query.eq('journey_time', t); }
+
+        query.then(bRes => {
             c.innerHTML = '';
             if(!bRes.data || bRes.data.length === 0) { 
                 document.getElementById('admSeats').innerHTML = `0<span style="font-size: 16px; color: var(--text-muted);">/9</span>`; 
@@ -705,7 +745,7 @@
                     
                     let actBtn = b.payment_mode === 'CASH' ? `<button class="btn btn-dark" style="padding:8px 16px; font-size:12px; margin:0; width:auto; border-radius:100px; color:var(--success); border-color:var(--success);" onclick="markAsPaid('${b.pnr}')"><i class="fa-solid fa-check"></i> ${isHindi?'नकद लिया':'Collect Cash'}</button>` : `<span style="font-size:12px; font-weight:900; color:var(--success); background:rgba(16,185,129,0.15); padding:8px 16px; border-radius:100px;"><i class="fa-solid fa-check-double"></i> PAID</span>`;
 
-                    c.innerHTML += `<div class="glass-card manifest-card" style="padding:22px; margin-bottom:15px; border-color:rgba(255,255,255,0.08);"><div style="display:flex; justify-content:space-between; font-weight:800; border-bottom:1px dashed var(--glass-border); padding-bottom:12px; margin-bottom:8px;"><span class="m-pnr" style="font-size:14px; color:var(--gold);">${b.pnr}</span><span style="font-size: 13px; color: var(--text-muted);">${b.route_from} > ${b.route_to}</span></div>${passHTML}<div style="margin-top:20px; display:flex; justify-content:space-between; align-items:center; border-top:1px solid rgba(255,255,255,0.05); padding-top:16px;"><div style="display:flex; gap:16px;"><a href="tel:${b.phone}" style="color:var(--text-main); font-size:20px; transition:0.2s;"><i class="fa-solid fa-phone"></i></a> <a href="https://wa.me/91${b.phone}" style="color:var(--success); font-size:20px; transition:0.2s;"><i class="fa-brands fa-whatsapp"></i></a></div>${actBtn}</div></div>`;
+                    c.innerHTML += `<div class="glass-card manifest-card" style="padding:22px; margin-bottom:15px; border-color:rgba(255,255,255,0.08);"><div style="display:flex; justify-content:space-between; font-weight:800; border-bottom:1px dashed var(--glass-border); padding-bottom:12px; margin-bottom:8px;"><span class="m-pnr" style="font-size:14px; color:var(--gold);">${b.pnr}</span><span style="font-size: 13px; color: var(--text-muted);">${b.route_from} > ${b.route_to} <span style="color:var(--gold); margin-left:5px;">(${b.journey_time})</span></span></div>${passHTML}<div style="margin-top:20px; display:flex; justify-content:space-between; align-items:center; border-top:1px solid rgba(255,255,255,0.05); padding-top:16px;"><div style="display:flex; gap:16px;"><a href="tel:${b.phone}" style="color:var(--text-main); font-size:20px; transition:0.2s;"><i class="fa-solid fa-phone"></i></a> <a href="https://wa.me/91${b.phone}" style="color:var(--success); font-size:20px; transition:0.2s;"><i class="fa-brands fa-whatsapp"></i></a></div>${actBtn}</div></div>`;
                 });
                 document.getElementById('admSeats').innerHTML = `${seatsC}<span style="font-size: 16px; color: var(--text-muted);">/9</span>`; document.getElementById('admRevUpi').innerText = `₹${revUpi}`; document.getElementById('admRevCash').innerText = `₹${revCash}`;
             });
