@@ -9,11 +9,9 @@
     
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Noto+Sans+Devanagari:wght@500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
-        /* --- SUPREME DARK THEME --- */
         :root {
             --bg-base: #04060A; --bg-surface: #0B101E; --glass: rgba(15, 23, 42, 0.65);
             --gold: #EAB308; --gold-light: #FDE047; --gold-glow: rgba(234, 179, 8, 0.25);
@@ -24,60 +22,50 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Outfit', 'Noto Sans Devanagari', sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background: var(--bg-base); color: var(--text-main); display: flex; justify-content: center; min-height: 100vh; overflow-x: hidden; scroll-behavior: smooth; }
 
-        /* Dynamic 3D Ambient Background */
         .ambient-bg { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; background: radial-gradient(circle at 20% 0%, rgba(234,179,8,0.08) 0%, transparent 40%), radial-gradient(circle at 80% 100%, rgba(16,185,129,0.05) 0%, transparent 40%); filter: blur(30px); }
 
         .app-frame { width: 100%; max-width: 480px; min-height: 100vh; display: flex; flex-direction: column; position: relative; padding-bottom: 90px; background: var(--bg-base); box-shadow: 0 0 50px rgba(0,0,0,0.5); }
         
-        /* Modern Floating Header */
-        .top-nav { padding: 15px 24px; background: rgba(4, 6, 10, 0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); position: sticky; top: 0; z-index: 100; border-bottom: 1px solid rgba(255,255,255,0.03); display: flex; justify-content: space-between; align-items: center; }
+        .top-nav { padding: 15px 24px; background: rgba(4, 6, 10, 0.85); backdrop-filter: blur(20px); position: sticky; top: 0; z-index: 100; border-bottom: 1px solid rgba(255,255,255,0.03); display: flex; justify-content: space-between; align-items: center; }
         .brand-logo { font-weight: 900; font-size: 22px; background: linear-gradient(to right, var(--gold-light), var(--gold)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: flex; align-items: center; gap: 8px; letter-spacing: 0.5px; }
-        .lang-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: var(--text-main); padding: 6px 14px; border-radius: 20px; font-size: 11px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+        .lang-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: var(--text-main); padding: 6px 14px; border-radius: 20px; font-size: 11px; font-weight: 700; cursor: pointer; transition: 0.2s; }
         .lang-btn:active { transform: scale(0.92); background: var(--gold); color: #000; }
 
-        /* Screen Transitions */
         .screen { display: none; padding: 24px; flex: 1; flex-direction: column; animation: slideFade 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); }
         .screen.active { display: flex; }
         @keyframes slideFade { from { opacity: 0; transform: translateY(20px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
 
-        /* Ultra Premium Glass Cards */
-        .glass-card { background: var(--glass); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid rgba(255,255,255,0.05); border-top: 1px solid rgba(255,255,255,0.1); border-radius: 24px; padding: 24px; margin-bottom: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); position: relative; overflow: hidden; }
-        .glass-card::before { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(to right, transparent, rgba(255,255,255,0.03), transparent); transform: skewX(-20deg); animation: shine 6s infinite; }
-        @keyframes shine { 0% { left: -100%; } 20% { left: 200%; } 100% { left: 200%; } }
-
-        /* Inputs & Buttons */
+        .glass-card { background: var(--glass); backdrop-filter: blur(24px); border: 1px solid rgba(255,255,255,0.05); border-top: 1px solid rgba(255,255,255,0.1); border-radius: 24px; padding: 24px; margin-bottom: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
+        
         .input-group { position: relative; margin-bottom: 16px; }
         .input-group label { position: absolute; top: -8px; left: 15px; background: var(--bg-surface); padding: 0 8px; font-size: 10px; font-weight: 700; color: var(--gold); border-radius: 4px; letter-spacing: 1px; z-index: 2; }
-        .input { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); padding: 18px 16px; border-radius: 16px; color: var(--text-main); width: 100%; font-size: 16px; font-weight: 600; transition: all 0.3s; outline: none; }
+        .input { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); padding: 18px 16px; border-radius: 16px; color: var(--text-main); width: 100%; font-size: 16px; font-weight: 600; transition: 0.3s; outline: none; }
         .input:focus { border-color: var(--gold); box-shadow: 0 0 0 4px var(--gold-glow); background: rgba(0,0,0,0.6); }
 
-        .btn { width: 100%; padding: 18px; border-radius: 16px; border: none; font-size: 16px; font-weight: 800; cursor: pointer; margin-bottom: 15px; transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1); display: flex; justify-content: center; align-items: center; gap: 10px; letter-spacing: 0.5px; position: relative; overflow: hidden; }
+        .btn { width: 100%; padding: 18px; border-radius: 16px; border: none; font-size: 16px; font-weight: 800; cursor: pointer; margin-bottom: 15px; transition: 0.2s; display: flex; justify-content: center; align-items: center; gap: 10px; }
         .btn:active { transform: scale(0.96); }
         .btn-gold { background: linear-gradient(135deg, #FDE047 0%, #EAB308 100%); color: #1E1B4B; box-shadow: 0 8px 25px rgba(234, 179, 8, 0.3); }
         .btn-green { background: linear-gradient(135deg, #10B981 0%, #047857 100%); color: #fff; box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3); }
         .btn-dark { background: rgba(255,255,255,0.05); color: var(--text-main); border: 1px solid rgba(255,255,255,0.1); }
 
-        /* Advanced Toast Notification */
-        #toast { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); background: #1E293B; color: #fff; padding: 16px 24px; border-radius: 30px; font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 12px; z-index: 10000; box-shadow: 0 20px 40px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.05); transition: top 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        #toast { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); background: #1E293B; color: #fff; padding: 16px 24px; border-radius: 30px; font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 12px; z-index: 10000; box-shadow: 0 20px 40px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.05); transition: top 0.5s; }
         #toast.show { top: 30px; }
 
-        /* 🚌 REALISTIC BUS CHASSIS UI */
-        .bus-chassis { border: 2px solid rgba(255,255,255,0.15); background: linear-gradient(180deg, rgba(30,41,59,0.9) 0%, rgba(15,23,42,0.95) 100%); width: 300px; margin: 0 auto; border-top-left-radius: 60px; border-top-right-radius: 60px; border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; padding: 30px 20px 20px 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.5), inset 0 10px 20px rgba(255,255,255,0.05); position: relative; }
+        .bus-chassis { border: 2px solid rgba(255,255,255,0.15); background: linear-gradient(180deg, rgba(30,41,59,0.9) 0%, rgba(15,23,42,0.95) 100%); width: 300px; margin: 0 auto; border-top-left-radius: 60px; border-top-right-radius: 60px; border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; padding: 30px 20px 20px 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); position: relative; }
         .bus-windshield { position: absolute; top: 8px; left: 50%; transform: translateX(-50%); width: 140px; height: 15px; background: rgba(0,0,0,0.5); border-radius: 10px; border-top: 2px solid rgba(255,255,255,0.1); }
         .bus-dashboard { margin-bottom: 25px; border-bottom: 2px dashed rgba(255,255,255,0.1); padding-bottom: 15px; display: flex; justify-content: space-between; align-items: flex-end; }
         
         .grid-seats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; justify-items: center; align-items: center; }
-        .seat { width: 48px; height: 48px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.15); border-radius: 12px 12px 6px 6px; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 800; cursor: pointer; transition: all 0.2s; position: relative; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        .seat { width: 48px; height: 48px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.15); border-radius: 12px 12px 6px 6px; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 800; cursor: pointer; transition: 0.2s; position: relative; }
         .seat::after { content: ''; position: absolute; bottom: -4px; width: 30px; height: 4px; background: rgba(255,255,255,0.15); border-radius: 4px; }
         .seat:active { transform: scale(0.9); }
-        .seat.avail:hover { border-color: var(--gold); background: rgba(234,179,8,0.1); box-shadow: 0 0 15px var(--gold-glow); }
+        .seat.avail:hover { border-color: var(--gold); background: rgba(234,179,8,0.1); }
         .seat.sel { background: linear-gradient(180deg, var(--gold-light), var(--gold)); color: #000; border-color: var(--gold); transform: scale(1.08) translateY(-2px); box-shadow: 0 10px 20px var(--gold-glow); }
         .seat.sel::after { background: #854D0E; }
-        .seat.book { background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.4); color: var(--danger); cursor: not-allowed; opacity: 0.6; box-shadow: none; }
-        .seat.drv { border: none; color: var(--text-muted); background: transparent; box-shadow: none; }
+        .seat.book { background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.4); color: var(--danger); cursor: not-allowed; opacity: 0.6; }
+        .seat.drv { border: none; color: var(--text-muted); background: transparent; }
         .seat.drv::after { display: none; }
 
-        /* ✈️ AIRLINE STYLE BOARDING PASS */
         .boarding-pass { background: #fff; border-radius: 20px; color: #000; margin-top: 15px; box-shadow: 0 25px 50px rgba(0,0,0,0.4); position: relative; overflow: hidden; }
         .bp-header { background: #0F172A; color: var(--gold); padding: 20px 24px; display: flex; justify-content: space-between; align-items: center; font-weight: 900; font-size: 18px; letter-spacing: 1px; }
         .bp-cutout { position: relative; border-bottom: 2px dashed #CBD5E1; background: #F8FAFC; }
@@ -87,77 +75,80 @@
         .bp-body { padding: 24px; background: #F8FAFC; }
         .bp-barcode { height: 50px; background: repeating-linear-gradient(90deg, #0F172A, #0F172A 3px, transparent 3px, transparent 7px); margin-top: 25px; border-radius: 4px; }
 
-        /* Bottom Navigation */
-        .bottom-nav { position: fixed; bottom: 0; width: 100%; max-width: 480px; background: rgba(4, 6, 10, 0.9); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid rgba(255,255,255,0.05); z-index: 100; padding-bottom: env(safe-area-inset-bottom, 15px); }
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; max-width: 480px; background: rgba(4, 6, 10, 0.95); backdrop-filter: blur(20px); display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid rgba(255,255,255,0.05); z-index: 100; padding-bottom: env(safe-area-inset-bottom, 15px); }
         .nav-item { color: #475569; font-size: 10px; font-weight: 800; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 6px; transition: 0.3s; letter-spacing: 0.5px; }
         .nav-item i { font-size: 22px; transition: 0.3s; }
         .nav-item.active { color: var(--gold); }
         .nav-item.active i { transform: translateY(-4px); filter: drop-shadow(0 4px 8px var(--gold-glow)); }
 
-        /* Shimmer Loading Skeleton */
         .skeleton { background: linear-gradient(90deg, rgba(255,255,255,0.05) 25%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.05) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 12px; }
         @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+        /* Admin Layer System */
+        .adm-tabs { display: flex; background: rgba(255,255,255,0.05); border-radius: 16px; padding: 6px; margin-bottom: 20px; }
+        .adm-tab-btn { flex: 1; padding: 12px 0; background: transparent; border: none; color: var(--text-muted); font-weight: 800; font-size: 12px; border-radius: 12px; cursor: pointer; transition: 0.3s; letter-spacing: 1px; }
+        .adm-tab-btn.active { background: var(--gold); color: #000; box-shadow: 0 4px 15px var(--gold-glow); }
+        .adm-layer { display: none; animation: slideFade 0.3s; }
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+        .stat-box { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05); padding: 20px; border-radius: 16px; text-align: center; }
 
         @media print { body * { visibility: hidden; } #printZone, #printZone * { visibility: visible; } #printZone { position: absolute; left: 0; top: 0; width: 100%; } }
     </style>
 </head>
 <body>
+
 <div class="ambient-bg"></div>
 
-<!-- Toast Alert -->
 <div id="toast"><i id="toastIcon" class="fa-solid fa-bell"></i> <span id="toastMsg">Alert</span></div>
 
-<div id="splashScreen" style="position:fixed; top:0; left:0; width:100%; height:100vh; background:var(--bg-base); z-index:9999; display:flex; flex-direction:column; justify-content:center; align-items:center;">
+<div id="splashScreen" style="position:fixed; top:0; left:0; width:100%; height:100vh; background:var(--bg-base); z-index:9999; display:flex; flex-direction:column; justify-content:center; align-items:center; transition: opacity 0.4s;">
     <i class="fa-solid fa-van-shuttle" style="font-size:75px; color:var(--gold); filter:drop-shadow(0 0 25px var(--gold-glow));"></i>
     <h1 style="margin-top:25px; color:#fff; font-size: 40px; font-weight: 900; letter-spacing: 2px;">SARTHI</h1>
     <p style="color:var(--gold); font-weight: 700; letter-spacing: 6px; font-size: 11px; margin-top: 5px;">FIRST CLASS</p>
 </div>
 
 <div class="app-frame">
-    <!-- TOP HEADER -->
     <div class="top-nav">
-        <div class="brand-logo"><i class="fa-solid fa-bus"></i> सार्थी <span id="adminTag" style="display:none; color:#000; background:var(--danger); padding:2px 6px; font-size:9px; border-radius:6px; letter-spacing: 1px;">DRIVER</span></div>
+        <div class="brand-logo"><i class="fa-solid fa-bus"></i> सार्थी <span id="adminTag" style="display:none; color:#000; background:var(--danger); padding:2px 6px; font-size:9px; border-radius:6px; letter-spacing: 1px; margin-left: 5px;">DRIVER</span></div>
         <div style="display:flex; gap:10px; align-items:center;">
             <button class="lang-btn" onclick="toggleLanguage()">A/अ</button>
             <div style="font-size:12px; font-weight: 800; color:var(--text-main); background:rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding:8px 16px; border-radius:20px;" id="userNameDisplay"><i class="fa-solid fa-user-circle" style="color:var(--gold); margin-right:5px;"></i> Guest</div>
         </div>
     </div>
 
-    <!-- 1. AUTH SCREEN -->
     <div id="authScreen" class="screen active">
         <div style="text-align:center; margin:40px 0 30px 0;">
             <h1 class="translate" data-en="Sarthi Travels" data-hi="सार्थी ट्रेवल्स" style="font-size: 42px; font-weight: 900;">Sarthi Travels</h1>
-            <p style="color:var(--gold); font-size:12px; font-weight: 800; letter-spacing: 2px; margin-top: 8px;">VIP DAILY COMMUTE</p>
+            <p class="translate" data-en="VIP DAILY COMMUTE" data-hi="वीआईपी दैनिक यात्रा" style="color:var(--gold); font-size:12px; font-weight: 800; letter-spacing: 2px; margin-top: 8px;">VIP DAILY COMMUTE</p>
         </div>
 
         <div class="glass-card" id="loginBox">
             <p style="text-align:center; margin-bottom:25px; font-size:15px; font-weight: 700; color:var(--text-muted);" class="translate" data-en="Access Your Account" data-hi="खाते में प्रवेश करें">Access Your Account</p>
             <div class="input-group">
-                <label>PASSENGER NAME</label>
+                <label class="translate" data-en="PASSENGER NAME" data-hi="यात्री का नाम">PASSENGER NAME</label>
                 <input type="text" id="nameInput" class="input" placeholder="Full Name" style="font-weight: 700;">
             </div>
             <div class="input-group">
-                <label>MOBILE NUMBER</label>
+                <label class="translate" data-en="MOBILE NUMBER" data-hi="मोबाइल नंबर">MOBILE NUMBER</label>
                 <input type="tel" id="phoneInput" class="input" placeholder="10-digit number" maxlength="10" style="letter-spacing:2px; font-weight:800; font-size: 18px;">
             </div>
-            <button class="btn btn-gold translate" id="getOtpBtn" onclick="requestPIN()" data-en="Continue Securely" data-hi="आगे बढ़ें">Continue Securely <i class="fa-solid fa-shield-halved"></i></button>
+            <button class="btn btn-gold translate" id="getOtpBtn" onclick="requestPIN()" data-en="Continue Securely" data-hi="लॉगिन करें">Continue Securely <i class="fa-solid fa-shield-halved"></i></button>
         </div>
 
         <div class="glass-card" id="otpBox" style="display:none;">
-            <p style="text-align:center; margin-bottom:20px; font-weight: 700; color:var(--gold);" class="translate" data-en="Enter 4-Digit Security PIN" data-hi="सिक्योरिटी पिन डालें">Enter Security PIN</p>
+            <p style="text-align:center; margin-bottom:20px; font-weight: 700; color:var(--gold);" class="translate" data-en="Enter Security PIN" data-hi="सिक्योरिटी पिन डालें">Enter Security PIN</p>
             <input type="number" id="otpInput" class="input" placeholder="• • • •" style="text-align:center; letter-spacing:12px; font-size: 28px; font-weight: 900; background: rgba(0,0,0,0.6);">
             <button class="btn btn-green translate" onclick="verifyPIN()" data-en="Verify Identity" data-hi="वेरीफाई करें">Verify Identity <i class="fa-solid fa-fingerprint"></i></button>
         </div>
         
         <div style="flex-grow:1;"></div>
         <div style="padding: 15px; text-align: center; border-radius: 100px; margin-bottom: 10px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05);">
-            <span style="font-size:12px; color:var(--text-muted); font-weight: 700;">24/7 Helpline: </span>
+            <span class="translate" data-en="24/7 Helpline: " data-hi="हेल्पलाइन: " style="font-size:12px; color:var(--text-muted); font-weight: 700;">24/7 Helpline: </span>
             <span style="color:var(--gold); font-weight: 900; font-size: 14px; letter-spacing: 1px;">9098567628</span>
         </div>
-        <a href="#" onclick="openAdmin()" style="text-align:center; display:block; margin-top:10px; color:var(--text-muted); font-size:12px; font-weight: 700; text-decoration:none;"><i class="fa-solid fa-user-astronaut"></i> Driver Auth</a>
+        <a href="#" onclick="openAdmin()" class="translate" data-en="Driver Portal" data-hi="ड्राइवर पोर्टल" style="text-align:center; display:block; margin-top:10px; color:var(--text-muted); font-size:12px; font-weight: 700; text-decoration:none;"><i class="fa-solid fa-user-astronaut"></i> Driver Portal</a>
     </div>
 
-    <!-- 2. HOME SCREEN -->
     <div id="homeScreen" class="screen">
         <h2 style="font-size:36px; font-weight: 900; margin-bottom:25px; line-height: 1.1;" class="translate" data-en="Where to today?" data-hi="आज कहाँ जाना है?">Where to today?</h2>
         <div class="glass-card" style="padding: 30px 24px;">
@@ -165,22 +156,22 @@
                 <div style="position:absolute; left:-7px; top: 15px; width: 12px; height: 12px; background: var(--text-muted); border-radius: 50%;"></div>
                 <div style="position:absolute; left:-7px; bottom: 15px; width: 12px; height: 12px; background: var(--gold); border-radius: 50%; box-shadow: 0 0 10px var(--gold-glow);"></div>
                 
-                <div style="font-size: 10px; color: var(--text-muted); font-weight: 800; letter-spacing: 1px;">DEPARTURE</div>
+                <div class="translate" data-en="DEPARTURE" data-hi="यहाँ से" style="font-size: 10px; color: var(--text-muted); font-weight: 800; letter-spacing: 1px;">DEPARTURE</div>
                 <input type="text" id="fromInput" class="input" value="Alampur" readonly style="font-weight:900; font-size: 22px; background: transparent; border: none; padding: 5px 0;">
                 
                 <div style="position:absolute; right:10px; top:35px; background:var(--bg-surface); border: 1px solid rgba(255,255,255,0.1); color:var(--text-main); padding:12px; border-radius:50%; z-index:2; cursor:pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.5); transition: 0.3s;" onclick="swapRoute()" id="swapBtn"><i class="fa-solid fa-arrow-right-arrow-left fa-rotate-90"></i></div>
                 
-                <div style="font-size: 10px; color: var(--text-muted); font-weight: 800; letter-spacing: 1px; margin-top: 10px;">DESTINATION</div>
+                <div class="translate" data-en="DESTINATION" data-hi="यहाँ तक" style="font-size: 10px; color: var(--text-muted); font-weight: 800; letter-spacing: 1px; margin-top: 10px;">DESTINATION</div>
                 <input type="text" id="toInput" class="input" value="Gwalior" readonly style="font-weight:900; font-size: 22px; background: transparent; border: none; padding: 5px 0;">
             </div>
             
             <div style="display:flex; gap:15px; margin-top: 25px;">
                 <div class="input-group" style="flex:1;">
-                    <label>DATE</label>
+                    <label class="translate" data-en="DATE" data-hi="तारीख">DATE</label>
                     <input type="date" id="dateInput" class="input" style="font-weight: 700;">
                 </div>
                 <div class="input-group" style="flex:1;">
-                    <label>TIME</label>
+                    <label class="translate" data-en="TIME" data-hi="समय">TIME</label>
                     <select id="timeInput" class="input" style="font-weight: 700;"></select>
                 </div>
             </div>
@@ -188,7 +179,6 @@
         </div>
     </div>
 
-    <!-- 3. SEAT MAP SCREEN -->
     <div id="seatScreen" class="screen">
         <div style="display:flex; align-items:center; margin-bottom:30px;">
             <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 12px 16px; border-radius: 14px; margin-right: 15px; cursor: pointer;" onclick="switchTab('home')"><i class="fa-solid fa-arrow-left"></i></div>
@@ -202,31 +192,29 @@
             <div class="bus-windshield"></div>
             <div class="bus-dashboard">
                 <i class="fa-solid fa-dharmachakra" style="color:var(--text-muted); font-size: 24px;"></i>
-                <span style="font-size: 10px; font-weight: 900; letter-spacing: 2px; color: var(--gold); background: rgba(234, 179, 8, 0.1); padding: 4px 8px; border-radius: 4px;">ENTRY</span>
+                <span class="translate" data-en="ENTRY" data-hi="प्रवेश" style="font-size: 10px; font-weight: 900; letter-spacing: 2px; color: var(--gold); background: rgba(234, 179, 8, 0.1); padding: 4px 8px; border-radius: 4px;">ENTRY</span>
             </div>
             <div class="grid-seats" id="seatGrid"></div>
         </div>
 
         <div class="glass-card" style="margin-top:30px; display:flex; justify-content:space-between; align-items:center; padding: 18px 24px;">
             <div>
-                <div style="font-size:10px; color:var(--text-muted); font-weight: 800; letter-spacing: 1px;">SELECTED</div>
+                <div class="translate" data-en="SELECTED SEATS" data-hi="चुनी गई सीटें" style="font-size:10px; color:var(--text-muted); font-weight: 800; letter-spacing: 1px;">SELECTED SEATS</div>
                 <div id="selectedSeatsList" style="font-size:24px; font-weight:900; color:var(--gold);">None</div>
             </div>
-            <button class="btn btn-gold" style="width:auto; margin:0; padding: 16px 30px; border-radius: 100px; font-size: 15px;" onclick="proceedToPassengers()" id="proceedBtn" disabled>Continue <i class="fa-solid fa-arrow-right"></i></button>
+            <button class="btn btn-gold translate" data-en="Continue" data-hi="आगे बढ़ें" style="width:auto; margin:0; padding: 16px 30px; border-radius: 100px; font-size: 15px;" onclick="proceedToPassengers()" id="proceedBtn" disabled>Continue <i class="fa-solid fa-arrow-right"></i></button>
         </div>
     </div>
 
-    <!-- 4. PASSENGER DETAILS -->
     <div id="passengerScreen" class="screen">
         <div style="display:flex; align-items:center; margin-bottom:25px;">
             <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 12px 16px; border-radius: 14px; margin-right: 15px; cursor: pointer;" onclick="switchScreen('seatScreen')"><i class="fa-solid fa-arrow-left"></i></div>
             <h2 style="font-size: 24px; font-weight: 900;" class="translate" data-en="Passenger Details" data-hi="यात्री विवरण">Passenger Details</h2>
         </div>
         <div id="passForms" style="overflow-y:auto; flex:1; padding-right: 5px;"></div>
-        <button class="btn btn-gold" style="margin-top: 15px;" onclick="proceedToPay()">Secure Checkout <i class="fa-solid fa-lock"></i></button>
+        <button class="btn btn-gold translate" data-en="Secure Checkout" data-hi="भुगतान करें" style="margin-top: 15px;" onclick="proceedToPay()">Secure Checkout <i class="fa-solid fa-lock"></i></button>
     </div>
 
-    <!-- 5. CHECKOUT -->
     <div id="checkoutScreen" class="screen">
         <div style="display:flex; align-items:center; margin-bottom:25px;">
             <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 12px 16px; border-radius: 14px; margin-right: 15px; cursor: pointer;" onclick="switchScreen('passengerScreen')"><i class="fa-solid fa-arrow-left"></i></div>
@@ -235,45 +223,44 @@
         
         <div class="glass-card" style="background:linear-gradient(135deg, rgba(234,179,8,0.08), transparent); border-color:var(--gold);">
             <div style="display:flex; justify-content:space-between; margin-bottom:12px; font-size: 14px; color: var(--text-muted); font-weight: 600;">
-                <span>Total Seats Booked:</span> <span id="chkSeats" style="color: #fff; font-weight: 800;">0</span>
+                <span class="translate" data-en="Total Seats Booked:" data-hi="कुल सीटें:">Total Seats Booked:</span> <span id="chkSeats" style="color: #fff; font-weight: 800;">0</span>
             </div>
             <div style="display:flex; justify-content:space-between; margin-bottom:15px; font-size: 14px; color: var(--text-muted); font-weight: 600;">
-                <span>Fare per Seat:</span> <span style="color: #fff; font-weight: 800;">₹200</span>
+                <span class="translate" data-en="Fare per Seat:" data-hi="प्रति सीट किराया:">Fare per Seat:</span> <span style="color: #fff; font-weight: 800;">₹200</span>
             </div>
             <div style="border-top: 1px dashed rgba(234,179,8,0.3); margin-bottom: 15px;"></div>
             <div style="display:flex; justify-content:space-between; font-size:30px; font-weight:900; color:var(--gold);">
-                <span>Total</span> <span id="payAmount">₹0</span>
+                <span class="translate" data-en="Total" data-hi="कुल राशि">Total</span> <span id="payAmount">₹0</span>
             </div>
-            <div style="font-size: 11px; color: var(--success); margin-top: 8px; font-weight: 800; letter-spacing: 1px;"><i class="fa-solid fa-circle-check"></i> ZERO HIDDEN CHARGES</div>
+            <div class="translate" data-en="ZERO HIDDEN CHARGES" data-hi="कोई अतिरिक्त शुल्क नहीं" style="font-size: 11px; color: var(--success); margin-top: 8px; font-weight: 800; letter-spacing: 1px;"><i class="fa-solid fa-circle-check"></i> ZERO HIDDEN CHARGES</div>
         </div>
         
-        <div style="font-size: 11px; font-weight: 800; color: var(--text-muted); margin-bottom: 12px; letter-spacing: 1.5px;">CHOOSE METHOD</div>
+        <div class="translate" data-en="CHOOSE METHOD" data-hi="तरीका चुनें" style="font-size: 11px; font-weight: 800; color: var(--text-muted); margin-bottom: 12px; letter-spacing: 1.5px;">CHOOSE METHOD</div>
         
         <div class="glass-card" style="cursor:pointer; display: flex; align-items: center; justify-content: space-between; padding: 20px; transition: 0.3s;" onclick="confirmBooking('CASH')" id="cashBtn">
             <div>
-                <div style="font-weight:900; font-size:18px;"><i class="fa-solid fa-money-bill-wave" style="color:var(--success); margin-right:12px;"></i> Pay in Bus (Cash)</div>
-                <div style="font-size:13px; color:var(--text-muted); margin-left:36px; margin-top: 4px; font-weight: 600;">Pay directly to the driver</div>
+                <div class="translate" data-en="Pay in Bus (Cash)" data-hi="बस में नकद दें" style="font-weight:900; font-size:18px;"><i class="fa-solid fa-money-bill-wave" style="color:var(--success); margin-right:12px;"></i> Pay in Bus (Cash)</div>
+                <div class="translate" data-en="Pay directly to the driver" data-hi="ड्राइवर को पैसे दें" style="font-size:13px; color:var(--text-muted); margin-left:36px; margin-top: 4px; font-weight: 600;">Pay directly to the driver</div>
             </div>
             <i class="fa-solid fa-chevron-right" style="color: var(--text-muted);"></i>
         </div>
         
         <div class="glass-card" id="upiBox" style="border-color:var(--gold); text-align:center; background: rgba(234,179,8,0.05);">
-            <div style="font-weight:900; font-size:20px; margin-bottom:5px;"><i class="fa-brands fa-google-pay" style="color:var(--gold);"></i> Pay via UPI</div>
+            <div class="translate" data-en="Pay via UPI" data-hi="UPI से भुगतान करें" style="font-weight:900; font-size:20px; margin-bottom:5px;"><i class="fa-brands fa-google-pay" style="color:var(--gold);"></i> Pay via UPI</div>
             <div id="upiDisplay" style="font-size:13px; color:var(--text-muted); margin-bottom:25px; font-weight: 600;">Fetching secure UPI...</div>
             <div style="background: #fff; padding: 10px; border-radius: 16px; display: inline-block; margin-bottom: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
                 <img id="qrCode" src="" style="width:160px; height:160px; display:none; border-radius: 8px;">
             </div>
-            <button class="btn btn-green" style="border-radius: 100px; font-size: 18px;" onclick="payViaApp()"><i class="fa-solid fa-bolt"></i> Open UPI App</button>
+            <button class="btn btn-green translate" data-en="Open UPI App" data-hi="UPI ऐप खोलें" style="border-radius: 100px; font-size: 18px;" onclick="payViaApp()"><i class="fa-solid fa-bolt"></i> Open UPI App</button>
         </div>
     </div>
 
-    <!-- 6. BOARDING PASS SCREEN -->
     <div id="ticketScreen" class="screen">
         <div style="text-align:center; margin-bottom:20px; margin-top: 10px;">
             <div style="width: 80px; height: 80px; background: rgba(16, 185, 129, 0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px auto; border: 2px solid var(--success);">
                 <i class="fa-solid fa-check" style="font-size:35px; color: var(--success);"></i>
             </div>
-            <h2 style="font-size:26px; font-weight: 900;">Booking Confirmed!</h2>
+            <h2 class="translate" data-en="Booking Confirmed!" data-hi="बुकिंग हो गई!" style="font-size:26px; font-weight: 900;">Booking Confirmed!</h2>
         </div>
         
         <div id="printZone">
@@ -287,17 +274,17 @@
                         <span id="tFrom"></span> <i class="fa-solid fa-plane" style="color:#CBD5E0; transform: rotate(45deg); font-size: 20px;"></i> <span id="tTo"></span>
                     </div>
                     <div style="display:flex; justify-content:space-between; margin-bottom: 25px;">
-                        <div style="font-size: 10px; font-weight: 800; color: #94A3B8;">ORIGIN</div>
-                        <div style="font-size: 10px; font-weight: 800; color: #94A3B8;">DESTINATION</div>
+                        <div class="translate" data-en="ORIGIN" data-hi="प्रस्थान" style="font-size: 10px; font-weight: 800; color: #94A3B8;">ORIGIN</div>
+                        <div class="translate" data-en="DESTINATION" data-hi="गंतव्य" style="font-size: 10px; font-weight: 800; color: #94A3B8;">DESTINATION</div>
                     </div>
                     
                     <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
                         <div>
-                            <div style="font-size: 10px; font-weight: 800; color: #94A3B8; margin-bottom: 4px;">DATE & TIME</div>
+                            <div class="translate" data-en="DATE & TIME" data-hi="तारीख व समय" style="font-size: 10px; font-weight: 800; color: #94A3B8; margin-bottom: 4px;">DATE & TIME</div>
                             <div id="tDate" style="font-weight: 800; color: #1E293B; font-size: 14px;"></div>
                         </div>
                         <div style="text-align: right;">
-                            <div style="font-size: 10px; font-weight: 800; color: #94A3B8; margin-bottom: 4px;">SEAT(S)</div>
+                            <div class="translate" data-en="SEAT(S)" data-hi="सीटें" style="font-size: 10px; font-weight: 800; color: #94A3B8; margin-bottom: 4px;">SEAT(S)</div>
                             <div id="tSeats" style="font-weight: 900; color: #D97706; font-size: 16px;"></div>
                         </div>
                     </div>
@@ -312,63 +299,73 @@
         </div>
 
         <div style="display: flex; gap: 12px; margin-top: 30px;">
-            <button class="btn btn-green" style="flex: 1; border-radius: 100px; font-size: 15px;" onclick="sendWhatsApp()"><i class="fa-brands fa-whatsapp" style="font-size: 20px;"></i> Driver</button>
-            <button class="btn btn-dark" style="flex: 1; border-radius: 100px; font-size: 15px;" onclick="window.print()"><i class="fa-solid fa-download"></i> Save PDF</button>
+            <button class="btn btn-green translate" data-en="Driver" data-hi="ड्राइवर" style="flex: 1; border-radius: 100px; font-size: 15px;" onclick="sendWhatsApp()"><i class="fa-brands fa-whatsapp" style="font-size: 20px;"></i> Driver</button>
+            <button class="btn btn-dark translate" data-en="Save PDF" data-hi="पीडीएफ सेव करें" style="flex: 1; border-radius: 100px; font-size: 15px;" onclick="window.print()"><i class="fa-solid fa-download"></i> Save PDF</button>
         </div>
     </div>
 
-    <!-- 7. TRIPS -->
     <div id="tripsScreen" class="screen">
         <h2 style="font-size: 32px; font-weight: 900; margin-bottom:25px;" class="translate" data-en="My Bookings" data-hi="मेरी यात्रा">My Bookings</h2>
         <div id="tripsList" style="overflow-y:auto; flex:1; padding-right: 5px;"></div>
     </div>
 
-    <!-- 8. ADMIN DASHBOARD -->
     <div id="adminScreen" class="screen">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
-            <h2 style="color:var(--gold); font-size: 28px; font-weight: 900;"><i class="fa-solid fa-shield-halved"></i> Driver Panel</h2>
-            <button class="btn btn-dark" style="width: auto; padding: 10px 18px; font-size: 13px; margin: 0; border-radius: 100px;" onclick="loadManifest()"><i class="fa-solid fa-arrows-rotate"></i> Refresh</button>
-        </div>
-        
-        <div class="stats-grid">
-            <div class="stat-box">
-                <div style="font-size:10px; color:var(--text-muted); font-weight: 800; letter-spacing: 1px;">TOTAL SEATS</div>
-                <div style="font-size:32px; font-weight:900; color:var(--gold); margin-top: 5px;" id="admSeats">0<span style="font-size: 16px; color: var(--text-muted);">/9</span></div>
-            </div>
-            <div class="stat-box">
-                <div style="font-size:10px; color:var(--text-muted); font-weight: 800; letter-spacing: 1px;">UPI (ONLINE)</div>
-                <div style="font-size:32px; font-weight:900; color:var(--success); margin-top: 5px;" id="admRevUpi">₹0</div>
-            </div>
-            <div class="stat-box" style="grid-column: span 2; background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.3);">
-                <div style="font-size:12px; color:var(--danger); font-weight: 800; letter-spacing: 2px;">CASH TO COLLECT</div>
-                <div style="font-size:40px; font-weight:900; color:var(--danger); margin-top: 5px;" id="admRevCash">₹0</div>
-            </div>
-        </div>
-        
-        <div style="display:flex; gap:15px; margin-bottom:25px;">
-            <div class="input-group" style="flex:1; margin:0;"><label>FILTER DATE</label><input type="date" id="admDate" class="input" style="margin:0;" onchange="loadManifest()"></div>
-            <div class="input-group" style="flex:1; margin:0;"><label>FILTER TIME</label><select id="admTime" class="input" style="margin:0;" onchange="loadManifest()"><option>08:00 AM</option><option>07:00 AM</option><option>04:00 PM</option></select></div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2 style="color:var(--gold); font-size: 26px; font-weight: 900;" class="translate" data-en="Driver Panel" data-hi="ड्राइवर पैनल"><i class="fa-solid fa-shield-halved"></i> Driver Panel</h2>
+            <button class="btn btn-dark translate" data-en="Refresh" data-hi="रिफ्रेश" style="width: auto; padding: 10px 16px; font-size: 12px; margin: 0; border-radius: 100px;" onclick="loadManifest()"><i class="fa-solid fa-arrows-rotate"></i> Refresh</button>
         </div>
 
-        <button class="btn btn-gold" style="padding:18px; margin-bottom:25px; font-size:16px; border-radius: 100px;" onclick="shareManifest()"><i class="fa-solid fa-share-nodes"></i> Share Live Manifest</button>
-
-        <div style="font-size: 12px; font-weight: 800; color: var(--text-muted); margin-bottom: 12px; letter-spacing: 1px;">PASSENGER LIST</div>
-        <div id="manifestList" style="overflow-y:auto; flex:1; padding-right: 5px;"></div>
-        
-        <div class="glass-card" style="border-color:var(--text-muted); padding:24px; margin-top: 25px;">
-            <div style="font-size: 13px; font-weight: 800; color: var(--gold); margin-bottom: 15px;"><i class="fa-solid fa-qrcode"></i> UPI ID Configuration</div>
-            <input type="text" id="adminUpi" class="input" placeholder="e.g. 9098@ybl" style="margin-bottom:15px; font-weight: 800; color: var(--gold);">
-            <button class="btn btn-dark" style="padding:16px; font-size: 14px; border-radius: 100px;" onclick="saveAdmin()"><i class="fa-solid fa-floppy-disk"></i> Save & Lock UPI ID</button>
+        <div class="adm-tabs">
+            <button class="adm-tab-btn active translate" onclick="switchAdmTab('manifest')" data-en="Manifest" data-hi="यात्री सूची">Manifest</button>
+            <button class="adm-tab-btn translate" onclick="switchAdmTab('revenue')" data-en="Revenue" data-hi="कमाई">Revenue</button>
+            <button class="adm-tab-btn translate" onclick="switchAdmTab('setup')" data-en="Setup" data-hi="सेटिंग्स">Setup</button>
         </div>
 
-        <button class="btn" style="background: rgba(239,68,68,0.1); color: var(--danger); margin-top: 15px; border-radius: 100px;" onclick="logoutAdmin()">Exit Driver Panel</button>
+        <div id="layer-manifest" class="adm-layer" style="display: block; flex:1; overflow-y:auto;">
+            <div style="display:flex; gap:15px; margin-bottom:15px;">
+                <div class="input-group" style="flex:1; margin:0;"><label class="translate" data-en="DATE" data-hi="तारीख">DATE</label><input type="date" id="admDate" class="input" style="margin:0; padding:12px;" onchange="loadManifest()"></div>
+                <div class="input-group" style="flex:1; margin:0;"><label class="translate" data-en="TIME" data-hi="समय">TIME</label><select id="admTime" class="input" style="margin:0; padding:12px;" onchange="loadManifest()"><option>08:00 AM</option><option>07:00 AM</option><option>04:00 PM</option></select></div>
+            </div>
+            
+            <input type="text" id="admSearch" class="input translate" onkeyup="filterManifest()" placeholder="Search Name or PNR..." data-en="Search Name or PNR..." data-hi="नाम या PNR खोजें..." style="padding:14px; border-radius:100px; margin-bottom:20px;">
+            
+            <button class="btn btn-gold translate" data-en="Share Manifest" data-hi="सूची भेजें" style="padding:16px; font-size:15px; border-radius: 100px; margin-bottom:20px;" onclick="shareManifest()"><i class="fa-solid fa-share-nodes"></i> Share Manifest</button>
+            
+            <div id="manifestList"></div>
+        </div>
+
+        <div id="layer-revenue" class="adm-layer">
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <div class="translate" data-en="TOTAL SEATS" data-hi="कुल सीटें" style="font-size:10px; color:var(--text-muted); font-weight: 800; letter-spacing: 1px;">TOTAL SEATS</div>
+                    <div style="font-size:32px; font-weight:900; color:var(--gold); margin-top: 5px;" id="admSeats">0<span style="font-size: 16px; color: var(--text-muted);">/9</span></div>
+                </div>
+                <div class="stat-box">
+                    <div class="translate" data-en="UPI (ONLINE)" data-hi="ऑनलाइन पैसे" style="font-size:10px; color:var(--text-muted); font-weight: 800; letter-spacing: 1px;">UPI (ONLINE)</div>
+                    <div style="font-size:32px; font-weight:900; color:var(--success); margin-top: 5px;" id="admRevUpi">₹0</div>
+                </div>
+                <div class="stat-box" style="grid-column: span 2; background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.3);">
+                    <div class="translate" data-en="CASH TO COLLECT" data-hi="नकद पैसे" style="font-size:12px; color:var(--danger); font-weight: 800; letter-spacing: 2px;">CASH TO COLLECT</div>
+                    <div style="font-size:40px; font-weight:900; color:var(--danger); margin-top: 5px;" id="admRevCash">₹0</div>
+                </div>
+            </div>
+            <p class="translate" data-en="Revenue data updates based on the selected date and time in the Manifest tab." data-hi="कमाई का डेटा 'यात्री सूची' वाले टैब की तारीख के अनुसार दिखता है।" style="color:var(--text-muted); font-size:12px; text-align:center;">Revenue data updates based on the selected date and time in the Manifest tab.</p>
+        </div>
+
+        <div id="layer-setup" class="adm-layer">
+            <div class="glass-card" style="border-color:var(--text-muted); padding:24px;">
+                <div class="translate" data-en="UPI ID Configuration" data-hi="UPI आईडी सेटअप" style="font-size: 14px; font-weight: 800; color: var(--gold); margin-bottom: 20px;"><i class="fa-solid fa-qrcode"></i> UPI ID Configuration</div>
+                <input type="text" id="adminUpi" class="input" placeholder="e.g. 9098@ybl" style="margin-bottom:20px; font-weight: 800; color: var(--gold);">
+                <button class="btn btn-dark translate" data-en="Save & Lock UPI ID" data-hi="सेव करें" style="padding:16px; font-size: 14px; border-radius: 100px;" onclick="saveAdmin()"><i class="fa-solid fa-floppy-disk"></i> Save & Lock UPI ID</button>
+            </div>
+            <button class="btn translate" data-en="Exit Driver Panel" data-hi="पैनल बंद करें" style="background: rgba(239,68,68,0.1); color: var(--danger); margin-top: 15px; border-radius: 100px;" onclick="logoutAdmin()"><i class="fa-solid fa-arrow-right-from-bracket"></i> Exit Driver Panel</button>
+        </div>
     </div>
 
-    <!-- BOTTOM NAV -->
     <div class="bottom-nav" id="botNav" style="display:none;">
-        <div class="nav-item active" onclick="switchTab('home')"><i class="fa-solid fa-house"></i> <span>Home</span></div>
-        <div class="nav-item" onclick="switchTab('trips')"><i class="fa-solid fa-ticket-simple"></i> <span>Trips</span></div>
-        <div class="nav-item" onclick="handleLogout()"><i class="fa-solid fa-arrow-right-from-bracket"></i> <span>Logout</span></div>
+        <div class="nav-item active translate" data-en="Home" data-hi="होम" onclick="switchTab('home')"><i class="fa-solid fa-house"></i> <span>Home</span></div>
+        <div class="nav-item translate" data-en="Trips" data-hi="यात्रा" onclick="switchTab('trips')"><i class="fa-solid fa-ticket-simple"></i> <span>Trips</span></div>
+        <div class="nav-item translate" data-en="Logout" data-hi="लॉगआउट" onclick="handleLogout()"><i class="fa-solid fa-arrow-right-from-bracket"></i> <span>Logout</span></div>
     </div>
 </div>
 
@@ -377,7 +374,7 @@
     const SUPABASE_URL = "https://dauogmpxplaochdjntnj.supabase.co"; 
     const SUPABASE_ANON_KEY = "sb_publishable_swVHpNxlJuQjQop0cziIjg_44U-ofWf";
     
-    // Using variable name "db" to completely avoid the clash with the global "supabase" CDN variable
+    // Create Supabase Client safely
     const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     const FARE = 200; 
@@ -389,39 +386,76 @@
     
     const state = { userPhone: null, userName: null, ticket: null, search: { from: 'Alampur', to: 'Gwalior', date: '', time: '08:00 AM' }, booking: { seats: [], pass: [] } };
 
-    window.onload = () => {
-        setTimeout(() => { document.getElementById('splashScreen').style.opacity = '0'; setTimeout(() => document.getElementById('splashScreen').style.display = 'none', 500); }, 2000);
+    // Anti-stuck splash logic
+    function hideSplash() {
+        const splash = document.getElementById('splashScreen');
+        if(splash) {
+            splash.style.opacity = '0';
+            setTimeout(() => { splash.style.display = 'none'; }, 400);
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        setTimeout(hideSplash, 1200);
         
         db.from('settings').select('value').eq('key', 'upi_id').then(res => { 
-            if(res.data && res.data[0]) { adminUpiId = res.data[0].value; localStorage.setItem('s_admin_upi', adminUpiId); } 
-        });
+            if(res.data && res.data[0]) { 
+                adminUpiId = res.data[0].value; 
+                localStorage.setItem('s_admin_upi', adminUpiId); 
+            } 
+        }).catch(err => console.error("UPI fetch issue:", err));
 
         const today = new Date().toISOString().split('T')[0];
         document.getElementById('dateInput').value = document.getElementById('dateInput').min = document.getElementById('admDate').value = today;
         updateTimes('Alampur');
 
-        const savedPhone = localStorage.getItem('s_phone'); const savedName = localStorage.getItem('s_name');
+        const savedPhone = localStorage.getItem('s_phone'); 
+        const savedName = localStorage.getItem('s_name');
         if(savedPhone && savedName) {
             state.userPhone = savedPhone; state.userName = savedName;
             document.getElementById('userNameDisplay').innerHTML = `<i class="fa-solid fa-user-circle" style="color:var(--gold); margin-right:5px;"></i> ${state.userName}`;
-            document.getElementById('botNav').style.display = 'flex'; switchScreen('homeScreen');
+            document.getElementById('botNav').style.display = 'flex'; 
+            switchScreen('homeScreen');
         }
-    };
+        applyLanguage(); // Initial apply
+    });
+    window.onload = () => { setTimeout(hideSplash, 1000); };
 
     function showToast(msg, type='success') {
         const t = document.getElementById('toast');
         const icon = document.getElementById('toastIcon');
         document.getElementById('toastMsg').innerText = msg;
-        
         if(type === 'error') { t.style.borderColor = 'var(--danger)'; icon.className = 'fa-solid fa-circle-exclamation'; icon.style.color = 'var(--danger)'; }
         else { t.style.borderColor = 'var(--gold)'; icon.className = 'fa-solid fa-circle-check'; icon.style.color = 'var(--gold)'; }
-        
-        t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3500);
+        t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000);
     }
 
     function toggleLanguage() {
         isHindi = !isHindi;
-        document.querySelectorAll('.translate').forEach(el => { el.innerText = isHindi ? el.getAttribute('data-hi') : el.getAttribute('data-en'); });
+        applyLanguage();
+    }
+    
+    function applyLanguage() {
+        document.querySelectorAll('.translate').forEach(el => { 
+            if(el.tagName === 'INPUT' && el.hasAttribute('placeholder')) {
+                el.setAttribute('placeholder', isHindi ? el.getAttribute('data-hi') : el.getAttribute('data-en'));
+            } else {
+                // Keep inner HTML tags if they exist (like icons)
+                let iconHTML = el.innerHTML.match(/<i.*?><\/i>/) ? el.innerHTML.match(/<i.*?><\/i>/)[0] + ' ' : '';
+                // Specific fix for span elements containing text and icons inside buttons
+                if(el.classList.contains('btn')) {
+                     el.innerHTML = (isHindi ? el.getAttribute('data-hi') : el.getAttribute('data-en')) + ' ' + (el.querySelector('i') ? el.querySelector('i').outerHTML : '');
+                } else if(el.classList.contains('nav-item')) {
+                    el.innerHTML = (el.querySelector('i') ? el.querySelector('i').outerHTML : '') + ' <span>' + (isHindi ? el.getAttribute('data-hi') : el.getAttribute('data-en')) + '</span>';
+                } else {
+                    el.innerText = isHindi ? el.getAttribute('data-hi') : el.getAttribute('data-en');
+                }
+            }
+        });
+        
+        // Dynamic re-render if on specific tabs
+        if(document.getElementById('tripsScreen').classList.contains('active')) loadTrips();
+        if(document.getElementById('adminScreen').classList.contains('active')) loadManifest();
     }
 
     function switchScreen(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); window.scrollTo(0,0); }
@@ -429,29 +463,29 @@
 
     function requestPIN() {
         const name = document.getElementById('nameInput').value.trim(); const phone = document.getElementById('phoneInput').value.trim();
-        if(name.length < 2 || !/^[6-9]\d{9}$/.test(phone)) return showToast("Valid Name & 10-digit number required.", "error");
+        if(name.length < 2 || !/^[6-9]\d{9}$/.test(phone)) return showToast(isHindi ? "सही नाम और 10 अंकों का नंबर डालें।" : "Valid Name & 10-digit number required.", "error");
         
-        document.getElementById('getOtpBtn').innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> Securing Connection...`;
+        document.getElementById('getOtpBtn').innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> Securing...`;
         setTimeout(() => {
             mockGeneratedPIN = Math.floor(1000 + Math.random() * 9000).toString();
             alert(`[Security Alert]\nYour 4-Digit Login PIN is: ${mockGeneratedPIN}`);
             document.getElementById('loginBox').style.display = "none"; document.getElementById('otpBox').style.display = "block";
-            document.getElementById('getOtpBtn').innerHTML = `Continue Securely <i class="fa-solid fa-shield-halved"></i>`;
-        }, 1000);
+            document.getElementById('getOtpBtn').innerHTML = isHindi ? `लॉगिन करें <i class="fa-solid fa-shield-halved"></i>` : `Continue Securely <i class="fa-solid fa-shield-halved"></i>`;
+        }, 800);
     }
     
     function verifyPIN() {
         const code = document.getElementById('otpInput').value.trim();
-        if(code !== mockGeneratedPIN) return showToast("Incorrect Verification PIN.", "error");
+        if(code !== mockGeneratedPIN) return showToast(isHindi ? "गलत पिन।" : "Incorrect Verification PIN.", "error");
         
         state.userName = document.getElementById('nameInput').value.trim(); state.userPhone = document.getElementById('phoneInput').value.trim();
         localStorage.setItem('s_phone', state.userPhone); localStorage.setItem('s_name', state.userName);
         document.getElementById('userNameDisplay').innerHTML = `<i class="fa-solid fa-user-circle" style="color:var(--gold); margin-right:5px;"></i> ${state.userName}`;
         document.getElementById('botNav').style.display = 'flex';
-        showToast("Login Successful!"); switchTab('home');
+        showToast(isHindi ? "लॉगिन सफल!" : "Login Successful!"); switchTab('home');
     }
     
-    function handleLogout() { if(confirm("Are you sure you want to logout?")) { localStorage.clear(); location.reload(); } }
+    function handleLogout() { if(confirm(isHindi ? "लॉगआउट करें?" : "Are you sure you want to logout?")) { localStorage.clear(); location.reload(); } }
 
     function swapRoute() {
         const btn = document.getElementById('swapBtn');
@@ -464,7 +498,7 @@
     function searchBuses() {
         state.search.from = document.getElementById('fromInput').value; state.search.to = document.getElementById('toInput').value;
         state.search.date = document.getElementById('dateInput').value; state.search.time = document.getElementById('timeInput').value;
-        if(!state.search.date) return showToast("Please select a valid journey date.", "error");
+        if(!state.search.date) return showToast(isHindi ? "तारीख चुनें।" : "Please select a valid journey date.", "error");
         
         document.getElementById('seatTitle').innerText = `${state.search.from} - ${state.search.to}`;
         document.getElementById('seatSubtitle').innerText = `${state.search.date} | ${state.search.time}`;
@@ -480,6 +514,8 @@
                     let booked = pRes.data ? pRes.data.map(p => p.seat_no) : []; drawSeats(booked);
                 });
             } else { drawSeats([]); }
+        }).catch(err => {
+            drawSeats([]); showToast("Network sync delayed.", "warning");
         });
     }
 
@@ -498,15 +534,20 @@
 
     function toggleSeat(n, el) {
         if(state.booking.seats.includes(n)) { state.booking.seats = state.booking.seats.filter(s=>s!==n); el.classList.remove('sel'); }
-        else { if(state.booking.seats.length>=6) return showToast("Max 6 seats allowed per booking.", "error"); state.booking.seats.push(n); el.classList.add('sel'); }
+        else { if(state.booking.seats.length>=6) return showToast(isHindi ? "अधिकतम 6 सीटें अनुमति है।" : "Max 6 seats allowed per booking.", "error"); state.booking.seats.push(n); el.classList.add('sel'); }
         updateSeatUI();
     }
-    function updateSeatUI() { const len = state.booking.seats.length; document.getElementById('selectedSeatsList').innerText = len ? state.booking.seats.sort().join(', ') : "None"; document.getElementById('proceedBtn').disabled = !len; }
+    function updateSeatUI() { 
+        const len = state.booking.seats.length; 
+        document.getElementById('selectedSeatsList').innerText = len ? state.booking.seats.sort().join(', ') : "None"; 
+        document.getElementById('proceedBtn').disabled = !len; 
+        if(len) document.getElementById('proceedBtn').innerHTML = (isHindi ? "आगे बढ़ें" : "Continue") + ` <i class="fa-solid fa-arrow-right"></i>`;
+    }
 
     function proceedToPassengers() {
         const c = document.getElementById('passForms'); c.innerHTML = '';
         state.booking.seats.sort().forEach((s,i) => {
-            c.innerHTML += `<div class="glass-card" style="padding:24px; margin-bottom:18px;"><div style="color:var(--gold); font-weight:900; margin-bottom:18px; font-size: 16px;"><i class="fa-solid fa-chair" style="margin-right:8px;"></i> SEAT NO: ${s}</div><div class="input-group"><label>FULL NAME</label><input type="text" id="pN_${s}" class="input" value="${i===0?state.userName:''}"></div><div class="input-group" style="margin-bottom:0;"><label>AGE</label><input type="number" id="pA_${s}" class="input" style="margin-bottom:0;"></div></div>`;
+            c.innerHTML += `<div class="glass-card" style="padding:24px; margin-bottom:18px;"><div style="color:var(--gold); font-weight:900; margin-bottom:18px; font-size: 16px;"><i class="fa-solid fa-chair" style="margin-right:8px;"></i> SEAT NO: ${s}</div><div class="input-group"><label>${isHindi?'पूरा नाम':'FULL NAME'}</label><input type="text" id="pN_${s}" class="input" value="${i===0?state.userName:''}"></div><div class="input-group" style="margin-bottom:0;"><label>${isHindi?'उम्र':'AGE'}</label><input type="number" id="pA_${s}" class="input" style="margin-bottom:0;"></div></div>`;
         });
         switchScreen('passengerScreen');
     }
@@ -517,7 +558,7 @@
             let n = document.getElementById(`pN_${s}`).value.trim(); let a = parseInt(document.getElementById(`pA_${s}`).value);
             if(n.length<2 || !a) valid = false; else state.booking.pass.push({s, n, a});
         });
-        if(!valid) return showToast("Please check Name and Age entries.", "error");
+        if(!valid) return showToast(isHindi ? "कृपया नाम और उम्र सही से भरें।" : "Please check Name and Age entries.", "error");
         
         let seatsLen = state.booking.pass.length; let totalAmt = seatsLen * FARE; 
         
@@ -539,7 +580,7 @@
 
     function confirmBooking(mode) {
         if(mode === 'CASH') {
-            document.getElementById('cashBtn').innerHTML = `<div style="font-weight:900; font-size:18px;"><i class="fa-solid fa-circle-notch fa-spin" style="color:var(--gold); margin-right:12px;"></i> Reserving...</div>`;
+            document.getElementById('cashBtn').innerHTML = `<div style="font-weight:900; font-size:18px;"><i class="fa-solid fa-circle-notch fa-spin" style="color:var(--gold); margin-right:12px;"></i> ${isHindi?'सुरक्षित कर रहे हैं...':'Reserving...'}</div>`;
         }
         const pnrStr = 'PNR'+Math.floor(100000+Math.random()*900000);
         let finalFare = state.booking.pass.length * FARE;
@@ -549,8 +590,8 @@
             const passengerRows = state.booking.pass.map(p => ({ pnr: pnrStr, name: p.n, age: p.a, seat_no: p.s }));
             db.from('passengers').insert(passengerRows).then(() => {
                 state.ticket = { pnr: pnrStr, phone: state.userPhone, from: state.search.from, to: state.search.to, date: state.search.date, time: state.search.time, pass: state.booking.pass, fare: bookingRow.fare, mode };
-                if(mode === 'CASH') document.getElementById('cashBtn').innerHTML = `<div><div style="font-weight:900; font-size:18px;"><i class="fa-solid fa-money-bill-wave" style="color:var(--success); margin-right:12px;"></i> Pay in Bus (Cash)</div><div style="font-size:13px; color:var(--text-muted); margin-left:36px; margin-top: 4px; font-weight: 600;">Pay directly to the driver</div></div><i class="fa-solid fa-chevron-right" style="color: var(--text-muted);"></i>`;
-                renderTicket(state.ticket); showToast("Booking Successful!"); switchScreen('ticketScreen');
+                if(mode === 'CASH') document.getElementById('cashBtn').innerHTML = `<div><div style="font-weight:900; font-size:18px;"><i class="fa-solid fa-money-bill-wave" style="color:var(--success); margin-right:12px;"></i> ${isHindi?'बस में नकद दें':'Pay in Bus (Cash)'}</div><div style="font-size:13px; color:var(--text-muted); margin-left:36px; margin-top: 4px; font-weight: 600;">${isHindi?'ड्राइवर को पैसे दें':'Pay directly to the driver'}</div></div><i class="fa-solid fa-chevron-right" style="color: var(--text-muted);"></i>`;
+                renderTicket(state.ticket); showToast(isHindi ? "बुकिंग सफल!" : "Booking Successful!"); switchScreen('ticketScreen');
             });
         });
     }
@@ -560,8 +601,8 @@
         document.getElementById('tDate').innerText = `${t.date} | ${t.time}`; document.getElementById('tSeats').innerText = t.pass.map(p=>p.s).join(', ');
         document.getElementById('tPhone').innerHTML = `<i class="fa-solid fa-phone"></i> ${t.phone}`;
         let sEl = document.getElementById('tStatus');
-        if(t.mode==='UPI') { sEl.innerText = "PAID VIA UPI"; sEl.style.background = "rgba(16,185,129,0.15)"; sEl.style.color = "#10B981"; }
-        else { sEl.innerText = "DUE: ₹"+t.fare; sEl.style.background = "rgba(245,158,11,0.15)"; sEl.style.color = "#F59E0B"; }
+        if(t.mode==='UPI') { sEl.innerText = isHindi ? "ऑनलाइन पेमेंट" : "PAID VIA UPI"; sEl.style.background = "rgba(16,185,129,0.15)"; sEl.style.color = "#10B981"; }
+        else { sEl.innerText = (isHindi ? "बकाया: ₹" : "DUE: ₹") + t.fare; sEl.style.background = "rgba(245,158,11,0.15)"; sEl.style.color = "#F59E0B"; }
     }
 
     function sendWhatsApp() {
@@ -574,27 +615,37 @@
         let c = document.getElementById('tripsList'); c.innerHTML = '<div class="skeleton" style="width:100%; height:120px; margin-bottom:15px;"></div><div class="skeleton" style="width:100%; height:120px;"></div>';
         db.from('bookings').select('*').eq('phone', state.userPhone).order('created_at', { ascending: false }).then(res => {
             c.innerHTML = '';
-            if(!res.data || res.data.length === 0) { c.innerHTML = '<p style="text-align:center;color:var(--text-muted); margin-top: 50px; font-weight:800;">No booking history found.</p>'; return; }
+            if(!res.data || res.data.length === 0) { c.innerHTML = `<p style="text-align:center;color:var(--text-muted); margin-top: 50px; font-weight:800;">${isHindi?'कोई यात्रा नहीं मिली।':'No booking history found.'}</p>`; return; }
             res.data.forEach(t => {
                 db.from('passengers').select('seat_no').eq('pnr', t.pnr).then(pRes => {
                     let sList = pRes.data ? pRes.data.map(x=>x.seat_no).join(', ') : '';
-                    c.innerHTML += `<div class="glass-card" style="border-left:4px solid var(--gold); padding:20px; margin-bottom:18px;"><div style="display:flex; justify-content:space-between; margin-bottom:12px;"><strong style="font-size:14px; color:var(--text-muted);">${t.pnr}</strong> <span style="font-size:11px; font-weight:900; padding:6px 10px; border-radius:8px; background:${t.payment_mode.includes('PAID')?'rgba(16,185,129,0.15)':'rgba(245,158,11,0.15)'}; color:${t.payment_mode.includes('PAID')?'var(--success)':'var(--warning)'}; letter-spacing:1px;">${t.payment_mode.includes('PAID')?'PAID':'PAY IN BUS'}</span></div><div style="font-weight:900; font-size:18px; margin-bottom:10px;">${t.route_from} <i class="fa-solid fa-arrow-right" style="color:var(--text-muted); font-size: 14px; margin: 0 6px;"></i> ${t.route_to}</div><div style="font-size:13px; color:var(--text-muted); font-weight:600; margin-bottom:10px;"><i class="fa-regular fa-calendar" style="margin-right:6px;"></i> ${t.journey_date} | ${t.journey_time}</div><div style="font-size:14px; color:var(--gold); font-weight:800;"><i class="fa-solid fa-chair" style="margin-right:6px;"></i> Seats: ${sList}</div></div>`;
+                    let statusText = t.payment_mode.includes('PAID') ? (isHindi?'भुगतान किया':'PAID') : (isHindi?'नकद':'PAY IN BUS');
+                    c.innerHTML += `<div class="glass-card" style="border-left:4px solid var(--gold); padding:20px; margin-bottom:18px;"><div style="display:flex; justify-content:space-between; margin-bottom:12px;"><strong style="font-size:14px; color:var(--text-muted);">${t.pnr}</strong> <span style="font-size:11px; font-weight:900; padding:6px 10px; border-radius:8px; background:${t.payment_mode.includes('PAID')?'rgba(16,185,129,0.15)':'rgba(245,158,11,0.15)'}; color:${t.payment_mode.includes('PAID')?'var(--success)':'var(--warning)'}; letter-spacing:1px;">${statusText}</span></div><div style="font-weight:900; font-size:18px; margin-bottom:10px;">${t.route_from} <i class="fa-solid fa-arrow-right" style="color:var(--text-muted); font-size: 14px; margin: 0 6px;"></i> ${t.route_to}</div><div style="font-size:13px; color:var(--text-muted); font-weight:600; margin-bottom:10px;"><i class="fa-regular fa-calendar" style="margin-right:6px;"></i> ${t.journey_date} | ${t.journey_time}</div><div style="font-size:14px; color:var(--gold); font-weight:800;"><i class="fa-solid fa-chair" style="margin-right:6px;"></i> ${isHindi?'सीटें':'Seats'}: ${sList}</div></div>`;
                 });
             });
         });
     }
 
-    // --- ADMIN DRIVER PANEL ---
+    // --- ADMIN DRIVER PANEL WITH LAYERS ---
     function openAdmin() { 
-        if(prompt("Driver Dashboard PIN:") === PIN) { 
+        if(prompt(isHindi ? "ड्राइवर पिन डालें:" : "Driver Dashboard PIN:") === PIN) { 
             document.getElementById('adminTag').style.display='inline'; document.getElementById('botNav').style.display='none'; 
-            document.getElementById('adminUpi').value = adminUpiId; loadManifest(); switchScreen('adminScreen'); 
-        } else showToast("Access Denied", "error"); 
+            document.getElementById('adminUpi').value = adminUpiId; 
+            switchAdmTab('manifest'); switchScreen('adminScreen'); 
+        } else showToast(isHindi ? "गलत पिन" : "Access Denied", "error"); 
+    }
+
+    function switchAdmTab(tabId) {
+        document.querySelectorAll('.adm-layer').forEach(l => l.style.display = 'none');
+        document.querySelectorAll('.adm-tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById('layer-' + tabId).style.display = 'block';
+        event.currentTarget.classList.add('active');
+        if(tabId === 'manifest') loadManifest();
     }
     
     function saveAdmin() { 
         adminUpiId = document.getElementById('adminUpi').value.trim(); localStorage.setItem('s_admin_upi', adminUpiId);
-        db.from('settings').upsert({key:'upi_id', value:adminUpiId}).then(() => showToast("UPI Rules Updated!")); 
+        db.from('settings').upsert({key:'upi_id', value:adminUpiId}).then(() => showToast(isHindi ? "सेटिंग्स सेव हो गईं!" : "UPI Rules Updated!")); 
     }
     
     function logoutAdmin() { document.getElementById('adminTag').style.display='none'; switchScreen('authScreen'); }
@@ -605,10 +656,15 @@
         const d = document.getElementById('admDate').value; const t = document.getElementById('admTime').value;
         const c = document.getElementById('manifestList'); c.innerHTML = '<div class="skeleton" style="width:100%; height:150px; margin-bottom:15px;"></div>';
         manifestDataCache = `*LIVE MANIFEST: ${d} | ${t}*\n`;
+        document.getElementById('admSearch').value = '';
         
         db.from('bookings').select('*').eq('journey_date', d).eq('journey_time', t).then(bRes => {
             c.innerHTML = '';
-            if(!bRes.data || bRes.data.length === 0) { document.getElementById('admSeats').innerHTML = `0<span style="font-size: 16px; color: var(--text-muted);">/9</span>`; document.getElementById('admRevUpi').innerText = "₹0"; document.getElementById('admRevCash').innerText = "₹0"; c.innerHTML = '<p style="text-align:center;color:var(--text-muted); font-weight:700; margin-top:30px;">No bookings for this schedule.</p>'; return; }
+            if(!bRes.data || bRes.data.length === 0) { 
+                document.getElementById('admSeats').innerHTML = `0<span style="font-size: 16px; color: var(--text-muted);">/9</span>`; 
+                document.getElementById('admRevUpi').innerText = "₹0"; document.getElementById('admRevCash').innerText = "₹0"; 
+                c.innerHTML = `<p style="text-align:center;color:var(--text-muted); font-weight:700; margin-top:30px;">${isHindi?'कोई यात्री नहीं।':'No bookings for this schedule.'}</p>`; return; 
+            }
             
             let seatsC = 0; let revUpi = 0; let revCash = 0; let pnrs = bRes.data.map(b => b.pnr);
             
@@ -618,21 +674,31 @@
                     let pList = pRes.data ? pRes.data.filter(p => p.pnr === b.pnr) : [];
                     seatsC += pList.length;
                     
-                    let passHTML = pList.map(p => `<div style="font-size:14px; margin-top:10px; display:flex; align-items:center; background:rgba(255,255,255,0.03); padding:10px; border-radius:10px;"><i class="fa-solid fa-user" style="color:var(--text-muted); margin-right:10px; font-size:12px;"></i> <span style="color:var(--gold); font-weight:800; margin-right:8px;">S${p.seat_no}:</span> <span style="font-weight:700;">${p.name}</span> <span style="color:var(--text-muted); font-size:12px; font-weight:700; margin-left:6px;">(${p.age})</span></div>`).join('');
+                    let passHTML = pList.map(p => `<div style="font-size:14px; margin-top:10px; display:flex; align-items:center; background:rgba(255,255,255,0.03); padding:10px; border-radius:10px;"><i class="fa-solid fa-user" style="color:var(--text-muted); margin-right:10px; font-size:12px;"></i> <span style="color:var(--gold); font-weight:800; margin-right:8px;">S${p.seat_no}:</span> <span class="m-name" style="font-weight:700;">${p.name}</span> <span style="color:var(--text-muted); font-size:12px; font-weight:700; margin-left:6px;">(${p.age})</span></div>`).join('');
                     manifestDataCache += `\nPNR: ${b.pnr}\nSeats: ${pList.map(p=>p.seat_no).join(',')}\nPh: ${b.phone}\nDue: ${b.payment_mode==='CASH'?('Rs '+b.fare):'PAID'}\n`;
                     
-                    let actBtn = b.payment_mode === 'CASH' ? `<button class="btn btn-dark" style="padding:8px 16px; font-size:12px; margin:0; width:auto; border-radius:100px; color:var(--success); border-color:var(--success);" onclick="markAsPaid('${b.pnr}')"><i class="fa-solid fa-check"></i> Collect Cash</button>` : `<span style="font-size:12px; font-weight:900; color:var(--success); background:rgba(16,185,129,0.15); padding:8px 16px; border-radius:100px;"><i class="fa-solid fa-check-double"></i> PAID</span>`;
+                    let actBtn = b.payment_mode === 'CASH' ? `<button class="btn btn-dark" style="padding:8px 16px; font-size:12px; margin:0; width:auto; border-radius:100px; color:var(--success); border-color:var(--success);" onclick="markAsPaid('${b.pnr}')"><i class="fa-solid fa-check"></i> ${isHindi?'नकद लिया':'Collect Cash'}</button>` : `<span style="font-size:12px; font-weight:900; color:var(--success); background:rgba(16,185,129,0.15); padding:8px 16px; border-radius:100px;"><i class="fa-solid fa-check-double"></i> PAID</span>`;
 
-                    c.innerHTML += `<div class="glass-card" style="padding:22px; margin-bottom:15px; border-color:rgba(255,255,255,0.08);"><div style="display:flex; justify-content:space-between; font-weight:800; border-bottom:1px dashed var(--glass-border); padding-bottom:12px; margin-bottom:8px;"><span style="font-size:14px; color:var(--gold);">${b.pnr}</span><span style="font-size: 13px; color: var(--text-muted);">${b.route_from} > ${b.route_to}</span></div>${passHTML}<div style="margin-top:20px; display:flex; justify-content:space-between; align-items:center; border-top:1px solid rgba(255,255,255,0.05); padding-top:16px;"><div style="display:flex; gap:16px;"><a href="tel:${b.phone}" style="color:var(--text-main); font-size:20px; transition:0.2s;"><i class="fa-solid fa-phone"></i></a> <a href="https://wa.me/91${b.phone}" style="color:var(--success); font-size:20px; transition:0.2s;"><i class="fa-brands fa-whatsapp"></i></a></div>${actBtn}</div></div>`;
+                    c.innerHTML += `<div class="glass-card manifest-card" style="padding:22px; margin-bottom:15px; border-color:rgba(255,255,255,0.08);"><div style="display:flex; justify-content:space-between; font-weight:800; border-bottom:1px dashed var(--glass-border); padding-bottom:12px; margin-bottom:8px;"><span class="m-pnr" style="font-size:14px; color:var(--gold);">${b.pnr}</span><span style="font-size: 13px; color: var(--text-muted);">${b.route_from} > ${b.route_to}</span></div>${passHTML}<div style="margin-top:20px; display:flex; justify-content:space-between; align-items:center; border-top:1px solid rgba(255,255,255,0.05); padding-top:16px;"><div style="display:flex; gap:16px;"><a href="tel:${b.phone}" style="color:var(--text-main); font-size:20px; transition:0.2s;"><i class="fa-solid fa-phone"></i></a> <a href="https://wa.me/91${b.phone}" style="color:var(--success); font-size:20px; transition:0.2s;"><i class="fa-brands fa-whatsapp"></i></a></div>${actBtn}</div></div>`;
                 });
                 document.getElementById('admSeats').innerHTML = `${seatsC}<span style="font-size: 16px; color: var(--text-muted);">/9</span>`; document.getElementById('admRevUpi').innerText = `₹${revUpi}`; document.getElementById('admRevCash').innerText = `₹${revCash}`;
             });
         });
     }
 
+    function filterManifest() {
+        const input = document.getElementById('admSearch').value.toUpperCase();
+        const cards = document.querySelectorAll('.manifest-card');
+        cards.forEach(card => {
+            const pnr = card.querySelector('.m-pnr').innerText.toUpperCase();
+            const names = Array.from(card.querySelectorAll('.m-name')).map(n => n.innerText.toUpperCase()).join(' ');
+            if(pnr.includes(input) || names.includes(input)) card.style.display = ""; else card.style.display = "none";
+        });
+    }
+
     function markAsPaid(pnr) {
-        if(confirm("Confirm cash collected from passenger?")) {
-            db.from('bookings').update({ payment_mode: 'CASH_PAID' }).eq('pnr', pnr).then(() => { showToast("Payment Updated Successfully!"); loadManifest(); });
+        if(confirm(isHindi ? "नकद प्राप्त हुआ?" : "Confirm cash collected from passenger?")) {
+            db.from('bookings').update({ payment_mode: 'CASH_PAID' }).eq('pnr', pnr).then(() => { showToast(isHindi ? "अपडेट हो गया!" : "Payment Updated!"); loadManifest(); });
         }
     }
 
