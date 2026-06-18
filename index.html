@@ -97,7 +97,6 @@
 <body>
 
 <div class="ambient-bg"></div>
-
 <div id="toast"><i id="toastIcon" class="fa-solid fa-bell"></i> <span id="toastMsg">Alert</span></div>
 
 <div id="splashScreen" style="position:fixed; top:0; left:0; width:100%; height:100vh; background:var(--bg-base); z-index:9999; display:flex; flex-direction:column; justify-content:center; align-items:center; transition: opacity 0.4s;">
@@ -107,7 +106,6 @@
 </div>
 
 <div class="app-frame">
-    <!-- TOP HEADER -->
     <div class="top-nav">
         <div class="brand-logo"><i class="fa-solid fa-bus"></i> सार्थी <span id="adminTag" style="display:none; color:#fff; background:var(--danger); padding:4px 8px; font-size:10px; font-weight:900; border-radius:6px; letter-spacing: 1px; margin-left: 8px; box-shadow: 0 0 12px rgba(239,68,68,0.6);">DRIVER</span></div>
         <div style="display:flex; gap:10px; align-items:center;">
@@ -116,7 +114,6 @@
         </div>
     </div>
 
-    <!-- 1. AUTH SCREEN -->
     <div id="authScreen" class="screen active">
         <div style="text-align:center; margin:40px 0 30px 0;">
             <h1 class="translate" data-en="Sarthi Travels" data-hi="सार्थी ट्रेवल्स" style="font-size: 42px; font-weight: 900;">Sarthi Travels</h1>
@@ -154,7 +151,6 @@
         <a href="#" onclick="openAdmin()" class="translate" data-en="Driver Portal" data-hi="ड्राइवर पोर्टल" style="text-align:center; display:block; margin-top:10px; color:var(--text-muted); font-size:12px; font-weight: 700; text-decoration:none;"><i class="fa-solid fa-user-astronaut"></i> Driver Portal</a>
     </div>
 
-    <!-- 2. HOME SCREEN -->
     <div id="homeScreen" class="screen">
         <h2 style="font-size:36px; font-weight: 900; margin-bottom:25px; line-height: 1.1;" class="translate" data-en="Where to today?" data-hi="आज कहाँ जाना है?">Where to today?</h2>
         <div class="glass-card" style="padding: 30px 24px;">
@@ -187,7 +183,6 @@
         </div>
     </div>
 
-    <!-- 3. SEAT MAP SCREEN -->
     <div id="seatScreen" class="screen">
         <div style="display:flex; align-items:center; margin-bottom:30px;">
             <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 12px 16px; border-radius: 14px; margin-right: 15px; cursor: pointer;" onclick="switchTab('home')"><i class="fa-solid fa-arrow-left"></i></div>
@@ -217,7 +212,6 @@
         </div>
     </div>
 
-    <!-- 4. PASSENGER DETAILS -->
     <div id="passengerScreen" class="screen">
         <div style="display:flex; align-items:center; margin-bottom:25px;">
             <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 12px 16px; border-radius: 14px; margin-right: 15px; cursor: pointer;" onclick="switchScreen('seatScreen')"><i class="fa-solid fa-arrow-left"></i></div>
@@ -229,7 +223,6 @@
         </button>
     </div>
 
-    <!-- 5. CHECKOUT -->
     <div id="checkoutScreen" class="screen">
         <div style="display:flex; align-items:center; margin-bottom:25px;">
             <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 12px 16px; border-radius: 14px; margin-right: 15px; cursor: pointer;" onclick="switchScreen('passengerScreen')"><i class="fa-solid fa-arrow-left"></i></div>
@@ -263,22 +256,18 @@
         <div class="glass-card" id="upiBox" style="border-color:var(--gold); text-align:center; background: rgba(234,179,8,0.05);">
             <div style="font-weight:900; font-size:20px; margin-bottom:5px;"><i class="fa-brands fa-google-pay" style="color:var(--gold);"></i> <span class="translate" data-en="Pay via UPI" data-hi="UPI से भुगतान करें">Pay via UPI</span></div>
             <div id="upiDisplay" style="font-size:13px; color:var(--text-muted); margin-bottom:25px; font-weight: 600;">Fetching secure UPI...</div>
-            <div style="background: #fff; padding: 10px; border-radius: 16px; display: inline-block; margin-bottom: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
-                <img id="qrCode" src="" style="width:160px; height:160px; display:none; border-radius: 8px;">
-            </div>
             
             <div style="display:flex; gap:10px;">
-                <button class="btn btn-dark" style="border-radius: 100px; font-size: 14px; flex:1;" onclick="window.location.href='upi://pay?pa='+adminUpiId+'&pn=Sarthi&am='+(state.booking.pass.length*FARE)+'&cu=INR'">
-                    <i class="fa-solid fa-bolt"></i> <span class="translate" data-en="Open UPI App" data-hi="UPI ऐप खोलें">Open UPI App</span>
+                <button class="btn btn-dark" style="border-radius: 100px; font-size: 14px; flex:1; border-color: rgba(234,179,8,0.5);" onclick="openUPIApp()">
+                    <i class="fa-solid fa-bolt" style="color: var(--gold);"></i> <span class="translate" data-en="Open App" data-hi="ऐप खोलें">Open App</span>
                 </button>
-                <button class="btn btn-green" style="border-radius: 100px; font-size: 14px; flex:1;" onclick="confirmBooking('UPI')" id="upiBtn">
-                    <i class="fa-solid fa-check"></i> <span class="translate" data-en="Verify Payment" data-hi="पेमेंट कन्फर्म करें">Verify Payment</span>
+                <button class="btn btn-green" style="border-radius: 100px; font-size: 14px; flex:1.2;" onclick="confirmBooking('UPI_PENDING')" id="upiBtn">
+                    <i class="fa-solid fa-check"></i> <span class="translate" data-en="I Have Paid" data-hi="पेमेंट कर दिया">I Have Paid</span>
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- 6. BOARDING PASS SCREEN -->
     <div id="ticketScreen" class="screen">
         <div style="text-align:center; margin-bottom:20px; margin-top: 10px;">
             <div style="width: 80px; height: 80px; background: rgba(16, 185, 129, 0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px auto; border: 2px solid var(--success);">
@@ -332,13 +321,11 @@
         </div>
     </div>
 
-    <!-- 7. TRIPS -->
     <div id="tripsScreen" class="screen">
         <h2 style="font-size: 32px; font-weight: 900; margin-bottom:25px;" class="translate" data-en="My Bookings" data-hi="मेरी यात्रा">My Bookings</h2>
         <div id="tripsList" style="overflow-y:auto; flex:1; padding-right: 5px;"></div>
     </div>
 
-    <!-- 8. ADMIN DASHBOARD (LAYERED) -->
     <div id="adminScreen" class="screen">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
             <h2 style="color:var(--gold); font-size: 26px; font-weight: 900;"><i class="fa-solid fa-shield-halved"></i> <span class="translate" data-en="Driver Panel" data-hi="ड्राइवर पैनल">Driver Panel</span></h2>
@@ -347,16 +334,13 @@
             </button>
         </div>
 
-        <!-- LAYER TABS -->
         <div class="adm-tabs">
             <button id="tab-manifest" class="adm-tab-btn active translate" onclick="switchAdmTab('manifest', this)" data-en="Manifest" data-hi="यात्री सूची">Manifest</button>
             <button id="tab-revenue" class="adm-tab-btn translate" onclick="switchAdmTab('revenue', this)" data-en="Revenue" data-hi="कमाई">Revenue</button>
             <button id="tab-setup" class="adm-tab-btn translate" onclick="switchAdmTab('setup', this)" data-en="Setup" data-hi="सेटिंग्स">Setup</button>
         </div>
 
-        <!-- LAYER 1: MANIFEST (DEFAULT) -->
         <div id="layer-manifest" class="adm-layer" style="display: block; flex:1; overflow-y:auto;">
-            
             <div style="display:flex; gap:15px; margin-top:20px; margin-bottom:20px;">
                 <div class="input-group" style="flex:1; margin:0;"><label class="translate" data-en="DATE" data-hi="तारीख">DATE</label><input type="date" id="admDate" class="input" style="margin:0; padding:12px;" onchange="loadManifest()"></div>
                 <div class="input-group" style="flex:1; margin:0;"><label class="translate" data-en="TIME" data-hi="समय">TIME</label>
@@ -369,7 +353,6 @@
                 </div>
             </div>
 
-            <!-- NEW: OFFLINE BLOCK SEAT SECTION -->
             <div class="glass-card" style="border-color:var(--danger); padding:18px; margin-bottom: 20px;">
                 <div class="translate" data-en="Block Offline Seats" data-hi="ऑफलाइन सीट बुक करें" style="font-size: 13px; font-weight: 800; color: var(--danger); margin-bottom: 12px;"><i class="fa-solid fa-lock"></i> Block Offline Seats</div>
                 <div style="display:flex; gap:10px;">
@@ -390,26 +373,24 @@
             <div id="manifestList"></div>
         </div>
 
-        <!-- LAYER 2: REVENUE -->
         <div id="layer-revenue" class="adm-layer">
             <div class="stats-grid">
                 <div class="stat-box">
                     <div class="translate" data-en="TOTAL SEATS" data-hi="कुल सीटें" style="font-size:10px; color:var(--text-muted); font-weight: 800; letter-spacing: 1px;">TOTAL SEATS</div>
-                    <div style="font-size:32px; font-weight:900; color:var(--gold); margin-top: 5px;" id="admSeats">0<span style="font-size: 16px; color: var(--text-muted);">/9</span></div>
+                    <div style="font-size:32px; font-weight:900; color:var(--gold); margin-top: 5px;" id="admSeatsRev">0<span style="font-size: 16px; color: var(--text-muted);">/9</span></div>
                 </div>
                 <div class="stat-box">
-                    <div class="translate" data-en="UPI (ONLINE)" data-hi="ऑनलाइन पैसे" style="font-size:10px; color:var(--text-muted); font-weight: 800; letter-spacing: 1px;">UPI (ONLINE)</div>
+                    <div class="translate" data-en="VERIFIED UPI" data-hi="ऑनलाइन पैसे" style="font-size:10px; color:var(--text-muted); font-weight: 800; letter-spacing: 1px;">VERIFIED UPI</div>
                     <div style="font-size:32px; font-weight:900; color:var(--success); margin-top: 5px;" id="admRevUpi">₹0</div>
                 </div>
                 <div class="stat-box" style="grid-column: span 2; background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.3);">
-                    <div class="translate" data-en="CASH TO COLLECT" data-hi="नकद पैसे" style="font-size:12px; color:var(--danger); font-weight: 800; letter-spacing: 2px;">CASH TO COLLECT</div>
+                    <div class="translate" data-en="CASH TO COLLECT" data-hi="नकद पैसे (बकाया)" style="font-size:12px; color:var(--danger); font-weight: 800; letter-spacing: 2px;">CASH TO COLLECT</div>
                     <div style="font-size:40px; font-weight:900; color:var(--danger); margin-top: 5px;" id="admRevCash">₹0</div>
                 </div>
             </div>
             <p class="translate" data-en="Revenue data updates based on the selected date and time in the Manifest tab." data-hi="कमाई का डेटा 'यात्री सूची' वाले टैब की तारीख के अनुसार दिखता है।" style="color:var(--text-muted); font-size:12px; text-align:center;">Revenue data updates based on the selected date and time in the Manifest tab.</p>
         </div>
 
-        <!-- LAYER 3: SETUP -->
         <div id="layer-setup" class="adm-layer">
             <div class="glass-card" style="border-color:var(--text-muted); padding:24px;">
                 <div class="translate" data-en="UPI ID Configuration" data-hi="UPI आईडी सेटअप" style="font-size: 14px; font-weight: 800; color: var(--gold); margin-bottom: 20px;"><i class="fa-solid fa-qrcode"></i> UPI ID Configuration</div>
@@ -424,7 +405,6 @@
         </div>
     </div>
 
-    <!-- BOTTOM NAV -->
     <div class="bottom-nav" id="botNav" style="display:none;">
         <div class="nav-item active" onclick="switchTab('home')"><i class="fa-solid fa-house"></i> <span class="translate" data-en="Home" data-hi="होम">Home</span></div>
         <div class="nav-item" onclick="switchTab('trips')"><i class="fa-solid fa-ticket-simple"></i> <span class="translate" data-en="Trips" data-hi="यात्रा">Trips</span></div>
@@ -433,7 +413,7 @@
 </div>
 
 <script>
-    // --- SUPABASE ENGINE ---
+    // --- SUPABASE ENGINE FIX APPLIED HERE ---
     const SUPABASE_URL = "https://dauogmpxplaochdjntnj.supabase.co"; 
     const SUPABASE_ANON_KEY = "sb_publishable_swVHpNxlJuQjQop0cziIjg_44U-ofWf";
     const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -460,9 +440,9 @@
         }).catch(err => console.log("UPI Load skipped."));
 
         // ACCURATE LOCAL TIMEZONE FIX FOR INDIA (IST)
-        const tzDate = new Date();
-        const localOffset = tzDate.getTimezoneOffset() * 60000;
-        const localISOTime = (new Date(tzDate.getTime() - localOffset)).toISOString().slice(0, -1);
+        const now = new Date();
+        const localOffset = now.getTimezoneOffset() * 60000;
+        const localISOTime = new Date(now.getTime() - localOffset).toISOString().slice(0, -1);
         const todayLocal = localISOTime.split('T')[0];
 
         document.getElementById('dateInput').value = document.getElementById('dateInput').min = document.getElementById('admDate').value = todayLocal;
@@ -483,8 +463,9 @@
         const icon = document.getElementById('toastIcon');
         document.getElementById('toastMsg').innerText = msg;
         if(type === 'error') { t.style.borderColor = 'var(--danger)'; icon.className = 'fa-solid fa-circle-exclamation'; icon.style.color = 'var(--danger)'; }
+        else if(type === 'warning') { t.style.borderColor = 'var(--warning)'; icon.className = 'fa-solid fa-triangle-exclamation'; icon.style.color = 'var(--warning)'; }
         else { t.style.borderColor = 'var(--gold)'; icon.className = 'fa-solid fa-circle-check'; icon.style.color = 'var(--gold)'; }
-        t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000);
+        t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3500);
     }
 
     function toggleLanguage() { isHindi = !isHindi; applyLanguage(); }
@@ -551,6 +532,22 @@
         state.search.from = document.getElementById('fromInput').value; state.search.to = document.getElementById('toInput').value;
         state.search.date = document.getElementById('dateInput').value; state.search.time = document.getElementById('timeInput').value;
         if(!state.search.date) return showToast(isHindi ? "तारीख चुनें।" : "Please select a valid journey date.", "error");
+        
+        // PAST TIME BLOCKING LOGIC
+        const now = new Date();
+        const todayLocal = new Date(now.getTime() - (now.getTimezoneOffset() * 60000)).toISOString().split('T')[0];
+        
+        if (state.search.date === todayLocal) {
+            let selectedHour = 8;
+            if(state.search.time === '07:00 AM') selectedHour = 7;
+            if(state.search.time === '04:00 PM') selectedHour = 16;
+            if(now.getHours() >= selectedHour) {
+                return showToast(isHindi ? "यह बस जा चुकी है! कृपया अगला समय चुनें।" : "This bus has already departed! Please select future time.", "error");
+            }
+        }
+        if (state.search.date < todayLocal) {
+            return showToast(isHindi ? "पुरानी तारीख नहीं चुन सकते।" : "Cannot select past dates.", "error");
+        }
         
         document.getElementById('seatTitle').innerText = `${state.search.from} - ${state.search.to}`;
         document.getElementById('seatSubtitle').innerText = `${state.search.date} | ${state.search.time}`;
@@ -625,11 +622,16 @@
         switchScreen('checkoutScreen');
     }
 
+    function openUPIApp() {
+        let amt = state.booking.pass.length * FARE;
+        window.location.href = `upi://pay?pa=${adminUpiId}&pn=Sarthi&am=${amt}&cu=INR`;
+    }
+
     function confirmBooking(mode) {
         if(mode === 'CASH') {
             document.getElementById('cashBtn').innerHTML = `<div><div style="font-weight:900; font-size:18px;"><i class="fa-solid fa-circle-notch fa-spin" style="color:var(--gold); margin-right:12px;"></i> ${isHindi?'सुरक्षित कर रहे हैं...':'Reserving...'}</div></div>`;
         } else {
-            document.getElementById('upiBtn').innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> ${isHindi?'प्रतीक्षा करें...':'Verifying...'}`;
+            document.getElementById('upiBtn').innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> ${isHindi?'प्रतीक्षा करें...':'Sending...'}`;
         }
         
         const pnrStr = 'PNR'+Math.floor(100000+Math.random()*900000);
@@ -638,7 +640,7 @@
         
         db.from('bookings').insert([bookingRow]).then((res) => {
             if(res.error) { 
-                showToast("DB Error: Go to Supabase SQL Editor and Disable RLS Policy!", "error"); 
+                showToast("DB Error: Unlock RLS Policy in Supabase!", "error"); 
                 if(mode === 'CASH') document.getElementById('cashBtn').innerHTML = "Error Occurred";
                 else document.getElementById('upiBtn').innerHTML = "Error Occurred";
                 return; 
@@ -651,7 +653,7 @@
                 state.ticket = { pnr: pnrStr, phone: state.userPhone, from: state.search.from, to: state.search.to, date: state.search.date, time: state.search.time, pass: state.booking.pass, fare: bookingRow.fare, mode };
                 
                 if(mode === 'CASH') document.getElementById('cashBtn').innerHTML = `<div><div style="font-weight:900; font-size:18px;"><i class="fa-solid fa-money-bill-wave" style="color:var(--success); margin-right:12px;"></i> <span class="translate" data-en="Pay in Bus (Cash)" data-hi="बस में नकद दें">${isHindi?'बस में नकद दें':'Pay in Bus (Cash)'}</span></div><div class="translate" data-en="Pay directly to the driver" data-hi="ड्राइवर को पैसे दें" style="font-size:13px; color:var(--text-muted); margin-left:36px; margin-top: 4px; font-weight: 600;">${isHindi?'ड्राइवर को पैसे दें':'Pay directly to the driver'}</div></div><i class="fa-solid fa-chevron-right" style="color: var(--text-muted);"></i>`;
-                else document.getElementById('upiBtn').innerHTML = `<i class="fa-solid fa-check"></i> Verified`;
+                else document.getElementById('upiBtn').innerHTML = `<i class="fa-solid fa-check"></i> ${isHindi?'पेमेंट भेज दिया':'Sent to Driver'}`;
                 
                 renderTicket(state.ticket); showToast(isHindi ? "बुकिंग सफल!" : "Booking Successful!"); switchScreen('ticketScreen');
             });
@@ -663,13 +665,14 @@
         document.getElementById('tDate').innerText = `${t.date} | ${t.time}`; document.getElementById('tSeats').innerText = t.pass.map(p=>p.s).join(', ');
         document.getElementById('tPhone').innerHTML = `<i class="fa-solid fa-phone"></i> ${t.phone}`;
         let sEl = document.getElementById('tStatus');
-        if(t.mode==='UPI') { sEl.innerText = isHindi ? "ऑनलाइन पेमेंट" : "PAID VIA UPI"; sEl.style.background = "rgba(16,185,129,0.15)"; sEl.style.color = "#10B981"; }
-        else { sEl.innerText = (isHindi ? "बकाया: ₹" : "DUE: ₹") + t.fare; sEl.style.background = "rgba(245,158,11,0.15)"; sEl.style.color = "#F59E0B"; }
+        if(t.mode==='UPI_PENDING') { sEl.innerText = isHindi ? "UPI पेंडिंग (वेरिफिकेशन)" : "UPI PENDING VERIFICATION"; sEl.style.background = "rgba(245,158,11,0.15)"; sEl.style.color = "#F59E0B"; }
+        else if(t.mode==='UPI_PAID') { sEl.innerText = isHindi ? "ऑनलाइन पेमेंट" : "PAID VIA UPI"; sEl.style.background = "rgba(16,185,129,0.15)"; sEl.style.color = "#10B981"; }
+        else { sEl.innerText = (isHindi ? "बकाया: ₹" : "DUE: ₹") + t.fare; sEl.style.background = "rgba(239,68,68,0.15)"; sEl.style.color = "#EF4444"; }
     }
 
     function sendWhatsApp() {
         let pText = state.ticket.pass.map(p=>`🎫 *S${p.s}:* ${p.n} (${p.a})`).join('\n');
-        let m = `*SARTHI PREMIUM TRAVELS* 🚌\n\n*PNR:* ${state.ticket.pnr}\n*Route:* ${state.ticket.from} ➔ ${state.ticket.to}\n*Schedule:* ${state.ticket.date} | ${state.ticket.time}\n\n*Passengers:*\n${pText}\n\n*Ph:* ${state.ticket.phone}\n*Status:* ${state.ticket.mode} (₹${state.ticket.fare})\n\n_Please confirm receipt._`;
+        let m = `*SARTHI PREMIUM TRAVELS* 🚌\n\n*PNR:* ${state.ticket.pnr}\n*Route:* ${state.ticket.from} ➔ ${state.ticket.to}\n*Schedule:* ${state.ticket.date} | ${state.ticket.time}\n\n*Passengers:*\n${pText}\n\n*Ph:* ${state.ticket.phone}\n*Status:* ${state.ticket.mode === 'UPI_PENDING' ? 'Sent via UPI (Please Verify)' : state.ticket.mode} (₹${state.ticket.fare})\n\n_Please confirm receipt._`;
         window.open(`https://wa.me/91${ADMIN_WHATSAPP}?text=${encodeURIComponent(m)}`, '_blank'); switchTab('trips');
     }
 
@@ -681,14 +684,17 @@
             res.data.forEach(t => {
                 db.from('passengers').select('seat_no').eq('pnr', t.pnr).then(pRes => {
                     let sList = pRes.data ? pRes.data.map(x=>x.seat_no).join(', ') : '';
-                    let statusText = t.payment_mode.includes('PAID') ? (isHindi?'भुगतान किया':'PAID') : (isHindi?'नकद':'PAY IN BUS');
-                    c.innerHTML += `<div class="glass-card" style="border-left:4px solid var(--gold); padding:20px; margin-bottom:18px;"><div style="display:flex; justify-content:space-between; margin-bottom:12px;"><strong style="font-size:14px; color:var(--text-muted);">${t.pnr}</strong> <span style="font-size:11px; font-weight:900; padding:6px 10px; border-radius:8px; background:${t.payment_mode.includes('PAID')?'rgba(16,185,129,0.15)':'rgba(245,158,11,0.15)'}; color:${t.payment_mode.includes('PAID')?'var(--success)':'var(--warning)'}; letter-spacing:1px;">${statusText}</span></div><div style="font-weight:900; font-size:18px; margin-bottom:10px;">${t.route_from} <i class="fa-solid fa-arrow-right" style="color:var(--text-muted); font-size: 14px; margin: 0 6px;"></i> ${t.route_to}</div><div style="font-size:13px; color:var(--text-muted); font-weight:600; margin-bottom:10px;"><i class="fa-regular fa-calendar" style="margin-right:6px;"></i> ${t.journey_date} | ${t.journey_time}</div><div style="font-size:14px; color:var(--gold); font-weight:800;"><i class="fa-solid fa-chair" style="margin-right:6px;"></i> ${isHindi?'सीटें':'Seats'}: ${sList}</div></div>`;
+                    let statusText = t.payment_mode === 'UPI_PAID' || t.payment_mode === 'CASH_PAID' ? (isHindi?'भुगतान किया':'PAID') : t.payment_mode === 'UPI_PENDING' ? (isHindi?'UPI पेंडिंग':'UPI PENDING') : (isHindi?'नकद दें':'PAY IN BUS');
+                    let statusColor = t.payment_mode === 'UPI_PAID' || t.payment_mode === 'CASH_PAID' ? 'var(--success)' : t.payment_mode === 'UPI_PENDING' ? 'var(--warning)' : 'var(--danger)';
+                    let statusBg = t.payment_mode === 'UPI_PAID' || t.payment_mode === 'CASH_PAID' ? 'rgba(16,185,129,0.15)' : t.payment_mode === 'UPI_PENDING' ? 'rgba(245,158,11,0.15)' : 'rgba(239,68,68,0.15)';
+
+                    c.innerHTML += `<div class="glass-card" style="border-left:4px solid var(--gold); padding:20px; margin-bottom:18px;"><div style="display:flex; justify-content:space-between; margin-bottom:12px;"><strong style="font-size:14px; color:var(--text-muted);">${t.pnr}</strong> <span style="font-size:10px; font-weight:900; padding:6px 10px; border-radius:8px; background:${statusBg}; color:${statusColor}; letter-spacing:1px;">${statusText}</span></div><div style="font-weight:900; font-size:18px; margin-bottom:10px;">${t.route_from} <i class="fa-solid fa-arrow-right" style="color:var(--text-muted); font-size: 14px; margin: 0 6px;"></i> ${t.route_to}</div><div style="font-size:13px; color:var(--text-muted); font-weight:600; margin-bottom:10px;"><i class="fa-regular fa-calendar" style="margin-right:6px;"></i> ${t.journey_date} | ${t.journey_time}</div><div style="font-size:14px; color:var(--gold); font-weight:800;"><i class="fa-solid fa-chair" style="margin-right:6px;"></i> ${isHindi?'सीटें':'Seats'}: ${sList}</div></div>`;
                 });
             });
         });
     }
 
-    // --- ADMIN DRIVER PANEL ---
+    // --- ADMIN DRIVER PANEL WITH LAYERS ---
     function openAdmin() { 
         if(prompt(isHindi ? "ड्राइवर पिन डालें:" : "Driver Dashboard PIN:") === PIN) { 
             document.getElementById('adminTag').style.display='inline'; document.getElementById('botNav').style.display='none'; 
@@ -728,27 +734,37 @@
         query.then(bRes => {
             c.innerHTML = '';
             if(!bRes.data || bRes.data.length === 0) { 
-                document.getElementById('admSeats').innerHTML = `0<span style="font-size: 16px; color: var(--text-muted);">/9</span>`; 
+                document.getElementById('admSeatsRev').innerHTML = `0<span style="font-size: 16px; color: var(--text-muted);">/9</span>`; 
                 document.getElementById('admRevUpi').innerText = "₹0"; document.getElementById('admRevCash').innerText = "₹0"; 
                 c.innerHTML = `<p style="text-align:center;color:var(--text-muted); font-weight:700; margin-top:30px;">${isHindi?'कोई यात्री नहीं।':'No bookings for this schedule.'}</p>`; return; 
             }
             
-            let seatsC = 0; let revUpi = 0; let revCash = 0; let pnrs = bRes.data.map(b => b.pnr);
+            let seatsC = 0; let revUpi = 0; let revCashDue = 0; let pnrs = bRes.data.map(b => b.pnr);
             
             db.from('passengers').select('*').in('pnr', pnrs).then(pRes => {
                 bRes.data.forEach(b => {
-                    if(b.payment_mode === 'UPI' || b.payment_mode === 'CASH_PAID') revUpi += b.fare; else revCash += b.fare;
+                    // STRICT REVENUE MATH
+                    if(b.payment_mode === 'UPI_PAID') revUpi += b.fare; 
+                    else if(b.payment_mode === 'CASH') revCashDue += b.fare;
+                    
                     let pList = pRes.data ? pRes.data.filter(p => p.pnr === b.pnr) : [];
                     seatsC += pList.length;
                     
                     let passHTML = pList.map(p => `<div style="font-size:14px; margin-top:10px; display:flex; align-items:center; background:rgba(255,255,255,0.03); padding:10px; border-radius:10px;"><i class="fa-solid fa-user" style="color:var(--text-muted); margin-right:10px; font-size:12px;"></i> <span style="color:var(--gold); font-weight:800; margin-right:8px;">S${p.seat_no}:</span> <span class="m-name" style="font-weight:700;">${p.name}</span> <span style="color:var(--text-muted); font-size:12px; font-weight:700; margin-left:6px;">(${p.age})</span></div>`).join('');
                     manifestDataCache += `\nPNR: ${b.pnr}\nSeats: ${pList.map(p=>p.seat_no).join(',')}\nPh: ${b.phone}\nDue: ${b.payment_mode==='CASH'?('Rs '+b.fare):'PAID'}\n`;
                     
-                    let actBtn = b.payment_mode === 'CASH' ? `<button class="btn btn-dark" style="padding:8px 16px; font-size:12px; margin:0; width:auto; border-radius:100px; color:var(--success); border-color:var(--success);" onclick="markAsPaid('${b.pnr}')"><i class="fa-solid fa-check"></i> ${isHindi?'नकद लिया':'Collect Cash'}</button>` : `<span style="font-size:12px; font-weight:900; color:var(--success); background:rgba(16,185,129,0.15); padding:8px 16px; border-radius:100px;"><i class="fa-solid fa-check-double"></i> PAID</span>`;
+                    let actBtn = '';
+                    if(b.payment_mode === 'CASH') {
+                        actBtn = `<button class="btn btn-dark" style="padding:8px 16px; font-size:11px; margin:0; width:auto; border-radius:100px; color:var(--danger); border-color:rgba(239,68,68,0.3);" onclick="markAsPaid('${b.pnr}', 'CASH_PAID')"><i class="fa-solid fa-money-bill"></i> ${isHindi?'नकद लें':'Collect Cash'}</button>`;
+                    } else if(b.payment_mode === 'UPI_PENDING') {
+                        actBtn = `<button class="btn btn-dark" style="padding:8px 16px; font-size:11px; margin:0; width:auto; border-radius:100px; color:var(--warning); border-color:var(--warning);" onclick="markAsPaid('${b.pnr}', 'UPI_PAID')"><i class="fa-solid fa-bolt"></i> ${isHindi?'UPI कन्फर्म करें':'Verify UPI'}</button>`;
+                    } else {
+                        actBtn = `<span style="font-size:11px; font-weight:900; color:var(--success); background:rgba(16,185,129,0.15); padding:8px 16px; border-radius:100px;"><i class="fa-solid fa-check-double"></i> PAID</span>`;
+                    }
 
                     c.innerHTML += `<div class="glass-card manifest-card" style="padding:22px; margin-bottom:15px; border-color:rgba(255,255,255,0.08);"><div style="display:flex; justify-content:space-between; font-weight:800; border-bottom:1px dashed var(--glass-border); padding-bottom:12px; margin-bottom:8px;"><span class="m-pnr" style="font-size:14px; color:var(--gold);">${b.pnr}</span><span style="font-size: 13px; color: var(--text-muted);">${b.route_from} > ${b.route_to} <span style="color:var(--gold); margin-left:5px;">(${b.journey_time})</span></span></div>${passHTML}<div style="margin-top:20px; display:flex; justify-content:space-between; align-items:center; border-top:1px solid rgba(255,255,255,0.05); padding-top:16px;"><div style="display:flex; gap:16px;"><a href="tel:${b.phone}" style="color:var(--text-main); font-size:20px; transition:0.2s;"><i class="fa-solid fa-phone"></i></a> <a href="https://wa.me/91${b.phone}" style="color:var(--success); font-size:20px; transition:0.2s;"><i class="fa-brands fa-whatsapp"></i></a></div>${actBtn}</div></div>`;
                 });
-                document.getElementById('admSeats').innerHTML = `${seatsC}<span style="font-size: 16px; color: var(--text-muted);">/9</span>`; document.getElementById('admRevUpi').innerText = `₹${revUpi}`; document.getElementById('admRevCash').innerText = `₹${revCash}`;
+                document.getElementById('admSeatsRev').innerHTML = `${seatsC}<span style="font-size: 16px; color: var(--text-muted);">/9</span>`; document.getElementById('admRevUpi').innerText = `₹${revUpi}`; document.getElementById('admRevCash').innerText = `₹${revCashDue}`;
             });
         });
     }
@@ -763,13 +779,12 @@
         });
     }
 
-    function markAsPaid(pnr) {
-        if(confirm(isHindi ? "नकद प्राप्त हुआ?" : "Confirm cash collected from passenger?")) {
-            db.from('bookings').update({ payment_mode: 'CASH_PAID' }).eq('pnr', pnr).then(() => { showToast(isHindi ? "अपडेट हो गया!" : "Payment Updated!"); loadManifest(); });
+    function markAsPaid(pnr, newStatus) {
+        if(confirm(isHindi ? "क्या आप पेमेंट कन्फर्म करना चाहते हैं?" : "Confirm payment received?")) {
+            db.from('bookings').update({ payment_mode: newStatus }).eq('pnr', pnr).then(() => { showToast(isHindi ? "पेमेंट वेरीफाई हो गया!" : "Payment Verified!"); loadManifest(); });
         }
     }
 
-    // --- NEW OFFLINE SEAT BLOCKER ---
     function blockOfflineSeat() {
         const d = document.getElementById('admDate').value;
         let t = document.getElementById('admTime').value;
