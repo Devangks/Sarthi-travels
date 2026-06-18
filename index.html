@@ -12,7 +12,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
-        /* DYNAMIC THEME SYSTEM */
+        /* CSS architecture kept inline for mobile-to-Vercel deployment ease, but organized globally */
         :root {
             --bg-base: #04060A; --bg-surface: #0B101E; --glass: rgba(15, 23, 42, 0.65);
             --primary: #EAB308; --primary-light: #FDE047; --primary-glow: rgba(234, 179, 8, 0.25);
@@ -106,7 +106,6 @@
         .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
         .stat-box { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05); padding: 20px; border-radius: 16px; text-align: center; }
         
-        /* SCROLLABLE MANIFEST LIST */
         #manifestList { max-height: 55vh; overflow-y: auto; padding-right: 8px; padding-bottom: 20px; }
         #manifestList::-webkit-scrollbar { width: 5px; }
         #manifestList::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); border-radius: 10px; }
@@ -276,7 +275,7 @@
         
         <div class="translate" data-en="CHOOSE METHOD" data-hi="तरीका चुनें" style="font-size: 11px; font-weight: 800; color: var(--text-muted); margin-bottom: 12px; letter-spacing: 1.5px;">CHOOSE METHOD</div>
         
-        <div class="glass-card" style="cursor:pointer; display: flex; align-items: center; justify-content: space-between; padding: 20px; transition: 0.3s;" onclick="confirmBooking('CASH', false)" id="cashBtn">
+        <div class="glass-card" style="cursor:pointer; display: flex; align-items: center; justify-content: space-between; padding: 20px; transition: 0.3s;" onclick="confirmBooking('CASH')" id="cashBtn">
             <div>
                 <div style="font-weight:900; font-size:18px;"><i class="fa-solid fa-money-bill-wave" style="color:var(--success); margin-right:12px;"></i> <span class="translate" data-en="Pay in Bus (Cash)" data-hi="बस में नकद दें">Pay in Bus (Cash)</span></div>
                 <div class="translate" data-en="Pay directly to the driver" data-hi="ड्राइवर को पैसे दें" style="font-size:13px; color:var(--text-muted); margin-left:36px; margin-top: 4px; font-weight: 600;">Pay directly to the driver</div>
@@ -284,12 +283,11 @@
             <i class="fa-solid fa-chevron-right" style="color: var(--text-muted);"></i>
         </div>
         
-        <div class="glass-card" id="upiBox" style="border-color:var(--primary); text-align:center; background: var(--primary-glow); padding:20px;">
-            <div style="font-weight:900; font-size:20px; margin-bottom:15px;"><i class="fa-brands fa-google-pay" style="color:var(--primary);"></i> <span class="translate" data-en="Pay via UPI" data-hi="UPI से भुगतान करें">Pay via UPI</span></div>
-            <button class="btn btn-green" style="border-radius: 100px; font-size: 16px; margin:0;" onclick="confirmBooking('UPI_PENDING', true)" id="upiBtn">
-                <i class="fa-solid fa-bolt"></i> <span class="t-text translate" data-en="Pay via UPI App" data-hi="UPI ऐप से भुगतान करें">Pay via UPI App</span>
-            </button>
-            <div style="font-size:11px; color:var(--text-main); margin-top:10px; opacity:0.8;" class="translate" data-en="Redirects to GPay/PhonePe" data-hi="सीधे ऐप पर ले जायेगा">Redirects to GPay/PhonePe</div>
+        <div class="glass-card" id="upiBox" style="border-color:var(--primary); text-align:center; background: var(--primary-glow); padding:20px; cursor:pointer;" onclick="confirmBooking('UPI_PENDING')" id="upiBtn">
+            <div>
+                <div style="font-weight:900; font-size:20px; margin-bottom:5px;"><i class="fa-brands fa-google-pay" style="color:var(--primary); margin-right:10px;"></i> <span class="translate" data-en="Pay via UPI App" data-hi="UPI ऐप से भुगतान करें">Pay via UPI App</span></div>
+                <div style="font-size:12px; color:var(--text-main); margin-top:8px; opacity:0.8;" class="translate" data-en="Redirects to GPay/PhonePe" data-hi="सीधे ऐप पर ले जायेगा">Redirects to GPay/PhonePe</div>
+            </div>
         </div>
     </div>
 
@@ -365,7 +363,7 @@
             <button id="tab-setup" class="adm-tab-btn translate" onclick="switchAdmTab('setup', this)" data-en="Setup" data-hi="सेटिंग्स">Setup</button>
         </div>
 
-        <div id="layer-manifest" class="adm-layer" style="display: block; flex:1; overflow-y:auto;">
+        <div id="layer-manifest" class="adm-layer" style="display: block; flex:1;">
             <div style="display:flex; gap:15px; margin-top:20px; margin-bottom:20px;">
                 <div class="input-group" style="flex:1; margin:0;"><label class="translate" data-en="DATE" data-hi="तारीख">DATE</label><input type="date" id="admDate" class="input" style="margin:0; padding:12px;" onchange="loadManifest()"></div>
                 <div class="input-group" style="flex:1; margin:0;"><label class="translate" data-en="TIME" data-hi="समय">TIME</label>
@@ -389,13 +387,13 @@
                 </button>
             </div>
             
-            <input type="text" id="admSearch" class="input translate" onkeyup="filterManifest()" placeholder="Search Name or PNR..." data-en="Search Name or PNR..." data-hi="नाम या PNR खोजें..." style="padding:14px; border-radius:100px; margin-bottom:20px;">
-            
-            <button class="btn btn-primary" style="padding:16px; font-size:15px; border-radius: 100px; margin-bottom:20px;" onclick="shareManifest()">
-                <i class="fa-solid fa-share-nodes"></i> <span class="t-text translate" data-en="Share Manifest" data-hi="सूची भेजें">Share Manifest</span>
-            </button>
+            <input type="text" id="admSearch" class="input translate" onkeyup="debounceSearch()" placeholder="Search Name or PNR..." data-en="Search Name or PNR..." data-hi="नाम या PNR खोजें..." style="padding:14px; border-radius:100px; margin-bottom:20px;">
             
             <div id="manifestList"></div>
+            
+            <button class="btn btn-primary" style="padding:16px; font-size:15px; border-radius: 100px; margin-top:20px;" onclick="shareManifest()">
+                <i class="fa-solid fa-share-nodes"></i> <span class="t-text translate" data-en="Share Manifest" data-hi="सूची भेजें">Share Manifest</span>
+            </button>
         </div>
 
         <div id="layer-revenue" class="adm-layer">
@@ -448,6 +446,7 @@
     const PIN = "2003";
     let mockGeneratedPIN = "";
     let isHindi = false;
+    let searchTimer;
     let adminUpiId = localStorage.getItem('s_admin_upi') || "";
     
     const state = { userPhone: null, userName: null, ticket: null, search: { from: 'Alampur', to: 'Gwalior', date: '', time: '08:00 AM' }, booking: { seats: [], pass: [] } };
@@ -492,7 +491,7 @@
         
         db.from('settings').select('value').eq('key', 'upi_id').then(res => { 
             if(res.data && res.data[0]) { adminUpiId = res.data[0].value; localStorage.setItem('s_admin_upi', adminUpiId); } 
-        }).catch(err => console.log("UPI Check bypassed."));
+        }).catch(err => console.log("UPI Load passed."));
 
         // BULLETPROOF INDIAN TIMEZONE FIX FOR DATE PICKER
         const now = new Date();
@@ -503,7 +502,8 @@
         document.getElementById('dateInput').value = document.getElementById('dateInput').min = document.getElementById('admDate').value = todayLocal;
         updateTimes('Alampur');
 
-        const savedPhone = localStorage.getItem('s_phone'); const savedName = localStorage.getItem('s_name');
+        const savedPhone = sessionStorage.getItem('s_phone') || localStorage.getItem('s_phone'); 
+        const savedName = sessionStorage.getItem('s_name') || localStorage.getItem('s_name');
         if(savedPhone && savedName) {
             state.userPhone = savedPhone; state.userName = savedName;
             document.getElementById('userNameDisplay').innerHTML = `<i class="fa-solid fa-user-circle" style="color:var(--primary); margin-right:5px; font-size:16px;"></i> <span class="t-name">${state.userName}</span>`;
@@ -563,13 +563,14 @@
         if(code !== mockGeneratedPIN) return showToast(isHindi ? "गलत पिन।" : "Incorrect Verification PIN.", "error");
         
         state.userName = document.getElementById('nameInput').value.trim(); state.userPhone = document.getElementById('phoneInput').value.trim();
-        localStorage.setItem('s_phone', state.userPhone); localStorage.setItem('s_name', state.userName);
+        sessionStorage.setItem('s_phone', state.userPhone); sessionStorage.setItem('s_name', state.userName);
+        localStorage.setItem('s_phone', state.userPhone); localStorage.setItem('s_name', state.userName); // Keep fallback
         document.getElementById('userNameDisplay').innerHTML = `<i class="fa-solid fa-user-circle" style="color:var(--primary); margin-right:5px; font-size:16px;"></i> <span class="t-name">${state.userName}</span>`;
         document.getElementById('botNav').style.display = 'flex';
         showToast(isHindi ? "लॉगिन सफल!" : "Login Successful!"); switchTab('home');
     }
     
-    function handleLogout() { if(confirm(isHindi ? "लॉगआउट करें?" : "Are you sure you want to logout?")) { localStorage.clear(); location.reload(); } }
+    function handleLogout() { if(confirm(isHindi ? "लॉगआउट करें?" : "Are you sure you want to logout?")) { sessionStorage.clear(); localStorage.clear(); location.reload(); } }
 
     function swapRoute() {
         const btn = document.getElementById('swapBtn');
@@ -579,12 +580,12 @@
     }
     function updateTimes(f) { document.getElementById('timeInput').innerHTML = f==='Alampur' ? '<option>08:00 AM</option><option>04:00 PM</option>' : '<option>07:00 AM</option><option>04:00 PM</option>'; }
 
-    function searchBuses() {
+    async function searchBuses() {
         state.search.from = document.getElementById('fromInput').value; state.search.to = document.getElementById('toInput').value;
         state.search.date = document.getElementById('dateInput').value; state.search.time = document.getElementById('timeInput').value;
         if(!state.search.date) return showToast(isHindi ? "तारीख चुनें।" : "Please select a valid journey date.", "error");
         
-        // BUGFIX: FLAWLESS TIME TRAVEL BLOCKER
+        // BULLETPROOF TIME TRAVEL BLOCKER
         const dateParts = state.search.date.split('-');
         let hour = parseInt(state.search.time.split(':')[0]);
         const ampm = state.search.time.split(' ')[1];
@@ -593,8 +594,10 @@
         
         const busDate = new Date(dateParts[0], dateParts[1] - 1, dateParts[2], hour, 0, 0);
         const now = new Date();
+        const istOffset = 5.5 * 60 * 60 * 1000; 
+        const istNow = new Date(now.getTime() + (now.getTimezoneOffset() * 60000) + istOffset);
         
-        if (busDate < now) {
+        if (busDate < istNow) {
             return showToast(isHindi ? "यह बस जा चुकी है! कृपया अगला समय चुनें।" : "This bus has already departed! Please select future time.", "error");
         }
         
@@ -605,17 +608,18 @@
         document.getElementById('seatGrid').innerHTML = '<div class="skeleton" style="width: 250px; height: 150px; grid-column: span 4;"></div>';
         switchScreen('seatScreen');
 
-        db.from('bookings').select('pnr').eq('journey_date', state.search.date).eq('journey_time', state.search.time).eq('route_from', state.search.from).then(res => {
-            if(res.error) { showToast("Database Sync Error", "error"); drawSeats([]); return; }
-            if(res.data && res.data.length > 0) {
-                let pnrs = res.data.map(b => b.pnr);
-                db.from('passengers').select('seat_no').in('pnr', pnrs).then(pRes => {
-                    let booked = pRes.data ? pRes.data.map(p => p.seat_no) : []; drawSeats(booked);
-                });
+        try {
+            const { data: bData, error: bErr } = await db.from('bookings').select('pnr').eq('journey_date', state.search.date).eq('journey_time', state.search.time).eq('route_from', state.search.from);
+            if(bErr) throw bErr;
+            if(bData && bData.length > 0) {
+                let pnrs = bData.map(b => b.pnr);
+                const { data: pData } = await db.from('passengers').select('seat_no').in('pnr', pnrs);
+                let booked = pData ? pData.map(p => p.seat_no) : []; 
+                drawSeats(booked);
             } else { drawSeats([]); }
-        }).catch(err => {
+        } catch(err) {
             drawSeats([]); showToast("Network sync delayed.", "warning");
-        });
+        }
     }
 
     function drawSeats(booked) {
@@ -663,18 +667,17 @@
         
         document.getElementById('chkSeats').innerText = seatsLen; document.getElementById('payAmount').innerText = `₹${totalAmt}`;
         
-        if(adminUpiId) {
-            document.getElementById('upiDisplay').innerText = `UPI Secure: ${adminUpiId}`;
-        } else { document.getElementById('upiBox').style.display = 'none'; }
+        if(!adminUpiId) document.getElementById('upiBox').style.display = 'none'; 
         switchScreen('checkoutScreen');
     }
 
-    // BUGFIX: ASYNC/AWAIT SECURE CHECKOUT & UPI AUTO-REDIRECT
+    // ASYNC CHECKOUT & DIRECT UPI APP OPEN
     async function confirmBooking(mode, redirectUpi = false) {
         if(mode === 'CASH') {
             document.getElementById('cashBtn').innerHTML = `<div><div style="font-weight:900; font-size:18px;"><i class="fa-solid fa-circle-notch fa-spin" style="color:var(--success); margin-right:12px;"></i> ${isHindi?'सुरक्षित कर रहे हैं...':'Reserving...'}</div></div>`;
         } else {
-            document.getElementById('upiBtn').innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> ${isHindi?'प्रतीक्षा करें...':'Sending...'}`;
+            const upiBox = document.getElementById('upiBox');
+            upiBox.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> ${isHindi?'प्रतीक्षा करें...':'Redirecting...'}`;
         }
         
         try {
@@ -695,13 +698,12 @@
                 window.location.href = `upi://pay?pa=${adminUpiId}&pn=Sarthi&am=${amt}&cu=INR`;
             }
 
-            // Success Block
             state.ticket = { pnr: pnrStr, phone: state.userPhone, from: state.search.from, to: state.search.to, date: state.search.date, time: state.search.time, pass: state.booking.pass, fare: finalFare, mode };
             
             if(mode === 'CASH') {
                 document.getElementById('cashBtn').innerHTML = `<div><div style="font-weight:900; font-size:18px;"><i class="fa-solid fa-money-bill-wave" style="color:var(--success); margin-right:12px;"></i> <span class="t-text translate" data-en="Pay in Bus (Cash)" data-hi="बस में नकद दें">${isHindi?'बस में नकद दें':'Pay in Bus (Cash)'}</span></div><div class="t-text translate" data-en="Pay directly to the driver" data-hi="ड्राइवर को पैसे दें" style="font-size:13px; color:var(--text-muted); margin-left:36px; margin-top: 4px; font-weight: 600;">${isHindi?'ड्राइवर को पैसे दें':'Pay directly to the driver'}</div></div><i class="fa-solid fa-chevron-right" style="color: var(--text-muted);"></i>`;
             } else {
-                document.getElementById('upiBtn').innerHTML = `<i class="fa-solid fa-bolt"></i> <span class="t-text translate" data-en="Pay via UPI App" data-hi="UPI ऐप से भुगतान करें">${isHindi?'UPI ऐप से भुगतान करें':'Pay via UPI App'}</span>`;
+                document.getElementById('upiBox').innerHTML = `<div style="font-weight:900; font-size:20px; margin-bottom:5px;"><i class="fa-brands fa-google-pay" style="color:var(--primary);"></i> <span class="translate" data-en="Pay via UPI App" data-hi="UPI से भुगतान करें">Pay via UPI App</span></div>`;
             }
             
             renderTicket(state.ticket); 
@@ -709,10 +711,10 @@
             switchScreen('ticketScreen');
             
         } catch (err) {
-            console.error("Booking failed:", err);
-            showToast("Database Error. Check connection or RLS!", "error");
+            console.error(err);
+            showToast("Database Error. Check RLS in Supabase!", "error");
             if(mode === 'CASH') document.getElementById('cashBtn').innerHTML = `<div><div style="font-weight:900; font-size:18px; color:var(--danger);"><i class="fa-solid fa-circle-exclamation" style="margin-right:12px;"></i> Error Occurred</div></div>`;
-            else document.getElementById('upiBtn').innerHTML = `<i class="fa-solid fa-circle-exclamation"></i> Error`;
+            else document.getElementById('upiBox').innerHTML = `<div style="color:var(--danger); font-weight:bold;"><i class="fa-solid fa-circle-exclamation"></i> Error</div>`;
         }
     }
 
@@ -727,6 +729,7 @@
         else { sEl.innerText = (isHindi ? "बकाया: ₹" : "DUE: ₹") + t.fare; sEl.style.background = "rgba(239,68,68,0.15)"; sEl.style.color = "#EF4444"; }
         
         document.getElementById('bpHead').style.background = 'var(--primary)';
+        document.getElementById('bpHead').style.color = '#000';
     }
 
     function sendWhatsApp() {
@@ -736,7 +739,7 @@
         window.open(`https://wa.me/91${ADMIN_WHATSAPP}?text=${encodeURIComponent(m)}`, '_blank'); switchTab('trips');
     }
 
-    // USER - CANCEL BOOKING FUNCTION
+    // USER - DELETE BOOKING 
     async function cancelBookingUser(pnr) {
         if(confirm(isHindi ? "क्या आप सच में यह बुकिंग रद्द करना चाहते हैं?" : "Are you sure you want to cancel this booking?")) {
             try {
@@ -752,15 +755,14 @@
         let c = document.getElementById('tripsList'); c.innerHTML = '<div class="skeleton" style="width:100%; height:120px; margin-bottom:15px;"></div><div class="skeleton" style="width:100%; height:120px;"></div>';
         
         try {
-            const { data, error } = await db.from('bookings').select('*').eq('phone', state.userPhone).order('created_at', { ascending: false });
+            const { data, error } = await db.from('bookings').select('*, passengers(seat_no)').eq('phone', state.userPhone).order('created_at', { ascending: false });
             if(error) throw error;
             
             c.innerHTML = '';
             if(!data || data.length === 0) { c.innerHTML = `<p style="text-align:center;color:var(--text-muted); margin-top: 50px; font-weight:800;">${isHindi?'कोई यात्रा नहीं मिली।':'No booking history found.'}</p>`; return; }
             
             for(let t of data) {
-                const { data: pRes } = await db.from('passengers').select('seat_no').eq('pnr', t.pnr);
-                let sList = pRes ? pRes.map(x=>x.seat_no).join(', ') : '';
+                let sList = t.passengers ? t.passengers.map(x=>x.seat_no).join(', ') : '';
                 
                 let statusText = t.payment_mode === 'UPI_PAID' || t.payment_mode === 'CASH_PAID' ? (isHindi?'भुगतान किया':'PAID') : t.payment_mode === 'UPI_PENDING' ? (isHindi?'UPI पेंडिंग':'UPI PENDING') : (isHindi?'नकद दें':'PAY IN BUS');
                 let statusColor = t.payment_mode === 'UPI_PAID' || t.payment_mode === 'CASH_PAID' ? 'var(--success)' : t.payment_mode === 'UPI_PENDING' ? 'var(--warning)' : 'var(--danger)';
@@ -825,13 +827,18 @@
         }
     }
 
+    function debounceSearch() {
+        clearTimeout(searchTimer);
+        searchTimer = setTimeout(filterManifest, 300);
+    }
+
     async function loadManifest() {
         const d = document.getElementById('admDate').value; const t = document.getElementById('admTime').value;
         const c = document.getElementById('manifestList'); c.innerHTML = '<div class="skeleton" style="width:100%; height:150px; margin-bottom:15px;"></div>';
         manifestDataCache = `*LIVE MANIFEST: ${d} | ${t}*\n`;
         document.getElementById('admSearch').value = '';
         
-        let query = db.from('bookings').select('*').eq('journey_date', d);
+        let query = db.from('bookings').select('*, passengers(*)').eq('journey_date', d);
         if(t !== 'ALL') { query = query.eq('journey_time', t); }
 
         try {
@@ -845,15 +852,13 @@
                 c.innerHTML = `<p style="text-align:center;color:var(--text-muted); font-weight:700; margin-top:30px;">${isHindi?'कोई यात्री नहीं।':'No bookings for this schedule.'}</p>`; return; 
             }
             
-            let seatsC = 0; let revUpi = 0; let revCashDue = 0; let pnrs = bData.map(b => b.pnr);
-            
-            const { data: pData } = await db.from('passengers').select('*').in('pnr', pnrs);
+            let seatsC = 0; let revUpi = 0; let revCashDue = 0;
             
             bData.forEach(b => {
                 if(b.payment_mode === 'UPI_PAID') revUpi += b.fare; 
                 else if(b.payment_mode === 'CASH' || b.payment_mode === 'UPI_PENDING') revCashDue += b.fare;
                 
-                let pList = pData ? pData.filter(p => p.pnr === b.pnr) : [];
+                let pList = b.passengers || [];
                 seatsC += pList.length;
                 
                 let passHTML = pList.map(p => `<div style="font-size:14px; margin-top:10px; display:flex; align-items:center; background:rgba(255,255,255,0.03); padding:10px; border-radius:10px;"><i class="fa-solid fa-user" style="color:var(--text-muted); margin-right:10px; font-size:12px;"></i> <span style="color:var(--primary); font-weight:800; margin-right:8px;">S${p.seat_no}:</span> <span class="m-name" style="font-weight:700;">${p.name}</span> <span style="color:var(--text-muted); font-size:12px; font-weight:700; margin-left:6px;">(${p.age})</span></div>`).join('');
