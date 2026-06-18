@@ -15,9 +15,7 @@
         /* DYNAMIC THEME SYSTEM */
         :root {
             --bg-base: #04060A; --bg-surface: #0B101E; --glass: rgba(15, 23, 42, 0.65);
-            /* Default Gold Theme */
             --primary: #EAB308; --primary-light: #FDE047; --primary-glow: rgba(234, 179, 8, 0.25);
-            
             --text-main: #F8FAFC; --text-muted: #64748B;
             --success: #10B981; --danger: #EF4444; --warning: #F59E0B;
         }
@@ -25,7 +23,6 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Outfit', 'Noto Sans Devanagari', sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background: var(--bg-base); color: var(--text-main); display: flex; justify-content: center; min-height: 100vh; overflow-x: hidden; scroll-behavior: smooth; }
 
-        /* LIVE AMBIENT BACKGROUND */
         .ambient-bg { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; 
             background: radial-gradient(circle at 20% 10%, var(--primary-glow) 0%, transparent 45%), 
                         radial-gradient(circle at 80% 90%, rgba(16,185,129,0.08) 0%, transparent 45%); 
@@ -37,7 +34,7 @@
         .app-frame { width: 100%; max-width: 480px; min-height: 100vh; display: flex; flex-direction: column; position: relative; padding-bottom: 90px; background: var(--bg-base); box-shadow: 0 0 50px rgba(0,0,0,0.5); }
         
         .top-nav { padding: 15px 24px; background: rgba(4, 6, 10, 0.85); backdrop-filter: blur(20px); position: sticky; top: 0; z-index: 100; border-bottom: 1px solid rgba(255,255,255,0.03); display: flex; justify-content: space-between; align-items: center; }
-        .brand-logo { font-weight: 900; font-size: 22px; background: linear-gradient(to right, var(--primary-light), var(--primary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: flex; align-items: center; gap: 8px; letter-spacing: 0.5px; transition: 0.3s; }
+        .brand-logo { font-weight: 900; font-size: 22px; display: flex; align-items: center; gap: 8px; letter-spacing: 0.5px; transition: 0.3s; }
         
         .icon-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: var(--text-main); padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 700; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; }
         .icon-btn:active { transform: scale(0.92); background: var(--primary); color: #000; }
@@ -62,7 +59,6 @@
         #toast { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); background: #1E293B; color: #fff; padding: 16px 24px; border-radius: 30px; font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 12px; z-index: 10000; box-shadow: 0 20px 40px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.05); transition: top 0.5s; width: 90%; max-width: 400px; }
         #toast.show { top: 30px; }
 
-        /* THEME MODAL */
         .theme-modal { position: fixed; top: 70px; right: 20px; background: var(--bg-surface); border: 1px solid rgba(255,255,255,0.1); padding: 15px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.6); z-index: 200; display: none; transform-origin: top right; animation: scaleIn 0.2s; }
         .theme-modal.show { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
         @keyframes scaleIn { from{ opacity:0; transform: scale(0.9); } to { opacity:1; transform:scale(1); } }
@@ -109,6 +105,12 @@
         .adm-layer { display: none; animation: slideFade 0.3s; }
         .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
         .stat-box { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05); padding: 20px; border-radius: 16px; text-align: center; }
+        
+        /* SCROLLABLE MANIFEST LIST */
+        #manifestList { max-height: 55vh; overflow-y: auto; padding-right: 8px; padding-bottom: 20px; }
+        #manifestList::-webkit-scrollbar { width: 5px; }
+        #manifestList::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); border-radius: 10px; }
+        #manifestList::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
 
         @media print { body * { visibility: hidden; } #printZone, #printZone * { visibility: visible; } #printZone { position: absolute; left: 0; top: 0; width: 100%; } }
     </style>
@@ -116,16 +118,13 @@
 <body>
 
 <div class="ambient-bg"></div>
-
 <div id="toast"><i id="toastIcon" class="fa-solid fa-bell"></i> <span id="toastMsg">Alert</span></div>
 
 <div id="splashScreen" style="position:fixed; top:0; left:0; width:100%; height:100vh; background:var(--bg-base); z-index:9999; display:flex; flex-direction:column; justify-content:center; align-items:center; transition: opacity 0.4s;">
     <i class="fa-solid fa-van-shuttle" style="font-size:75px; color:var(--primary); filter:drop-shadow(0 0 25px var(--primary-glow)); transition: 0.3s;"></i>
     <h1 style="margin-top:25px; color:#fff; font-size: 40px; font-weight: 900; letter-spacing: 2px;">SARTHI</h1>
-    <p style="color:var(--primary); font-weight: 700; letter-spacing: 6px; font-size: 11px; margin-top: 5px; transition: 0.3s;">FIRST CLASS</p>
 </div>
 
-<!-- THEME CHOOSER MODAL -->
 <div id="themeModal" class="theme-modal">
     <div class="theme-circle" style="background: #EAB308;" onclick="setTheme('gold', '#EAB308', '#FDE047')" id="t-gold"><i class="fa-solid fa-check"></i></div>
     <div class="theme-circle" style="background: #00E5FF;" onclick="setTheme('cyan', '#00E5FF', '#73E8FF')" id="t-cyan"><i class="fa-solid fa-check"></i></div>
@@ -134,9 +133,11 @@
 </div>
 
 <div class="app-frame">
-    <!-- TOP HEADER -->
     <div class="top-nav">
-        <div class="brand-logo"><i class="fa-solid fa-bus"></i> सार्थी <span id="adminTag" style="display:none; color:#fff; background:var(--danger); padding:4px 8px; font-size:10px; font-weight:900; border-radius:6px; letter-spacing: 1px; margin-left: 8px; box-shadow: 0 0 12px rgba(239,68,68,0.6);">DRIVER</span></div>
+        <div class="brand-logo">
+            <span style="background: linear-gradient(to right, var(--primary-light), var(--primary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"><i class="fa-solid fa-bus"></i> सार्थी</span> 
+            <span id="adminTag" style="display:none; color:#fff; -webkit-text-fill-color: #fff; background:var(--danger); padding:4px 8px; font-size:10px; font-weight:900; border-radius:6px; letter-spacing: 1px; margin-left: 8px; box-shadow: 0 0 12px rgba(239,68,68,0.6);">DRIVER</span>
+        </div>
         <div style="display:flex; gap:10px; align-items:center;">
             <button class="icon-btn" onclick="toggleThemeModal()"><i class="fa-solid fa-palette"></i></button>
             <button class="icon-btn" onclick="toggleLanguage()">A/अ</button>
@@ -144,7 +145,6 @@
         </div>
     </div>
 
-    <!-- 1. AUTH SCREEN -->
     <div id="authScreen" class="screen active">
         <div style="text-align:center; margin:40px 0 30px 0;">
             <h1 class="translate" data-en="Sarthi Travels" data-hi="सार्थी ट्रेवल्स" style="font-size: 42px; font-weight: 900;">Sarthi Travels</h1>
@@ -182,7 +182,6 @@
         <a href="#" onclick="openAdmin()" class="translate" data-en="Driver Portal" data-hi="ड्राइवर पोर्टल" style="text-align:center; display:block; margin-top:10px; color:var(--text-muted); font-size:12px; font-weight: 700; text-decoration:none;"><i class="fa-solid fa-user-astronaut"></i> Driver Portal</a>
     </div>
 
-    <!-- 2. HOME SCREEN -->
     <div id="homeScreen" class="screen">
         <h2 style="font-size:36px; font-weight: 900; margin-bottom:25px; line-height: 1.1;" class="translate" data-en="Where to today?" data-hi="आज कहाँ जाना है?">Where to today?</h2>
         <div class="glass-card" style="padding: 30px 24px;">
@@ -215,7 +214,6 @@
         </div>
     </div>
 
-    <!-- 3. SEAT MAP SCREEN -->
     <div id="seatScreen" class="screen">
         <div style="display:flex; align-items:center; margin-bottom:30px;">
             <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 12px 16px; border-radius: 14px; margin-right: 15px; cursor: pointer;" onclick="switchTab('home')"><i class="fa-solid fa-arrow-left"></i></div>
@@ -245,7 +243,6 @@
         </div>
     </div>
 
-    <!-- 4. PASSENGER DETAILS -->
     <div id="passengerScreen" class="screen">
         <div style="display:flex; align-items:center; margin-bottom:25px;">
             <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 12px 16px; border-radius: 14px; margin-right: 15px; cursor: pointer;" onclick="switchScreen('seatScreen')"><i class="fa-solid fa-arrow-left"></i></div>
@@ -257,7 +254,6 @@
         </button>
     </div>
 
-    <!-- 5. CHECKOUT -->
     <div id="checkoutScreen" class="screen">
         <div style="display:flex; align-items:center; margin-bottom:25px;">
             <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 12px 16px; border-radius: 14px; margin-right: 15px; cursor: pointer;" onclick="switchScreen('passengerScreen')"><i class="fa-solid fa-arrow-left"></i></div>
@@ -280,7 +276,7 @@
         
         <div class="translate" data-en="CHOOSE METHOD" data-hi="तरीका चुनें" style="font-size: 11px; font-weight: 800; color: var(--text-muted); margin-bottom: 12px; letter-spacing: 1.5px;">CHOOSE METHOD</div>
         
-        <div class="glass-card" style="cursor:pointer; display: flex; align-items: center; justify-content: space-between; padding: 20px; transition: 0.3s;" onclick="confirmBooking('CASH')" id="cashBtn">
+        <div class="glass-card" style="cursor:pointer; display: flex; align-items: center; justify-content: space-between; padding: 20px; transition: 0.3s;" onclick="confirmBooking('CASH', false)" id="cashBtn">
             <div>
                 <div style="font-weight:900; font-size:18px;"><i class="fa-solid fa-money-bill-wave" style="color:var(--success); margin-right:12px;"></i> <span class="translate" data-en="Pay in Bus (Cash)" data-hi="बस में नकद दें">Pay in Bus (Cash)</span></div>
                 <div class="translate" data-en="Pay directly to the driver" data-hi="ड्राइवर को पैसे दें" style="font-size:13px; color:var(--text-muted); margin-left:36px; margin-top: 4px; font-weight: 600;">Pay directly to the driver</div>
@@ -288,22 +284,15 @@
             <i class="fa-solid fa-chevron-right" style="color: var(--text-muted);"></i>
         </div>
         
-        <div class="glass-card" id="upiBox" style="border-color:var(--primary); text-align:center; background: var(--primary-glow);">
-            <div style="font-weight:900; font-size:20px; margin-bottom:5px;"><i class="fa-brands fa-google-pay" style="color:var(--primary);"></i> <span class="translate" data-en="Pay via UPI" data-hi="UPI से भुगतान करें">Pay via UPI</span></div>
-            <div id="upiDisplay" style="font-size:13px; color:var(--text-main); margin-bottom:25px; font-weight: 600;">Fetching secure UPI...</div>
-            
-            <div style="display:flex; gap:10px;">
-                <button class="btn btn-dark" style="border-radius: 100px; font-size: 14px; flex:1; border-color: rgba(255,255,255,0.2);" onclick="openUPIApp()">
-                    <i class="fa-solid fa-bolt" style="color: var(--primary);"></i> <span class="t-text translate" data-en="Open App" data-hi="ऐप खोलें">Open App</span>
-                </button>
-                <button class="btn btn-green" style="border-radius: 100px; font-size: 14px; flex:1.2;" onclick="confirmBooking('UPI_PENDING')" id="upiBtn">
-                    <i class="fa-solid fa-check"></i> <span class="t-text translate" data-en="I Have Paid" data-hi="पेमेंट कर दिया">I Have Paid</span>
-                </button>
-            </div>
+        <div class="glass-card" id="upiBox" style="border-color:var(--primary); text-align:center; background: var(--primary-glow); padding:20px;">
+            <div style="font-weight:900; font-size:20px; margin-bottom:15px;"><i class="fa-brands fa-google-pay" style="color:var(--primary);"></i> <span class="translate" data-en="Pay via UPI" data-hi="UPI से भुगतान करें">Pay via UPI</span></div>
+            <button class="btn btn-green" style="border-radius: 100px; font-size: 16px; margin:0;" onclick="confirmBooking('UPI_PENDING', true)" id="upiBtn">
+                <i class="fa-solid fa-bolt"></i> <span class="t-text translate" data-en="Pay via UPI App" data-hi="UPI ऐप से भुगतान करें">Pay via UPI App</span>
+            </button>
+            <div style="font-size:11px; color:var(--text-main); margin-top:10px; opacity:0.8;" class="translate" data-en="Redirects to GPay/PhonePe" data-hi="सीधे ऐप पर ले जायेगा">Redirects to GPay/PhonePe</div>
         </div>
     </div>
 
-    <!-- 6. BOARDING PASS SCREEN -->
     <div id="ticketScreen" class="screen">
         <div style="text-align:center; margin-bottom:20px; margin-top: 10px;">
             <div style="width: 80px; height: 80px; background: rgba(16, 185, 129, 0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px auto; border: 2px solid var(--success);">
@@ -357,13 +346,11 @@
         </div>
     </div>
 
-    <!-- 7. TRIPS -->
     <div id="tripsScreen" class="screen">
         <h2 style="font-size: 32px; font-weight: 900; margin-bottom:25px;" class="translate" data-en="My Bookings" data-hi="मेरी यात्रा">My Bookings</h2>
         <div id="tripsList" style="overflow-y:auto; flex:1; padding-right: 5px;"></div>
     </div>
 
-    <!-- 8. ADMIN DASHBOARD (LAYERED) -->
     <div id="adminScreen" class="screen">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
             <h2 style="color:var(--primary); font-size: 26px; font-weight: 900;"><i class="fa-solid fa-shield-halved"></i> <span class="translate" data-en="Driver Panel" data-hi="ड्राइवर पैनल">Driver Panel</span></h2>
@@ -391,7 +378,6 @@
                 </div>
             </div>
 
-            <!-- OFFLINE BLOCK SEAT SECTION -->
             <div class="glass-card" style="border-color:var(--danger); padding:18px; margin-bottom: 20px;">
                 <div class="translate" data-en="Block Offline Seats" data-hi="ऑफलाइन सीट बुक करें" style="font-size: 13px; font-weight: 800; color: var(--danger); margin-bottom: 12px;"><i class="fa-solid fa-lock"></i> Block Offline Seats</div>
                 <div style="display:flex; gap:10px;">
@@ -444,7 +430,6 @@
         </div>
     </div>
 
-    <!-- BOTTOM NAV -->
     <div class="bottom-nav" id="botNav" style="display:none;">
         <div class="nav-item active" onclick="switchTab('home')"><i class="fa-solid fa-house"></i> <span class="translate" data-en="Home" data-hi="होम">Home</span></div>
         <div class="nav-item" onclick="switchTab('trips')"><i class="fa-solid fa-ticket-simple"></i> <span class="translate" data-en="Trips" data-hi="यात्रा">Trips</span></div>
@@ -492,11 +477,9 @@
         return result ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : '234, 179, 8';
     }
 
-    // Load Saved Theme
     const savedThemeName = localStorage.getItem('s_theme_name');
-    if(savedThemeName) { 
-        setTheme(savedThemeName, localStorage.getItem('s_theme_pri'), localStorage.getItem('s_theme_lit')); 
-    } else { document.getElementById('t-gold').classList.add('active'); }
+    if(savedThemeName) { setTheme(savedThemeName, localStorage.getItem('s_theme_pri'), localStorage.getItem('s_theme_lit')); } 
+    else { document.getElementById('t-gold').classList.add('active'); }
 
     // --- SYSTEM INIT ---
     function hideSplash() {
@@ -523,7 +506,7 @@
         const savedPhone = localStorage.getItem('s_phone'); const savedName = localStorage.getItem('s_name');
         if(savedPhone && savedName) {
             state.userPhone = savedPhone; state.userName = savedName;
-            document.getElementById('userNameDisplay').innerHTML = `<i class="fa-solid fa-user-circle" style="color:var(--primary); margin-right:5px;"></i> <span class="t-name">${state.userName}</span>`;
+            document.getElementById('userNameDisplay').innerHTML = `<i class="fa-solid fa-user-circle" style="color:var(--primary); margin-right:5px; font-size:16px;"></i> <span class="t-name">${state.userName}</span>`;
             document.getElementById('botNav').style.display = 'flex'; switchScreen('homeScreen');
         }
         applyLanguage(); 
@@ -581,7 +564,7 @@
         
         state.userName = document.getElementById('nameInput').value.trim(); state.userPhone = document.getElementById('phoneInput').value.trim();
         localStorage.setItem('s_phone', state.userPhone); localStorage.setItem('s_name', state.userName);
-        document.getElementById('userNameDisplay').innerHTML = `<i class="fa-solid fa-user-circle" style="color:var(--primary); margin-right:5px;"></i> <span class="t-name">${state.userName}</span>`;
+        document.getElementById('userNameDisplay').innerHTML = `<i class="fa-solid fa-user-circle" style="color:var(--primary); margin-right:5px; font-size:16px;"></i> <span class="t-name">${state.userName}</span>`;
         document.getElementById('botNav').style.display = 'flex';
         showToast(isHindi ? "लॉगिन सफल!" : "Login Successful!"); switchTab('home');
     }
@@ -686,13 +669,8 @@
         switchScreen('checkoutScreen');
     }
 
-    function openUPIApp() {
-        let amt = state.booking.pass.length * FARE;
-        window.location.href = `upi://pay?pa=${adminUpiId}&pn=Sarthi&am=${amt}&cu=INR`;
-    }
-
-    // BUGFIX: ASYNC/AWAIT SECURE CHECKOUT (Will Not Get Stuck)
-    async function confirmBooking(mode) {
+    // BUGFIX: ASYNC/AWAIT SECURE CHECKOUT & UPI AUTO-REDIRECT
+    async function confirmBooking(mode, redirectUpi = false) {
         if(mode === 'CASH') {
             document.getElementById('cashBtn').innerHTML = `<div><div style="font-weight:900; font-size:18px;"><i class="fa-solid fa-circle-notch fa-spin" style="color:var(--success); margin-right:12px;"></i> ${isHindi?'सुरक्षित कर रहे हैं...':'Reserving...'}</div></div>`;
         } else {
@@ -711,19 +689,28 @@
             const { error: pErr } = await db.from('passengers').insert(passengerRows);
             if(pErr) throw pErr;
             
+            // Redirect to UPI intent if True
+            if(redirectUpi) {
+                let amt = state.booking.pass.length * FARE;
+                window.location.href = `upi://pay?pa=${adminUpiId}&pn=Sarthi&am=${amt}&cu=INR`;
+            }
+
             // Success Block
             state.ticket = { pnr: pnrStr, phone: state.userPhone, from: state.search.from, to: state.search.to, date: state.search.date, time: state.search.time, pass: state.booking.pass, fare: finalFare, mode };
             
-            if(mode === 'CASH') document.getElementById('cashBtn').innerHTML = `<div><div style="font-weight:900; font-size:18px;"><i class="fa-solid fa-money-bill-wave" style="color:var(--success); margin-right:12px;"></i> <span class="t-text translate" data-en="Pay in Bus (Cash)" data-hi="बस में नकद दें">${isHindi?'बस में नकद दें':'Pay in Bus (Cash)'}</span></div><div class="t-text translate" data-en="Pay directly to the driver" data-hi="ड्राइवर को पैसे दें" style="font-size:13px; color:var(--text-muted); margin-left:36px; margin-top: 4px; font-weight: 600;">${isHindi?'ड्राइवर को पैसे दें':'Pay directly to the driver'}</div></div><i class="fa-solid fa-chevron-right" style="color: var(--text-muted);"></i>`;
-            else document.getElementById('upiBtn').innerHTML = `<i class="fa-solid fa-check"></i> ${isHindi?'सफल':'Sent'}`;
+            if(mode === 'CASH') {
+                document.getElementById('cashBtn').innerHTML = `<div><div style="font-weight:900; font-size:18px;"><i class="fa-solid fa-money-bill-wave" style="color:var(--success); margin-right:12px;"></i> <span class="t-text translate" data-en="Pay in Bus (Cash)" data-hi="बस में नकद दें">${isHindi?'बस में नकद दें':'Pay in Bus (Cash)'}</span></div><div class="t-text translate" data-en="Pay directly to the driver" data-hi="ड्राइवर को पैसे दें" style="font-size:13px; color:var(--text-muted); margin-left:36px; margin-top: 4px; font-weight: 600;">${isHindi?'ड्राइवर को पैसे दें':'Pay directly to the driver'}</div></div><i class="fa-solid fa-chevron-right" style="color: var(--text-muted);"></i>`;
+            } else {
+                document.getElementById('upiBtn').innerHTML = `<i class="fa-solid fa-bolt"></i> <span class="t-text translate" data-en="Pay via UPI App" data-hi="UPI ऐप से भुगतान करें">${isHindi?'UPI ऐप से भुगतान करें':'Pay via UPI App'}</span>`;
+            }
             
-            renderTicket(state.ticket); showToast(isHindi ? "बुकिंग सफल!" : "Booking Successful!"); switchScreen('ticketScreen');
+            renderTicket(state.ticket); 
+            showToast(isHindi ? "बुकिंग सफल!" : "Booking Successful!"); 
+            switchScreen('ticketScreen');
             
         } catch (err) {
             console.error("Booking failed:", err);
-            showToast("Database Locked. Disable RLS in Supabase!", "error");
-            
-            // Restore Buttons on Error
+            showToast("Database Error. Check connection or RLS!", "error");
             if(mode === 'CASH') document.getElementById('cashBtn').innerHTML = `<div><div style="font-weight:900; font-size:18px; color:var(--danger);"><i class="fa-solid fa-circle-exclamation" style="margin-right:12px;"></i> Error Occurred</div></div>`;
             else document.getElementById('upiBtn').innerHTML = `<i class="fa-solid fa-circle-exclamation"></i> Error`;
         }
@@ -735,10 +722,11 @@
         document.getElementById('tPhone').innerHTML = `<i class="fa-solid fa-phone"></i> ${t.phone}`;
         let sEl = document.getElementById('tStatus');
         
-        // BUGFIX: FAKE PAID GLITCH FIXED
         if(t.mode==='UPI_PENDING') { sEl.innerText = isHindi ? "UPI पेंडिंग (वेरिफिकेशन)" : "UPI PENDING VERIFICATION"; sEl.style.background = "rgba(245,158,11,0.15)"; sEl.style.color = "#F59E0B"; }
         else if(t.mode==='UPI_PAID') { sEl.innerText = isHindi ? "ऑनलाइन पेमेंट" : "PAID VIA UPI"; sEl.style.background = "rgba(16,185,129,0.15)"; sEl.style.color = "#10B981"; }
         else { sEl.innerText = (isHindi ? "बकाया: ₹" : "DUE: ₹") + t.fare; sEl.style.background = "rgba(239,68,68,0.15)"; sEl.style.color = "#EF4444"; }
+        
+        document.getElementById('bpHead').style.background = 'var(--primary)';
     }
 
     function sendWhatsApp() {
@@ -746,6 +734,18 @@
         let statusTag = state.ticket.mode === 'UPI_PENDING' ? 'Sent via UPI (Please Verify)' : state.ticket.mode;
         let m = `*SARTHI PREMIUM TRAVELS* 🚌\n\n*PNR:* ${state.ticket.pnr}\n*Route:* ${state.ticket.from} ➔ ${state.ticket.to}\n*Schedule:* ${state.ticket.date} | ${state.ticket.time}\n\n*Passengers:*\n${pText}\n\n*Ph:* ${state.ticket.phone}\n*Status:* ${statusTag} (₹${state.ticket.fare})\n\n_Please confirm receipt._`;
         window.open(`https://wa.me/91${ADMIN_WHATSAPP}?text=${encodeURIComponent(m)}`, '_blank'); switchTab('trips');
+    }
+
+    // USER - CANCEL BOOKING FUNCTION
+    async function cancelBookingUser(pnr) {
+        if(confirm(isHindi ? "क्या आप सच में यह बुकिंग रद्द करना चाहते हैं?" : "Are you sure you want to cancel this booking?")) {
+            try {
+                await db.from('passengers').delete().eq('pnr', pnr);
+                await db.from('bookings').delete().eq('pnr', pnr);
+                showToast(isHindi ? "बुकिंग रद्द कर दी गई" : "Booking Cancelled", "success");
+                loadTrips();
+            } catch(e) { showToast("Error cancelling booking", "error"); }
+        }
     }
 
     async function loadTrips() {
@@ -766,7 +766,19 @@
                 let statusColor = t.payment_mode === 'UPI_PAID' || t.payment_mode === 'CASH_PAID' ? 'var(--success)' : t.payment_mode === 'UPI_PENDING' ? 'var(--warning)' : 'var(--danger)';
                 let statusBg = t.payment_mode === 'UPI_PAID' || t.payment_mode === 'CASH_PAID' ? 'rgba(16,185,129,0.15)' : t.payment_mode === 'UPI_PENDING' ? 'rgba(245,158,11,0.15)' : 'rgba(239,68,68,0.15)';
 
-                c.innerHTML += `<div class="glass-card" style="border-left:4px solid var(--primary); padding:20px; margin-bottom:18px;"><div style="display:flex; justify-content:space-between; margin-bottom:12px;"><strong style="font-size:14px; color:var(--text-muted);">${t.pnr}</strong> <span style="font-size:10px; font-weight:900; padding:6px 10px; border-radius:8px; background:${statusBg}; color:${statusColor}; letter-spacing:1px;">${statusText}</span></div><div style="font-weight:900; font-size:18px; margin-bottom:10px;">${t.route_from} <i class="fa-solid fa-arrow-right" style="color:var(--text-muted); font-size: 14px; margin: 0 6px;"></i> ${t.route_to}</div><div style="font-size:13px; color:var(--text-muted); font-weight:600; margin-bottom:10px;"><i class="fa-regular fa-calendar" style="margin-right:6px;"></i> ${t.journey_date} | ${t.journey_time}</div><div style="font-size:14px; color:var(--primary); font-weight:800;"><i class="fa-solid fa-chair" style="margin-right:6px;"></i> ${isHindi?'सीटें':'Seats'}: ${sList}</div></div>`;
+                c.innerHTML += `
+                <div class="glass-card" style="border-left:4px solid var(--primary); padding:20px; margin-bottom:18px;">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
+                        <strong style="font-size:14px; color:var(--text-muted);">${t.pnr}</strong> 
+                        <span style="font-size:10px; font-weight:900; padding:6px 10px; border-radius:8px; background:${statusBg}; color:${statusColor}; letter-spacing:1px;">${statusText}</span>
+                    </div>
+                    <div style="font-weight:900; font-size:18px; margin-bottom:10px;">${t.route_from} <i class="fa-solid fa-arrow-right" style="color:var(--text-muted); font-size: 14px; margin: 0 6px;"></i> ${t.route_to}</div>
+                    <div style="font-size:13px; color:var(--text-muted); font-weight:600; margin-bottom:15px;"><i class="fa-regular fa-calendar" style="margin-right:6px;"></i> ${t.journey_date} | ${t.journey_time}</div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid rgba(255,255,255,0.05); padding-top:15px;">
+                        <div style="font-size:14px; color:var(--primary); font-weight:800;"><i class="fa-solid fa-chair" style="margin-right:6px;"></i> ${isHindi?'सीटें':'Seats'}: ${sList}</div>
+                        <button onclick="cancelBookingUser('${t.pnr}')" class="btn btn-dark" style="padding:6px 12px; font-size:11px; margin:0; width:auto; border-radius:100px; color:var(--danger); border-color:rgba(239,68,68,0.3);"><i class="fa-solid fa-trash"></i> ${isHindi?'रद्द करें':'Cancel'}</button>
+                    </div>
+                </div>`;
             }
         } catch (err) {
             c.innerHTML = `<p style="text-align:center;color:var(--danger);">Error loading history.</p>`;
@@ -801,6 +813,18 @@
 
     let manifestDataCache = "";
 
+    // DRIVER - DELETE BOOKING
+    async function cancelBookingDriver(pnr) {
+        if(confirm(isHindi ? "क्या आप सच में इस यात्री की बुकिंग हटाना चाहते हैं?" : "Are you sure you want to delete this booking?")) {
+            try {
+                await db.from('passengers').delete().eq('pnr', pnr);
+                await db.from('bookings').delete().eq('pnr', pnr);
+                showToast(isHindi ? "बुकिंग हटा दी गई" : "Booking Deleted", "success");
+                loadManifest();
+            } catch(e) { showToast("Error deleting booking", "error"); }
+        }
+    }
+
     async function loadManifest() {
         const d = document.getElementById('admDate').value; const t = document.getElementById('admTime').value;
         const c = document.getElementById('manifestList'); c.innerHTML = '<div class="skeleton" style="width:100%; height:150px; margin-bottom:15px;"></div>';
@@ -826,7 +850,6 @@
             const { data: pData } = await db.from('passengers').select('*').in('pnr', pnrs);
             
             bData.forEach(b => {
-                // BUGFIX: STRICT REVENUE MATH FOR ADMIN DASHBOARD
                 if(b.payment_mode === 'UPI_PAID') revUpi += b.fare; 
                 else if(b.payment_mode === 'CASH' || b.payment_mode === 'UPI_PENDING') revCashDue += b.fare;
                 
@@ -845,7 +868,22 @@
                     actBtn = `<span style="font-size:11px; font-weight:900; color:var(--success); background:rgba(16,185,129,0.15); padding:8px 16px; border-radius:100px;"><i class="fa-solid fa-check-double"></i> PAID</span>`;
                 }
 
-                c.innerHTML += `<div class="glass-card manifest-card" style="padding:22px; margin-bottom:15px; border-color:rgba(255,255,255,0.08);"><div style="display:flex; justify-content:space-between; font-weight:800; border-bottom:1px dashed var(--glass-border); padding-bottom:12px; margin-bottom:8px;"><span class="m-pnr" style="font-size:14px; color:var(--primary);">${b.pnr}</span><span style="font-size: 13px; color: var(--text-muted);">${b.route_from} > ${b.route_to} <span style="color:var(--primary); margin-left:5px;">(${b.journey_time})</span></span></div>${passHTML}<div style="margin-top:20px; display:flex; justify-content:space-between; align-items:center; border-top:1px solid rgba(255,255,255,0.05); padding-top:16px;"><div style="display:flex; gap:16px;"><a href="tel:${b.phone}" style="color:var(--text-main); font-size:20px; transition:0.2s;"><i class="fa-solid fa-phone"></i></a> <a href="https://wa.me/91${b.phone}" style="color:var(--success); font-size:20px; transition:0.2s;"><i class="fa-brands fa-whatsapp"></i></a></div>${actBtn}</div></div>`;
+                c.innerHTML += `
+                <div class="glass-card manifest-card" style="padding:22px; margin-bottom:15px; border-color:rgba(255,255,255,0.08);">
+                    <div style="display:flex; justify-content:space-between; font-weight:800; border-bottom:1px dashed var(--glass-border); padding-bottom:12px; margin-bottom:8px;">
+                        <span class="m-pnr" style="font-size:14px; color:var(--primary);">${b.pnr}</span>
+                        <span style="font-size: 13px; color: var(--text-muted);">${b.route_from} > ${b.route_to} <span style="color:var(--primary); margin-left:5px;">(${b.journey_time})</span></span>
+                    </div>
+                    ${passHTML}
+                    <div style="margin-top:20px; display:flex; justify-content:space-between; align-items:center; border-top:1px solid rgba(255,255,255,0.05); padding-top:16px;">
+                        <div style="display:flex; gap:16px; align-items:center;">
+                            <a href="tel:${b.phone}" style="color:var(--text-main); font-size:20px; transition:0.2s;"><i class="fa-solid fa-phone"></i></a> 
+                            <a href="https://wa.me/91${b.phone}" style="color:var(--success); font-size:20px; transition:0.2s;"><i class="fa-brands fa-whatsapp"></i></a>
+                            <button onclick="cancelBookingDriver('${b.pnr}')" style="background:transparent; border:none; color:var(--danger); cursor:pointer; font-size:18px; margin-left:10px;"><i class="fa-solid fa-trash-can"></i></button>
+                        </div>
+                        ${actBtn}
+                    </div>
+                </div>`;
             });
             
             document.getElementById('admSeatsRev').innerHTML = `${seatsC}<span style="font-size: 16px; color: var(--text-muted);">/9</span>`; 
