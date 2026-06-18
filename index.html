@@ -10,7 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Noto+Sans+Devanagari:wght@500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Supabase loaded asynchronously for better performance -->
+    <!-- Supabase Engine -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
@@ -282,7 +282,7 @@
         
         <div class="translate" data-en="CHOOSE METHOD" data-hi="तरीका चुनें" style="font-size: 11px; font-weight: 800; color: var(--text-muted); margin-bottom: 12px; letter-spacing: 1.5px;">CHOOSE METHOD</div>
         
-        <button class="glass-card" style="width:100%; border:1px solid rgba(255,255,255,0.05); text-align:left; cursor:pointer; display: flex; align-items: center; justify-content: space-between; padding: 20px; transition: 0.3s; background:var(--glass); color:var(--text-main);" onclick="confirmBooking('CASH')" id="cashBtn">
+        <button class="glass-card" style="width:100%; border:1px solid rgba(255,255,255,0.05); text-align:left; cursor:pointer; display: flex; align-items: center; justify-content: space-between; padding: 20px; transition: 0.3s; background:var(--glass); color:var(--text-main);" onclick="confirmBooking('CASH', false)" id="cashBtn">
             <div>
                 <div style="font-weight:900; font-size:18px;"><i class="fa-solid fa-money-bill-wave" style="color:var(--success); margin-right:12px;"></i> <span class="translate" data-en="Pay in Bus (Cash)" data-hi="बस में नकद दें">Pay in Bus (Cash)</span></div>
                 <div class="translate" data-en="Pay directly to the driver" data-hi="ड्राइवर को पैसे दें" style="font-size:13px; color:var(--text-muted); margin-left:36px; margin-top: 4px; font-weight: 600;">Pay directly to the driver</div>
@@ -290,11 +290,20 @@
             <i class="fa-solid fa-chevron-right" style="color: var(--text-muted);"></i>
         </button>
         
-        <div class="glass-card" id="upiBox" style="border-color:var(--primary); text-align:center; background: var(--primary-glow); padding:20px; cursor:pointer;" onclick="confirmBooking('UPI_PENDING')" id="upiBtnWrap">
-            <div>
-                <div style="font-weight:900; font-size:20px; margin-bottom:5px;"><i class="fa-brands fa-google-pay" style="color:var(--primary); margin-right:10px;"></i> <span class="translate" data-en="Pay via UPI App" data-hi="UPI ऐप से भुगतान करें">Pay via UPI App</span></div>
-                <div style="font-size:12px; color:var(--text-main); margin-top:8px; opacity:0.8;" class="translate" data-en="Redirects to GPay/PhonePe" data-hi="सीधे ऐप पर ले जायेगा">Redirects to GPay/PhonePe</div>
+        <!-- FIX: QR CODE + BUTTON ENABLED -->
+        <div class="glass-card" id="upiBox" style="border-color:var(--primary); text-align:center; background: var(--primary-glow); padding:20px;">
+            <div style="font-weight:900; font-size:20px; margin-bottom:15px;"><i class="fa-brands fa-google-pay" style="color:var(--primary);"></i> <span class="translate" data-en="Pay via UPI" data-hi="UPI से भुगतान करें">Pay via UPI</span></div>
+            
+            <div style="background: #fff; padding: 10px; border-radius: 12px; display: inline-block; margin-bottom: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+                <img id="upiQRCode" src="" style="width:160px; height:160px; display:none; border-radius: 8px;">
             </div>
+
+            <button class="btn btn-dark" style="border-radius: 100px; font-size: 15px; margin-bottom: 10px; border-color: rgba(255,255,255,0.2);" onclick="confirmBooking('UPI_PENDING', true)" id="upiAppBtn">
+                <i class="fa-solid fa-bolt" style="color: var(--primary);"></i> <span class="t-text translate" data-en="Open UPI App (Mobile)" data-hi="UPI ऐप खोलें (मोबाइल)">Open UPI App (Mobile)</span>
+            </button>
+            <button class="btn btn-green" style="border-radius: 100px; font-size: 15px; margin:0;" onclick="confirmBooking('UPI_PENDING', false)" id="upiVerifyBtn">
+                <i class="fa-solid fa-check"></i> <span class="t-text translate" data-en="I have paid (Scan/Web)" data-hi="मैंने पेमेंट कर दिया">I have paid (Scan/Web)</span>
+            </button>
         </div>
     </div>
 
@@ -574,7 +583,6 @@
         if(isProcessing) return;
         const name = document.getElementById('nameInput').value.trim(); const phone = document.getElementById('phoneInput').value.trim();
         
-        // Strict Validation
         if(name.length < 2 || !/^[a-zA-Z\s]+$/.test(name)) return showToast(isHindi ? "सही नाम डालें (सिर्फ अक्षर)।" : "Please enter a valid name.", "error");
         if(!/^[6-9]\d{9}$/.test(phone)) return showToast(isHindi ? "10 अंकों का सही भारतीय नंबर डालें।" : "Valid 10-digit Indian number required.", "error");
         
@@ -655,13 +663,7 @@
         switchScreen('seatScreen');
 
         try {
-            // OPTIMIZATION: Using Left Join to reduce queries
-            const { data: bData, error: bErr } = await db.from('bookings')
-                .select('pnr, passengers(seat_no)')
-                .eq('journey_date', state.search.date)
-                .eq('journey_time', state.search.time)
-                .eq('route_from', state.search.from);
-            
+            const { data: bData, error: bErr } = await db.from('bookings').select('pnr, passengers(seat_no)').eq('journey_date', state.search.date).eq('journey_time', state.search.time).eq('route_from', state.search.from);
             if(bErr) throw bErr;
             
             let booked = [];
@@ -711,7 +713,6 @@
         state.booking.pass = []; let valid = true;
         state.booking.seats.forEach(s => {
             let n = document.getElementById(`pN_${s}`).value.trim(); let a = parseInt(document.getElementById(`pA_${s}`).value);
-            // Strict Validation
             if(n.length<2 || !/^[a-zA-Z\s]+$/.test(n) || isNaN(a) || a<=0 || a>100) valid = false; else state.booking.pass.push({s, n, a});
         });
         if(!valid) return showToast(isHindi ? "कृपया सही नाम (अक्षर) और उम्र (1-100) भरें।" : "Please check Name (letters only) and Age (1-100).", "error");
@@ -720,24 +721,35 @@
         
         document.getElementById('chkSeats').innerText = seatsLen; document.getElementById('payAmount').innerText = `₹${totalAmt}`;
         
-        if(!adminUpiId) document.getElementById('upiBox').style.display = 'none'; 
+        // FIX: QR CODE GENERATOR ADDED HERE
+        if(adminUpiId) {
+            let upiLink = `upi://pay?pa=${adminUpiId}&pn=Sarthi&am=${totalAmt}&cu=INR`;
+            document.getElementById('upiQRCode').src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiLink)}`;
+            document.getElementById('upiQRCode').style.display = 'block';
+        } else { 
+            document.getElementById('upiBox').style.display = 'none'; 
+        }
+        
         switchScreen('checkoutScreen');
     }
 
-    async function confirmBooking(mode) {
+    async function confirmBooking(mode, redirectUpi = false) {
         if(isProcessing) return;
         isProcessing = true;
         
         const cashBtn = document.getElementById('cashBtn');
-        const upiBox = document.getElementById('upiBox');
+        const upiAppBtn = document.getElementById('upiAppBtn');
+        const upiVerifyBtn = document.getElementById('upiVerifyBtn');
         
         cashBtn.disabled = true; cashBtn.style.pointerEvents = 'none';
-        upiBox.style.pointerEvents = 'none';
+        if(upiAppBtn) upiAppBtn.disabled = true;
+        if(upiVerifyBtn) upiVerifyBtn.disabled = true;
         
         if(mode === 'CASH') {
             cashBtn.innerHTML = `<div><div style="font-weight:900; font-size:18px;"><i class="fa-solid fa-circle-notch fa-spin" style="color:var(--success); margin-right:12px;"></i> ${isHindi?'सुरक्षित कर रहे हैं...':'Reserving...'}</div></div>`;
         } else {
-            upiBox.innerHTML = `<div style="text-align:center; padding:10px;"><i class="fa-solid fa-circle-notch fa-spin" style="font-size:24px; color:var(--primary);"></i><br><span style="font-weight:700; margin-top:10px; display:inline-block;">${isHindi?'प्रतीक्षा करें...':'Redirecting...'}</span></div>`;
+            if(redirectUpi) upiAppBtn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> ${isHindi?'खुल रहा है...':'Opening...'}`;
+            else upiVerifyBtn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> ${isHindi?'प्रतीक्षा करें...':'Sending...'}`;
         }
         
         try {
@@ -752,8 +764,9 @@
             const { error: pErr } = await db.from('passengers').insert(passengerRows);
             if(pErr) throw pErr;
             
-            if(mode === 'UPI_PENDING') {
-                window.location.href = `upi://pay?pa=${adminUpiId}&pn=Sarthi&am=${finalFare}&cu=INR`;
+            if(redirectUpi) {
+                let amt = state.booking.pass.length * FARE;
+                window.location.href = `upi://pay?pa=${adminUpiId}&pn=Sarthi&am=${amt}&cu=INR`;
             }
 
             state.ticket = { pnr: pnrStr, phone: state.userPhone, from: state.search.from, to: state.search.to, date: state.search.date, time: state.search.time, pass: state.booking.pass, fare: finalFare, mode };
@@ -767,13 +780,16 @@
             switchScreen('ticketScreen');
             
         } catch (err) {
-            console.error(err);
-            showToast("Database Error. Ensure RLS is updated.", "error");
+            console.error("Booking failed:", err);
+            showToast("Database Error. Ensure RLS is disabled in Supabase.", "error");
             
             cashBtn.style.pointerEvents = 'auto'; cashBtn.disabled = false;
-            upiBox.style.pointerEvents = 'auto';
+            if(upiAppBtn) upiAppBtn.disabled = false;
+            if(upiVerifyBtn) upiVerifyBtn.disabled = false;
+            
             if(mode === 'CASH') cashBtn.innerHTML = `<div><div style="font-weight:900; font-size:18px; color:var(--danger);"><i class="fa-solid fa-circle-exclamation" style="margin-right:12px;"></i> Error Occurred</div></div>`;
-            else upiBox.innerHTML = `<div style="color:var(--danger); font-weight:bold;"><i class="fa-solid fa-circle-exclamation"></i> Payment Error</div>`;
+            else if(redirectUpi) upiAppBtn.innerHTML = `<i class="fa-solid fa-circle-exclamation"></i> Error`;
+            else upiVerifyBtn.innerHTML = `<i class="fa-solid fa-circle-exclamation"></i> Error`;
         } finally {
             isProcessing = false;
         }
@@ -815,7 +831,6 @@
         let c = document.getElementById('tripsList'); c.innerHTML = '<div class="skeleton" style="width:100%; height:120px; margin-bottom:15px;"></div>';
         
         try {
-            // Pagination: Added .limit(50) for performance
             const { data, error } = await db.from('bookings').select('pnr, route_from, route_to, journey_date, journey_time, payment_mode, fare, passengers(seat_no)').eq('phone', state.userPhone).order('created_at', { ascending: false }).limit(50);
             if(error) throw error;
             
@@ -895,7 +910,7 @@
         manifestDataCache = `*LIVE MANIFEST: ${d} | ${t}*\n`;
         document.getElementById('admSearch').value = '';
         
-        let query = db.from('bookings').select('*, passengers(*)').eq('journey_date', d).order('created_at', { ascending: false }).limit(50); // Pagination limit added
+        let query = db.from('bookings').select('*, passengers(*)').eq('journey_date', d).order('created_at', { ascending: false }).limit(50);
         if(t !== 'ALL') { query = query.eq('journey_time', t); }
 
         try {
@@ -918,7 +933,6 @@
                 let pList = b.passengers || [];
                 seatsC += pList.length;
                 
-                // Safe rendering via escapeHTML
                 let passHTML = pList.map(p => `<div style="font-size:14px; margin-top:10px; display:flex; align-items:center; background:rgba(255,255,255,0.03); padding:10px; border-radius:10px;"><i class="fa-solid fa-user" style="color:var(--text-muted); margin-right:10px; font-size:12px;"></i> <span style="color:var(--primary); font-weight:800; margin-right:8px;">S${p.seat_no}:</span> <span class="m-name" style="font-weight:700;">${escapeHTML(p.name)}</span> <span style="color:var(--text-muted); font-size:12px; font-weight:700; margin-left:6px;">(${p.age})</span></div>`).join('');
                 manifestDataCache += `\nPNR: ${b.pnr}\nSeats: ${pList.map(p=>p.seat_no).join(',')}\nPh: ${b.phone}\nDue: ${b.payment_mode==='CASH' || b.payment_mode==='UPI_PENDING'?('Rs '+b.fare):'PAID'}\n`;
                 
@@ -1010,7 +1024,7 @@
             document.getElementById('offSeat').value = ''; document.getElementById('offName').value = '';
             loadManifest();
         } catch (err) {
-            showToast("DB Error: Refresh and try again.", "error");
+            showToast("DB Error. Refresh and try again.", "error");
         } finally {
             btn.disabled = false;
             isProcessing = false;
