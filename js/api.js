@@ -220,17 +220,41 @@ const API = (function () {
     },
 
     admin: {
+      // getManifest: always return an array []. Fall back to localStorage silently on any error.
       getManifest: async (date, time) => {
-        if (hasSupabase()) {
-          try {
-            const rows = await supabaseFetch(`/bookings?date=eq.${encodeURIComponent(date)}&time=eq.${encodeURIComponent(time)}&order=created_at.asc`, { method: 'GET' });
-            return rows || [];
-          } catch (err) {
-            console.warn('Supabase getManifest failed, falling back to local', err);
+        try {
+          if (hasSupabase()) {
+            try {
+              const rows = await supabaseFetch(
+                `/bookings?date=eq.${encodeURIComponent(date)}&time=eq.${encodeURIComponent(time)}&order=created_at.asc`,
+                { method: 'GET' }
+              );
+              // If Supabase returns an array, return it. If it returns an object with bookings, return that.
+              if (Array.isArray(rows)) return rows;
+              if (rows && Array.isArray(rows.bookings)) return rows.bookings;
+              // Unexpected shape from Supabase — fall through to local fallback.
+              console.warn('Supabase getManifest returned unexpected shape, falling back to local');
+            } catch (err) {
+              // Don't surface errors to the UI — log and fall back to localStorage.
+              console.warn('Supabase getManifest failed, falling back to local', err);
+            }
           }
+
+          // Local fallback (always returns an array)
+          try {
+            const all = readLocalBookings();
+            return (all || [])
+              .filter(b => b.date === date && b.time === time)
+              .sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+          } catch (e) {
+            console.warn('Local bookings read failed in getManifest', e);
+            return [];
+          }
+        } catch (e) {
+          // Catch-all to ensure this function never throws
+          console.warn('Unexpected error in admin.getManifest', e);
+          return [];
         }
-        const all = readLocalBookings();
-        return all.filter(b => b.date === date && b.time === time).sort((a,b) => new Date(a.created_at) - new Date(b.created_at));
       },
 
       markPaid: async (pnr, mode) => {
