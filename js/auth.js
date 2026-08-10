@@ -47,26 +47,58 @@ const Auth = {
   },
 
   // Create/reuse an invisible RecaptchaVerifier bound to #recaptcha-container
+  // Gracefully handles missing container and reCAPTCHA initialization errors
   _getRecaptchaVerifier: (forceReset = false) => {
-    if (!document.getElementById('recaptcha-container')) {
+    // Ensure recaptcha-container exists, create if missing
+    let container = document.getElementById('recaptcha-container');
+    if (!container) {
       const authScreen = document.getElementById('authScreen') || document.body;
-      const el = document.createElement('div');
-      el.id = 'recaptcha-container';
-      el.style.display = 'none';
-      authScreen.appendChild(el);
+      container = document.createElement('div');
+      container.id = 'recaptcha-container';
+      container.style.display = 'none';
+      try {
+        authScreen.appendChild(container);
+      } catch (e) {
+        console.warn('Failed to append recaptcha-container to authScreen', e);
+        // Container creation failed, will attempt fallback below
+        container = null;
+      }
     }
 
+    // Reset verifier if requested
     if (forceReset && window.recaptchaVerifier) {
-      try { window.recaptchaVerifier.clear(); } catch (e) {}
+      try {
+        window.recaptchaVerifier.clear();
+      } catch (e) {
+        console.warn('Failed to clear recaptchaVerifier', e);
+      }
       window.recaptchaVerifier = null;
     }
 
+    // Create new verifier if needed
     if (!window.recaptchaVerifier) {
-      window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
-        size: 'invisible'
-      });
-      try { window.recaptchaVerifier.render(); } catch (e) {}
+      try {
+        // Verify container exists before creating verifier
+        if (!container || !document.getElementById('recaptcha-container')) {
+          throw new Error('recaptcha-container not available for RecaptchaVerifier');
+        }
+        
+        window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+          size: 'invisible'
+        });
+        
+        try {
+          window.recaptchaVerifier.render();
+        } catch (renderErr) {
+          console.warn('RecaptchaVerifier render failed, continuing anyway', renderErr);
+        }
+      } catch (e) {
+        console.error('Failed to create RecaptchaVerifier', e);
+        // Return null to signal that reCAPTCHA is unavailable (caller should handle)
+        return null;
+      }
     }
+
     return window.recaptchaVerifier;
   },
 
@@ -95,7 +127,12 @@ const Auth = {
       await Auth._loadFirebase();
       Auth._initFirebaseApp();
 
+      // Get reCAPTCHA verifier with reset to clear any stale state
       const verifier = Auth._getRecaptchaVerifier(true);
+      if (!verifier) {
+        throw new Error('RecaptchaVerifier initialization failed. Please try again.');
+      }
+
       const auth = firebase.auth();
       const confirmationResult = await auth.signInWithPhoneNumber(phone, verifier);
 
@@ -108,9 +145,15 @@ const Auth = {
       UI.setLoading(btn, false);
     } catch (err) {
       console.error('requestOTP error', err);
-      UI.showToast('Failed to send OTP. Check console for details.', 'error');
+      UI.showToast(err.message || 'Failed to send OTP. Check console for details.', 'error');
       UI.setLoading(document.getElementById('getOtpBtn'), false);
-      try { Auth._getRecaptchaVerifier(true); } catch (e) {}
+      
+      // Gracefully reset reCAPTCHA on error
+      try {
+        Auth._getRecaptchaVerifier(true);
+      } catch (e) {
+        console.warn('Failed to reset recaptcha verifier after OTP error', e);
+      }
     }
   },
 
@@ -157,13 +200,28 @@ const Auth = {
       console.error('verifyOTP error', err);
       UI.showToast(err.message || 'Invalid OTP. Try again.', 'error');
       UI.setLoading(document.getElementById('verifyBtn'), false);
-      try { window.__sarthi_confirmationResult = null; } catch (e) {}
+      
+      // Clear confirmation result on error
+      try {
+        window.__sarthi_confirmationResult = null;
+      } catch (e) {}
     }
   },
 
   logout: async () => {
     if (confirm('Are you sure you want to logout?')) {
       try { if (window.firebase && firebase.auth) await firebase.auth().signOut(); } catch (e) {}
+      
+      // Clean up reCAPTCHA verifier
+      try {
+        if (window.recaptchaVerifier) {
+          window.recaptchaVerifier.clear();
+          window.recaptchaVerifier = null;
+        }
+      } catch (e) {
+        console.warn('Failed to clear recaptchaVerifier on logout', e);
+      }
+      
       sessionStorage.clear();
       localStorage.clear();
       location.reload();
