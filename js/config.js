@@ -25,10 +25,25 @@ const CONFIG = {
     SUPABASE_URL: (window.__ENV__ && window.__ENV__.SUPABASE_URL) || window.SUPABASE_URL || null,
     SUPABASE_ANON_KEY: (window.__ENV__ && window.__ENV__.SUPABASE_ANON_KEY) || window.SUPABASE_ANON_KEY || null,
 
-    // OTP expiry (ms)
+    // Firebase config (embedded here for convenience). You can instead inject via window.__ENV__ as above.
+    FIREBASE: (window.__ENV__ && window.__ENV__.FIREBASE) || window.FIREBASE || {
+      apiKey: "AIzaSyCPT5uSpPyHk6dA_q8UjTg3bIzLKh9tB24",
+      authDomain: "sarthi-travels.firebaseapp.com",
+      projectId: "sarthi-travels",
+      storageBucket: "sarthi-travels.firebasestorage.app",
+      messagingSenderId: "168359171735",
+      appId: "1:168359171735:web:befeb6338c0ce1e8d53bd2"
+    },
+
+    // OTP expiry (ms) — used only for non-Firebase fallback flows
     OTP_EXPIRY_MS: 5 * 60 * 1000
 };
 
 if (!CONFIG.SUPABASE_URL || !CONFIG.SUPABASE_ANON_KEY) {
     console.warn('CONFIG: Supabase URL or anon key not set. Local test flows will still work but DB operations will fail until these are provided.');
+}
+
+// Basic runtime check for Firebase presence — not an error (we lazy-load in auth.js if needed)
+if (!CONFIG.FIREBASE || !CONFIG.FIREBASE.apiKey) {
+  console.warn('CONFIG: Firebase config missing; phone authentication will not work until configured.');
 }
